@@ -39,8 +39,6 @@
         .input-group { display: flex; flex-direction: column; gap: 6px; }
         label { font-size: 0.875rem; font-weight: 500; color: var(--text-muted); }
         input, select { padding: 0.625rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; }
-        
-        /* Estilo especial para el input de archivo */
         input[type="file"] { padding: 0.4rem; background: #f8fafc; cursor: pointer; }
 
         .btn-add { background-color: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 1.5rem 1.5rem auto; transition: background 0.2s; width: calc(100% - 3rem); max-width: 300px; }
@@ -56,7 +54,6 @@
         td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; vertical-align: middle; }
         tr:hover { background-color: #f1f5f9; }
 
-        /* Imágenes en la tabla */
         .thumb-img { width: 50px; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); background: #fff; }
         .qr-canvas { width: 50px; height: 50px; border-radius: 4px; }
 
@@ -70,6 +67,9 @@
         .delete-btn { color: var(--danger); }
         .stock-btn { color: var(--success); }
         .stock-btn-minus { color: var(--warning); }
+
+        /* Loader */
+        #loader { display: none; margin: 1rem; color: var(--text-muted); font-size: 0.9rem; }
 
         footer { text-align: center; margin-top: 3rem; color: var(--text-muted); font-size: 0.85rem; padding: 2rem; border-top: 1px solid var(--border); }
     </style>
@@ -130,6 +130,7 @@
                     <input type="file" id="imagen" accept="image/*">
                 </div>
             </div>
+            <div id="loader">Guardando en la nube...</div>
             <button class="btn-add" onclick="agregarRepuesto()">
                 <i data-lucide="save"></i> Agregar Repuesto
             </button>
@@ -165,18 +166,44 @@
         </section>
     </div>
 
-    <script>
+    <script type="module">
+        // 1. Importar Firebase desde los servidores de Google
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        // 2. Tu configuración exacta
+        const firebaseConfig = {
+            apiKey: "AIzaSyBanJZzdmHOLkquFsDOMG8xDZQ1-5ylrVY",
+            authDomain: "stock-dieselnortelp.firebaseapp.com",
+            projectId: "stock-dieselnortelp",
+            storageBucket: "stock-dieselnortelp.firebasestorage.app",
+            messagingSenderId: "688180018556",
+            appId: "1:688180018556:web:3760271bb9381b71e638f9",
+            measurementId: "G-D10HP8DBRE"
+        };
+
+        // 3. Inicializar la app y la base de datos
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const repuestosRef = collection(db, "repuestos");
+
+        // Variable global para almacenar el inventario
+        let inventario = [];
         lucide.createIcons();
 
-        // Aún usamos localStorage temporalmente hasta integrar Firebase
-        let inventario = JSON.parse(localStorage.getItem('dieselStock')) || [];
+        // 4. ESCUCHAR LA BASE DE DATOS EN TIEMPO REAL
+        onSnapshot(repuestosRef, (snapshot) => {
+            inventario = []; // Limpiamos la lista local
+            snapshot.forEach((documento) => {
+                // Guardamos los datos y el ID único que le dio Firebase
+                inventario.push({ ...documento.data(), idFirebase: documento.id });
+            });
+            // Ordenar por fecha de creación (los más nuevos arriba)
+            inventario.sort((a, b) => b.fecha - a.fecha);
+            filtrarTabla(); // Mostramos en pantalla
+        });
 
-        function guardarLocal() {
-            localStorage.setItem('dieselStock', JSON.stringify(inventario));
-            renderizarTabla();
-        }
-
-        // Convertir imagen a formato guardable (Base64)
+        // 5. Convertir imagen a Base64
         function leerImagen(input, callback) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
@@ -185,77 +212,89 @@
                 };
                 reader.readAsDataURL(input.files[0]);
             } else {
-                // Imagen por defecto si no suben nada
                 callback('https://via.placeholder.com/50?text=No+Img');
             }
         }
 
-        function agregarRepuesto() {
+        // 6. Funciones expuestas a la ventana (para que los botones HTML las reconozcan)
+        window.agregarRepuesto = async function() {
+            const btn = document.querySelector('.btn-add');
+            const loader = document.getElementById('loader');
+            const nombre = document.getElementById('nombre').value;
+            const codigo = document.getElementById('codigo').value;
+
+            if(!nombre || !codigo) return alert("Nombre y Código son obligatorios");
+
+            btn.style.display = 'none';
+            loader.style.display = 'block';
+
             const inputImg = document.getElementById('imagen');
             
-            leerImagen(inputImg, function(imagenBase64) {
+            leerImagen(inputImg, async function(imagenBase64) {
                 const nuevo = {
-                    id: Date.now(),
-                    nombre: document.getElementById('nombre').value,
+                    nombre: nombre,
                     marca: document.getElementById('marca').value,
-                    codigo: document.getElementById('codigo').value,
+                    codigo: codigo,
                     categoria: document.getElementById('categoria').value,
                     ubicacion: document.getElementById('ubicacion').value,
                     minimo: parseInt(document.getElementById('minimo').value),
                     cantidad: parseInt(document.getElementById('cantidad').value),
-                    imagen: imagenBase64
+                    imagen: imagenBase64,
+                    fecha: Date.now() // Para ordenar
                 };
 
-                if(!nuevo.nombre || !nuevo.codigo) return alert("Nombre y Código son obligatorios");
-
-                inventario.push(nuevo);
-                guardarLocal();
-                
-                // Limpiar formulario
-                document.querySelectorAll('input').forEach(i => i.value = (i.type === 'number' ? 0 : ''));
-                document.getElementById('minimo').value = 5;
-                document.getElementById('imagen').value = '';
+                try {
+                    // Guardar en la nube!
+                    await addDoc(repuestosRef, nuevo);
+                    
+                    // Limpiar formulario
+                    document.querySelectorAll('input').forEach(i => i.value = (i.type === 'number' ? 0 : ''));
+                    document.getElementById('minimo').value = 5;
+                    document.getElementById('imagen').value = '';
+                } catch (e) {
+                    console.error("Error añadiendo documento: ", e);
+                    alert("Error al guardar. Revisa tu conexión a internet.");
+                } finally {
+                    btn.style.display = 'flex';
+                    loader.style.display = 'none';
+                }
             });
         }
 
-        function cambiarStock(id, cantidad) {
-            const item = inventario.find(i => i.id === id);
-            if(item) {
-                item.cantidad = Math.max(0, item.cantidad + cantidad);
-                guardarLocal();
+        window.cambiarStock = async function(idFirebase, cantidadSuma, cantidadActual) {
+            const nuevaCantidad = Math.max(0, cantidadActual + cantidadSuma);
+            const docRef = doc(db, "repuestos", idFirebase);
+            try {
+                await updateDoc(docRef, { cantidad: nuevaCantidad });
+            } catch(e) {
+                console.error("Error actualizando stock", e);
             }
         }
 
-        function eliminarRepuesto(id) {
-            if(confirm("¿Estás seguro de eliminar este ítem?")) {
-                inventario = inventario.filter(i => i.id !== id);
-                guardarLocal();
+        window.eliminarRepuesto = async function(idFirebase) {
+            if(confirm("¿Estás seguro de eliminar este repuesto definitivamente?")) {
+                const docRef = doc(db, "repuestos", idFirebase);
+                await deleteDoc(docRef);
             }
         }
 
-        function filtrarTabla() {
+        window.filtrarTabla = function() {
             const query = document.getElementById('buscar').value.toLowerCase();
-            renderizarTabla(query);
-        }
-
-        function renderizarTabla(filtro = '') {
             const tbody = document.getElementById('listaRepuestos');
             tbody.innerHTML = '';
-
-            // Array para guardar los IDs y Códigos de los QR que hay que dibujar
             let qrsADibujar = [];
 
             inventario.forEach(item => {
-                if(item.nombre.toLowerCase().includes(filtro) || 
-                   item.codigo.toLowerCase().includes(filtro) || 
-                   item.marca.toLowerCase().includes(filtro)) {
+                if(item.nombre.toLowerCase().includes(query) || 
+                   item.codigo.toLowerCase().includes(query) || 
+                   item.marca.toLowerCase().includes(query)) {
                     
                     const esBajo = item.cantidad <= item.minimo;
                     
                     const row = `
                         <tr>
                             <td><img src="${item.imagen}" class="thumb-img" alt="Repuesto"></td>
-                            <td><canvas id="qr-${item.id}" class="qr-canvas"></canvas></td>
+                            <td><canvas id="qr-${item.idFirebase}" class="qr-canvas"></canvas></td>
                             <td><strong>${item.codigo}</strong></td>
                             <td>${item.nombre}</td>
                             <td>${item.marca} <br><small>${item.categoria}</small></td>
@@ -267,22 +306,20 @@
                                 </span>
                             </td>
                             <td class="actions">
-                                <button class="btn-icon stock-btn" onclick="cambiarStock(${item.id}, 1)" title="Sumar"><i data-lucide="plus-circle"></i></button>
-                                <button class="btn-icon stock-btn-minus" onclick="cambiarStock(${item.id}, -1)" title="Restar"><i data-lucide="minus-circle"></i></button>
-                                <button class="btn-icon delete-btn" onclick="eliminarRepuesto(${item.id})" title="Eliminar"><i data-lucide="trash-2"></i></button>
+                                <button class="btn-icon stock-btn" onclick="cambiarStock('${item.idFirebase}', 1, ${item.cantidad})" title="Sumar"><i data-lucide="plus-circle"></i></button>
+                                <button class="btn-icon stock-btn-minus" onclick="cambiarStock('${item.idFirebase}', -1, ${item.cantidad})" title="Restar"><i data-lucide="minus-circle"></i></button>
+                                <button class="btn-icon delete-btn" onclick="eliminarRepuesto('${item.idFirebase}')" title="Eliminar"><i data-lucide="trash-2"></i></button>
                             </td>
                         </tr>
                     `;
                     tbody.innerHTML += row;
-                    
-                    // Agregamos este item a la lista de QRs a generar
-                    qrsADibujar.push({ id: item.id, codigo: item.codigo });
+                    qrsADibujar.push({ id: item.idFirebase, codigo: item.codigo });
                 }
             });
             
             lucide.createIcons();
 
-            // Dibujar todos los QRs después de que el HTML ya está en pantalla
+            // Dibujar los QRs
             qrsADibujar.forEach(qrInfo => {
                 new QRious({
                     element: document.getElementById(`qr-${qrInfo.id}`),
@@ -292,8 +329,6 @@
                 });
             });
         }
-
-        renderizarTabla();
     </script>
 </body>
 </html>
