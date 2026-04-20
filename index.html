@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Stock - Diesel Norte</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #1e3a8a; /* Azul Diesel Norte */
+            --primary-hover: #172554;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #f59e0b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text-main); line-height: 1.5; padding-bottom: 40px; }
+
+        /* Header */
+        header { background-color: var(--primary); color: white; padding: 1.5rem 2rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+        .header-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo-area { display: flex; align-items: center; gap: 12px; }
+        .logo-area h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.025em; }
+
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+
+        /* Card Styles */
+        .card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1); margin-bottom: 2rem; overflow: hidden; }
+        .card-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); background-color: #fcfcfd; }
+        .card-header h2 { font-size: 1.1rem; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+
+        /* Form Layout */
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; padding: 1.5rem; }
+        .input-group { display: flex; flex-direction: column; gap: 6px; }
+        label { font-size: 0.875rem; font-weight: 500; color: var(--text-muted); }
+        input, select { padding: 0.625rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; transition: border 0.2s; }
+        input:focus { outline: none; border-color: var(--primary); ring: 2px solid var(--primary); }
+
+        .btn-add { background-color: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 1.5rem 1.5rem auto; transition: background 0.2s; }
+        .btn-add:hover { background-color: var(--primary-hover); }
+
+        /* Search Bar */
+        .search-area { padding: 0 1.5rem 1.5rem; position: relative; }
+        .search-input { width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border-radius: 8px; border: 1px solid var(--border); background-color: white; }
+        .search-icon { position: absolute; left: 2.2rem; top: 0.8rem; color: var(--text-muted); }
+
+        /* Table Styles */
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { background-color: #f8fafc; padding: 1rem; font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border); }
+        td { padding: 1rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
+        tr:hover { background-color: #f1f5f9; }
+
+        .stock-badge { padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600; }
+        .stock-low { background-color: #fef2f2; color: var(--danger); }
+        .stock-ok { background-color: #f0fdf4; color: var(--success); }
+
+        .actions { display: flex; gap: 8px; }
+        .btn-icon { border: none; background: none; cursor: pointer; padding: 4px; border-radius: 4px; transition: background 0.2s; }
+        .btn-icon:hover { background: #e2e8f0; }
+        .delete-btn { color: var(--danger); }
+        .stock-btn { color: var(--primary); }
+
+        /* Footer */
+        footer { text-align: center; margin-top: 3rem; color: var(--text-muted); font-size: 0.85rem; padding: 2rem; border-top: 1px solid var(--border); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <div class="logo-area">
+                <i data-lucide="settings-2"></i>
+                <h1>Diesel Norte - Control de Stock</h1>
+            </div>
+            <span>La Plata, Arg.</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="card">
+            <div class="card-header">
+                <h2><i data-lucide="plus-circle"></i> Añadir Nuevo Repuesto</h2>
+            </div>
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>Nombre del Repuesto</label>
+                    <input type="text" id="nombre" placeholder="Ej: Inyector Bosch 0445">
+                </div>
+                <div class="input-group">
+                    <label>Marca</label>
+                    <input type="text" id="marca" placeholder="Ej: Bosch, Delphi">
+                </div>
+                <div class="input-group">
+                    <label>Código / Part Number</label>
+                    <input type="text" id="codigo" placeholder="Ej: F 00R J02 177">
+                </div>
+                <div class="input-group">
+                    <label>Categoría</label>
+                    <select id="categoria">
+                        <option value="Inyector">Inyector</option>
+                        <option value="Bomba">Bomba Common Rail</option>
+                        <option value="Kit">Kit de Sellos</option>
+                        <option value="Válvula">Válvula</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Ubicación</label>
+                    <input type="text" id="ubicacion" placeholder="Estante A-12">
+                </div>
+                <div class="input-group">
+                    <label>Stock Mínimo</label>
+                    <input type="number" id="minimo" value="5">
+                </div>
+                <div class="input-group">
+                    <label>Cantidad Inicial</label>
+                    <input type="number" id="cantidad" value="0">
+                </div>
+            </div>
+            <button class="btn-add" onclick="agregarRepuesto()">
+                <i data-lucide="save"></i> Guardar Repuesto
+            </button>
+        </section>
+
+        <section class="card">
+            <div class="card-header">
+                <h2><i data-lucide="list"></i> Inventario Actual</h2>
+            </div>
+            <div class="search-area">
+                <i data-lucide="search" class="search-icon" size="18"></i>
+                <input type="text" id="buscar" class="search-input" placeholder="Buscar por código, nombre o marca..." onkeyup="filtrarTabla()">
+            </div>
+            <div class="table-container">
+                <table id="tablaStock">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Nombre</th>
+                            <th>Marca / Cat.</th>
+                            <th>Ubicación</th>
+                            <th>Stock</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaRepuestos">
+                        </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Diesel Norte - Servicio de Inyección Diesel</p>
+        <p>Avenue 72 #773, La Plata | Tel: 2216745202</p>
+        <p>dieselnorte@hotmail.es</p>
+    </footer>
+
+    <script>
+        // Inicializar iconos
+        lucide.createIcons();
+
+        // Cargar datos de localStorage al iniciar
+        let inventario = JSON.parse(localStorage.getItem('dieselStock')) || [];
+
+        function guardarLocal() {
+            localStorage.setItem('dieselStock', JSON.stringify(inventario));
+            renderizarTabla();
+        }
+
+        function agregarRepuesto() {
+            const nuevo = {
+                id: Date.now(),
+                nombre: document.getElementById('nombre').value,
+                marca: document.getElementById('marca').value,
+                codigo: document.getElementById('codigo').value,
+                categoria: document.getElementById('categoria').value,
+                ubicacion: document.getElementById('ubicacion').value,
+                minimo: parseInt(document.getElementById('minimo').value),
+                cantidad: parseInt(document.getElementById('cantidad').value)
+            };
+
+            if(!nuevo.nombre || !nuevo.codigo) return alert("Por favor completa Nombre y Código");
+
+            inventario.push(nuevo);
+            guardarLocal();
+            
+            // Limpiar formulario
+            document.querySelectorAll('input').forEach(i => i.value = (i.type === 'number' ? 0 : ''));
+            document.getElementById('minimo').value = 5;
+        }
+
+        function cambiarStock(id, cantidad) {
+            const item = inventario.find(i => i.id === id);
+            if(item) {
+                item.cantidad = Math.max(0, item.cantidad + cantidad);
+                guardarLocal();
+            }
+        }
+
+        function eliminarRepuesto(id) {
+            if(confirm("¿Estás seguro de eliminar este ítem?")) {
+                inventario = inventario.filter(i => i.id !== id);
+                guardarLocal();
+            }
+        }
+
+        function filtrarTabla() {
+            const query = document.getElementById('buscar').value.toLowerCase();
+            renderizarTabla(query);
+        }
+
+        function renderizarTabla(filtro = '') {
+            const tbody = document.getElementById('listaRepuestos');
+            tbody.innerHTML = '';
+
+            inventario.forEach(item => {
+                if(item.nombre.toLowerCase().includes(filtro) || 
+                   item.codigo.toLowerCase().includes(filtro) || 
+                   item.marca.toLowerCase().includes(filtro)) {
+                    
+                    const esBajo = item.cantidad <= item.minimo;
+                    
+                    const row = `
+                        <tr>
+                            <td><strong>${item.codigo}</strong></td>
+                            <td>${item.nombre}</td>
+                            <td><small>${item.marca} / ${item.categoria}</small></td>
+                            <td>${item.ubicacion}</td>
+                            <td>
+                                <span class="stock-badge ${esBajo ? 'stock-low' : 'stock-ok'}">
+                                    ${item.cantidad}
+                                </span>
+                            </td>
+                            <td class="actions">
+                                <button class="btn-icon stock-btn" onclick="cambiarStock(${item.id}, 1)"><i data-lucide="plus-square"></i></button>
+                                <button class="btn-icon stock-btn" onclick="cambiarStock(${item.id}, -1)"><i data-lucide="minus-square"></i></button>
+                                <button class="btn-icon delete-btn" onclick="eliminarRepuesto(${item.id})"><i data-lucide="trash-2"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                }
+            });
+            lucide.createIcons(); // Recargar iconos en la tabla
+        }
+
+        // Carga inicial
+        renderizarTabla();
+    </script>
+</body>
+</html>
