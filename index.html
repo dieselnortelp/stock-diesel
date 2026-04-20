@@ -68,8 +68,7 @@
         .stock-btn { color: var(--success); }
         .stock-btn-minus { color: var(--warning); }
 
-        /* Loader */
-        #loader { display: none; margin: 1rem; color: var(--text-muted); font-size: 0.9rem; }
+        #loader { display: none; margin: 1rem 1.5rem; color: var(--text-muted); font-size: 0.9rem; font-weight: 500; }
 
         footer { text-align: center; margin-top: 3rem; color: var(--text-muted); font-size: 0.85rem; padding: 2rem; border-top: 1px solid var(--border); }
     </style>
@@ -111,6 +110,7 @@
                         <option value="Bomba">Bomba</option>
                         <option value="Kit">Kit de Sellos</option>
                         <option value="Válvula">Válvula</option>
+                        <option value="Otro">Otro</option>
                     </select>
                 </div>
                 <div class="input-group">
@@ -130,7 +130,7 @@
                     <input type="file" id="imagen" accept="image/*">
                 </div>
             </div>
-            <div id="loader">Guardando en la nube...</div>
+            <div id="loader">Guardando en la base de datos...</div>
             <button class="btn-add" onclick="agregarRepuesto()">
                 <i data-lucide="save"></i> Agregar Repuesto
             </button>
@@ -166,44 +166,44 @@
         </section>
     </div>
 
-    <script type="module">
-        // 1. Importar Firebase desde los servidores de Google
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    <footer>
+        <p>&copy; 2026 Diesel Norte - Servicio de Inyección Diesel</p>
+        <p>Avenue 72 #773, La Plata | Tel: 2216745202</p>
+        <p>dieselnorte@hotmail.es</p>
+    </footer>
 
-        // 2. Tu configuración exacta
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+        // Tus nuevas credenciales
         const firebaseConfig = {
-            apiKey: "AIzaSyBanJZzdmHOLkquFsDOMG8xDZQ1-5ylrVY",
-            authDomain: "stock-dieselnortelp.firebaseapp.com",
-            projectId: "stock-dieselnortelp",
-            storageBucket: "stock-dieselnortelp.firebasestorage.app",
-            messagingSenderId: "688180018556",
-            appId: "1:688180018556:web:3760271bb9381b71e638f9",
-            measurementId: "G-D10HP8DBRE"
+            apiKey: "AIzaSyCx_qCzokPIKPDec36D3If50PW_BdkxRiU",
+            authDomain: "dieselnortelp-6d680.firebaseapp.com",
+            projectId: "dieselnortelp-6d680",
+            storageBucket: "dieselnortelp-6d680.firebasestorage.app",
+            messagingSenderId: "449114568430",
+            appId: "1:449114568430:web:b4642934d81e3c4b3d25ff",
+            measurementId: "G-6KQ92MQHQ1"
         };
 
-        // 3. Inicializar la app y la base de datos
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const repuestosRef = collection(db, "repuestos");
 
-        // Variable global para almacenar el inventario
         let inventario = [];
         lucide.createIcons();
 
-        // 4. ESCUCHAR LA BASE DE DATOS EN TIEMPO REAL
+        // Escuchar datos en tiempo real
         onSnapshot(repuestosRef, (snapshot) => {
-            inventario = []; // Limpiamos la lista local
+            inventario = []; 
             snapshot.forEach((documento) => {
-                // Guardamos los datos y el ID único que le dio Firebase
                 inventario.push({ ...documento.data(), idFirebase: documento.id });
             });
-            // Ordenar por fecha de creación (los más nuevos arriba)
             inventario.sort((a, b) => b.fecha - a.fecha);
-            filtrarTabla(); // Mostramos en pantalla
+            filtrarTabla(); 
         });
 
-        // 5. Convertir imagen a Base64
         function leerImagen(input, callback) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
@@ -216,7 +216,6 @@
             }
         }
 
-        // 6. Funciones expuestas a la ventana (para que los botones HTML las reconozcan)
         window.agregarRepuesto = async function() {
             const btn = document.querySelector('.btn-add');
             const loader = document.getElementById('loader');
@@ -240,14 +239,11 @@
                     minimo: parseInt(document.getElementById('minimo').value),
                     cantidad: parseInt(document.getElementById('cantidad').value),
                     imagen: imagenBase64,
-                    fecha: Date.now() // Para ordenar
+                    fecha: Date.now() 
                 };
 
                 try {
-                    // Guardar en la nube!
                     await addDoc(repuestosRef, nuevo);
-                    
-                    // Limpiar formulario
                     document.querySelectorAll('input').forEach(i => i.value = (i.type === 'number' ? 0 : ''));
                     document.getElementById('minimo').value = 5;
                     document.getElementById('imagen').value = '';
@@ -319,7 +315,6 @@
             
             lucide.createIcons();
 
-            // Dibujar los QRs
             qrsADibujar.forEach(qrInfo => {
                 new QRious({
                     element: document.getElementById(`qr-${qrInfo.id}`),
