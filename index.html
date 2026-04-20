@@ -6,9 +6,10 @@
     <title>Control de Stock - Diesel Norte</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     <style>
         :root {
-            --primary: #1e3a8a; /* Azul Diesel Norte */
+            --primary: #1e3a8a;
             --primary-hover: #172554;
             --bg: #f8fafc;
             --card-bg: #ffffff;
@@ -23,52 +24,53 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text-main); line-height: 1.5; padding-bottom: 40px; }
 
-        /* Header */
         header { background-color: var(--primary); color: white; padding: 1.5rem 2rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
         .header-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
         .logo-area { display: flex; align-items: center; gap: 12px; }
-        .logo-area h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.025em; }
+        .logo-area h1 { font-size: 1.5rem; font-weight: 700; }
 
         .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
 
-        /* Card Styles */
         .card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1); margin-bottom: 2rem; overflow: hidden; }
         .card-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); background-color: #fcfcfd; }
-        .card-header h2 { font-size: 1.1rem; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+        .card-header h2 { font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
 
-        /* Form Layout */
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; padding: 1.5rem; }
         .input-group { display: flex; flex-direction: column; gap: 6px; }
         label { font-size: 0.875rem; font-weight: 500; color: var(--text-muted); }
-        input, select { padding: 0.625rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; transition: border 0.2s; }
-        input:focus { outline: none; border-color: var(--primary); ring: 2px solid var(--primary); }
+        input, select { padding: 0.625rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; }
+        
+        /* Estilo especial para el input de archivo */
+        input[type="file"] { padding: 0.4rem; background: #f8fafc; cursor: pointer; }
 
-        .btn-add { background-color: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 1.5rem 1.5rem auto; transition: background 0.2s; }
+        .btn-add { background-color: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 1.5rem 1.5rem auto; transition: background 0.2s; width: calc(100% - 3rem); max-width: 300px; }
         .btn-add:hover { background-color: var(--primary-hover); }
 
-        /* Search Bar */
         .search-area { padding: 0 1.5rem 1.5rem; position: relative; }
-        .search-input { width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border-radius: 8px; border: 1px solid var(--border); background-color: white; }
+        .search-input { width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border-radius: 8px; border: 1px solid var(--border); }
         .search-icon { position: absolute; left: 2.2rem; top: 0.8rem; color: var(--text-muted); }
 
-        /* Table Styles */
         .table-container { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; text-align: left; }
-        th { background-color: #f8fafc; padding: 1rem; font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border); }
-        td { padding: 1rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
+        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 800px; }
+        th { background-color: #1e293b; padding: 1rem; font-size: 0.8rem; text-transform: uppercase; color: white; font-weight: 600; }
+        td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; vertical-align: middle; }
         tr:hover { background-color: #f1f5f9; }
 
-        .stock-badge { padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600; }
+        /* Imágenes en la tabla */
+        .thumb-img { width: 50px; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); background: #fff; }
+        .qr-canvas { width: 50px; height: 50px; border-radius: 4px; }
+
+        .stock-badge { padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600; text-align: center; display: inline-block; min-width: 40px;}
         .stock-low { background-color: #fef2f2; color: var(--danger); }
         .stock-ok { background-color: #f0fdf4; color: var(--success); }
 
-        .actions { display: flex; gap: 8px; }
-        .btn-icon { border: none; background: none; cursor: pointer; padding: 4px; border-radius: 4px; transition: background 0.2s; }
+        .actions { display: flex; gap: 4px; }
+        .btn-icon { border: none; background: none; cursor: pointer; padding: 6px; border-radius: 4px; }
         .btn-icon:hover { background: #e2e8f0; }
         .delete-btn { color: var(--danger); }
-        .stock-btn { color: var(--primary); }
+        .stock-btn { color: var(--success); }
+        .stock-btn-minus { color: var(--warning); }
 
-        /* Footer */
         footer { text-align: center; margin-top: 3rem; color: var(--text-muted); font-size: 0.85rem; padding: 2rem; border-top: 1px solid var(--border); }
     </style>
 </head>
@@ -106,10 +108,9 @@
                     <label>Categoría</label>
                     <select id="categoria">
                         <option value="Inyector">Inyector</option>
-                        <option value="Bomba">Bomba Common Rail</option>
+                        <option value="Bomba">Bomba</option>
                         <option value="Kit">Kit de Sellos</option>
                         <option value="Válvula">Válvula</option>
-                        <option value="Otro">Otro</option>
                     </select>
                 </div>
                 <div class="input-group">
@@ -124,29 +125,36 @@
                     <label>Cantidad Inicial</label>
                     <input type="number" id="cantidad" value="0">
                 </div>
+                <div class="input-group">
+                    <label>Foto del Repuesto</label>
+                    <input type="file" id="imagen" accept="image/*">
+                </div>
             </div>
             <button class="btn-add" onclick="agregarRepuesto()">
-                <i data-lucide="save"></i> Guardar Repuesto
+                <i data-lucide="save"></i> Agregar Repuesto
             </button>
         </section>
 
         <section class="card">
             <div class="card-header">
-                <h2><i data-lucide="list"></i> Inventario Actual</h2>
+                <h2><i data-lucide="list"></i> Inventario de Repuestos Actual</h2>
             </div>
             <div class="search-area">
                 <i data-lucide="search" class="search-icon" size="18"></i>
                 <input type="text" id="buscar" class="search-input" placeholder="Buscar por código, nombre o marca..." onkeyup="filtrarTabla()">
             </div>
             <div class="table-container">
-                <table id="tablaStock">
+                <table>
                     <thead>
                         <tr>
+                            <th>Imagen</th>
+                            <th>Código QR</th>
                             <th>Código</th>
                             <th>Nombre</th>
-                            <th>Marca / Cat.</th>
+                            <th>Marca / Tipo</th>
                             <th>Ubicación</th>
-                            <th>Stock</th>
+                            <th>Stock Min.</th>
+                            <th>Cant. Actual</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -157,17 +165,10 @@
         </section>
     </div>
 
-    <footer>
-        <p>&copy; 2026 Diesel Norte - Servicio de Inyección Diesel</p>
-        <p>Avenue 72 #773, La Plata | Tel: 2216745202</p>
-        <p>dieselnorte@hotmail.es</p>
-    </footer>
-
     <script>
-        // Inicializar iconos
         lucide.createIcons();
 
-        // Cargar datos de localStorage al iniciar
+        // Aún usamos localStorage temporalmente hasta integrar Firebase
         let inventario = JSON.parse(localStorage.getItem('dieselStock')) || [];
 
         function guardarLocal() {
@@ -175,26 +176,46 @@
             renderizarTabla();
         }
 
+        // Convertir imagen a formato guardable (Base64)
+        function leerImagen(input, callback) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    callback(e.target.result);
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                // Imagen por defecto si no suben nada
+                callback('https://via.placeholder.com/50?text=No+Img');
+            }
+        }
+
         function agregarRepuesto() {
-            const nuevo = {
-                id: Date.now(),
-                nombre: document.getElementById('nombre').value,
-                marca: document.getElementById('marca').value,
-                codigo: document.getElementById('codigo').value,
-                categoria: document.getElementById('categoria').value,
-                ubicacion: document.getElementById('ubicacion').value,
-                minimo: parseInt(document.getElementById('minimo').value),
-                cantidad: parseInt(document.getElementById('cantidad').value)
-            };
-
-            if(!nuevo.nombre || !nuevo.codigo) return alert("Por favor completa Nombre y Código");
-
-            inventario.push(nuevo);
-            guardarLocal();
+            const inputImg = document.getElementById('imagen');
             
-            // Limpiar formulario
-            document.querySelectorAll('input').forEach(i => i.value = (i.type === 'number' ? 0 : ''));
-            document.getElementById('minimo').value = 5;
+            leerImagen(inputImg, function(imagenBase64) {
+                const nuevo = {
+                    id: Date.now(),
+                    nombre: document.getElementById('nombre').value,
+                    marca: document.getElementById('marca').value,
+                    codigo: document.getElementById('codigo').value,
+                    categoria: document.getElementById('categoria').value,
+                    ubicacion: document.getElementById('ubicacion').value,
+                    minimo: parseInt(document.getElementById('minimo').value),
+                    cantidad: parseInt(document.getElementById('cantidad').value),
+                    imagen: imagenBase64
+                };
+
+                if(!nuevo.nombre || !nuevo.codigo) return alert("Nombre y Código son obligatorios");
+
+                inventario.push(nuevo);
+                guardarLocal();
+                
+                // Limpiar formulario
+                document.querySelectorAll('input').forEach(i => i.value = (i.type === 'number' ? 0 : ''));
+                document.getElementById('minimo').value = 5;
+                document.getElementById('imagen').value = '';
+            });
         }
 
         function cambiarStock(id, cantidad) {
@@ -221,6 +242,9 @@
             const tbody = document.getElementById('listaRepuestos');
             tbody.innerHTML = '';
 
+            // Array para guardar los IDs y Códigos de los QR que hay que dibujar
+            let qrsADibujar = [];
+
             inventario.forEach(item => {
                 if(item.nombre.toLowerCase().includes(filtro) || 
                    item.codigo.toLowerCase().includes(filtro) || 
@@ -230,29 +254,45 @@
                     
                     const row = `
                         <tr>
+                            <td><img src="${item.imagen}" class="thumb-img" alt="Repuesto"></td>
+                            <td><canvas id="qr-${item.id}" class="qr-canvas"></canvas></td>
                             <td><strong>${item.codigo}</strong></td>
                             <td>${item.nombre}</td>
-                            <td><small>${item.marca} / ${item.categoria}</small></td>
+                            <td>${item.marca} <br><small>${item.categoria}</small></td>
                             <td>${item.ubicacion}</td>
+                            <td>${item.minimo}</td>
                             <td>
                                 <span class="stock-badge ${esBajo ? 'stock-low' : 'stock-ok'}">
                                     ${item.cantidad}
                                 </span>
                             </td>
                             <td class="actions">
-                                <button class="btn-icon stock-btn" onclick="cambiarStock(${item.id}, 1)"><i data-lucide="plus-square"></i></button>
-                                <button class="btn-icon stock-btn" onclick="cambiarStock(${item.id}, -1)"><i data-lucide="minus-square"></i></button>
-                                <button class="btn-icon delete-btn" onclick="eliminarRepuesto(${item.id})"><i data-lucide="trash-2"></i></button>
+                                <button class="btn-icon stock-btn" onclick="cambiarStock(${item.id}, 1)" title="Sumar"><i data-lucide="plus-circle"></i></button>
+                                <button class="btn-icon stock-btn-minus" onclick="cambiarStock(${item.id}, -1)" title="Restar"><i data-lucide="minus-circle"></i></button>
+                                <button class="btn-icon delete-btn" onclick="eliminarRepuesto(${item.id})" title="Eliminar"><i data-lucide="trash-2"></i></button>
                             </td>
                         </tr>
                     `;
                     tbody.innerHTML += row;
+                    
+                    // Agregamos este item a la lista de QRs a generar
+                    qrsADibujar.push({ id: item.id, codigo: item.codigo });
                 }
             });
-            lucide.createIcons(); // Recargar iconos en la tabla
+            
+            lucide.createIcons();
+
+            // Dibujar todos los QRs después de que el HTML ya está en pantalla
+            qrsADibujar.forEach(qrInfo => {
+                new QRious({
+                    element: document.getElementById(`qr-${qrInfo.id}`),
+                    value: qrInfo.codigo,
+                    size: 60,
+                    level: 'M'
+                });
+            });
         }
 
-        // Carga inicial
         renderizarTabla();
     </script>
 </body>
