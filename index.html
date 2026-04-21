@@ -57,6 +57,7 @@
         table { width: 100%; border-collapse: collapse; text-align: left; min-width: 800px; }
         th { background-color: #1e293b; padding: 1rem; font-size: 0.8rem; text-transform: uppercase; color: white; font-weight: 600; }
         td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; vertical-align: middle; }
+        tr:hover td { background-color: #f1f5f9; }
 
         .thumb-img { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); }
         .qr-canvas { width: 50px; height: 50px; border-radius: 4px; }
@@ -92,7 +93,7 @@
         .pres-totals div { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 1rem; align-items: center; }
         .pres-totals .total-final { font-size: 1.4rem; font-weight: 700; color: var(--primary); border-top: 2px solid var(--primary); padding-top: 0.5rem; margin-top: 0.5rem; }
 
-        /* Toggle Button (Ojito / Checkbox) */
+        /* Toggle Button */
         .toggle-btn { background: #e2e8f0; border: none; padding: 6px 8px; border-radius: 6px; cursor: pointer; color: var(--text-muted); transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center;}
         .toggle-btn.active { background: var(--primary); color: white; }
 
@@ -137,6 +138,25 @@
                 <div class="stat-info"><h3>Categorías</h3><p id="stat-tipos">0</p></div>
             </div>
         </div>
+
+        <section class="card">
+            <div class="card-header"><h2><i data-lucide="history"></i> Historial de Presupuestos (Nube)</h2></div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nº Pres.</th>
+                            <th>Fecha</th>
+                            <th>Cliente</th>
+                            <th>Vehículo/Orden</th>
+                            <th>Total</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaHistorial"></tbody>
+                </table>
+            </div>
+        </section>
 
         <section class="card">
             <div class="card-header"><h2><i data-lucide="plus-circle"></i> Nuevo Repuesto en Stock</h2></div>
@@ -226,10 +246,12 @@
             </div>
             <div class="modal-footer">
                 <button class="btn-icon" style="margin-right: auto; color: var(--text-muted)" onclick="itemsPresupuesto = []; renderizarItemsPresupuesto();">Limpiar Todo</button>
-                <button class="btn-main-action" onclick="generarPDF_Dinamico()"><i data-lucide="printer"></i> Generar Planilla Clásica</button>
+                <button class="btn-main-action" onclick="generarYGuardarPDF()"><i data-lucide="printer"></i> Guardar y Generar PDF</button>
             </div>
         </div>
     </div>
+
+    <div id="pdf-container" style="display:none;"></div>
 
     <div id="toast" class="toast"><i data-lucide="check-circle-2"></i> <span id="toast-msg"></span></div>
 
@@ -255,7 +277,10 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const repuestosRef = collection(db, "repuestos");
+        const presupuestosRef = collection(db, "presupuestos"); // Referencia nueva para la nube
+        
         let inventario = [];
+        let historialPresupuestos = [];
 
         window.mostrarNotificacion = (msg) => {
             const t = document.getElementById('toast');
@@ -278,7 +303,6 @@
 
         window.cerrarModalPresupuesto = () => document.getElementById('modal-presupuesto').classList.remove('active');
 
-        // Toggle del IVA global
         window.toggleIVA = () => {
             showIVA = !showIVA;
             const btn = document.getElementById('btn-show-iva');
@@ -301,7 +325,6 @@
             const p = parseFloat(document.getElementById('item-precio').value) || 0;
             const q = parseInt(document.getElementById('item-cantidad').value) || 1;
             if(!c) return;
-            // Se agrega con mostrarPrecio en true por defecto
             itemsPresupuesto.push({ concepto: c, precio: p, cantidad: q, mostrarPrecio: true });
             document.getElementById('item-concepto').value = '';
             document.getElementById('item-precio').value = '';
@@ -309,7 +332,6 @@
             renderizarItemsPresupuesto();
         }
 
-        // Función para ocultar/mostrar el precio de la fila
         window.togglePrecioItem = (index) => {
             itemsPresupuesto[index].mostrarPrecio = !itemsPresupuesto[index].mostrarPrecio;
             renderizarItemsPresupuesto();
@@ -343,7 +365,6 @@
             tbody.innerHTML = '';
             itemsPresupuesto.forEach((item, i) => {
                 const isHidden = !item.mostrarPrecio;
-                
                 tbody.innerHTML += `
                     <tr>
                         <td><input type="text" class="editable-input" value="${item.concepto}" oninput="editarFilaPresupuesto(${i}, 'concepto', this.value)"></td>
@@ -364,8 +385,8 @@
             lucide.createIcons();
         }
 
-        /* --- GENERACIÓN DEL PDF CLÁSICO --- */
-        window.generarPDF_Dinamico = () => {
+        /* --- GUARDAR EN NUBE Y GENERAR PDF --- */
+        window.generarYGuardarPDF = async () => {
             if(itemsPresupuesto.length === 0) return alert("Agrega algún ítem.");
             const cliente = document.getElementById('modal-cliente').value || 'S/N';
             const vehiculo = document.getElementById('modal-vehiculo').value || 'S/N';
@@ -373,13 +394,33 @@
             const numero = document.getElementById('modal-numero').value;
 
             let subtotal = 0;
+            itemsPresupuesto.forEach(item => subtotal += (item.precio * item.cantidad));
+            const ivaVal = subtotal * 0.21;
+            const totalFinal = showIVA ? subtotal + ivaVal : subtotal;
+
+            // 1. GUARDAR EN FIREBASE (LA NUBE)
+            try {
+                await addDoc(presupuestosRef, {
+                    cliente: cliente, vehiculo: vehiculo, fecha: fecha, numero: numero,
+                    items: itemsPresupuesto, subtotal: subtotal, iva: ivaVal, total: totalFinal,
+                    showIVA: showIVA, timestamp: Date.now()
+                });
+                mostrarNotificacion("Guardado en la Nube.");
+            } catch(e) {
+                console.error("Error al guardar presupuesto:", e);
+                alert("Error al guardar en la nube, pero se generará el PDF.");
+            }
+
+            // 2. GENERAR EL PDF
+            ejecutarDescargaPDF(cliente, vehiculo, fecha, numero, itemsPresupuesto, subtotal, ivaVal, totalFinal, showIVA);
+            cerrarModalPresupuesto();
+        }
+
+        /* --- MOTOR DE PDF CLÁSICO COMPARTIDO --- */
+        function ejecutarDescargaPDF(cliente, vehiculo, fecha, numero, listaItems, subtotal, ivaVal, totalFinal, mostrarIvaPdf) {
             let filasHTML = '';
-            
-            itemsPresupuesto.forEach(item => {
+            listaItems.forEach(item => {
                 const tf = item.precio * item.cantidad;
-                subtotal += tf;
-                
-                // Si el ojito está cerrado, imprime un guion en vez del número
                 let txtPrecio = item.mostrarPrecio ? `$ ${fPlata(item.precio)}` : '<span style="color: #666;">-</span>';
                 let txtTotal = item.mostrarPrecio ? `$ ${fPlata(tf)}` : '<span style="color: #666;">-</span>';
 
@@ -392,10 +433,6 @@
                     </tr>`;
             });
 
-            const ivaVal = subtotal * 0.21;
-            const totalFinal = showIVA ? subtotal + ivaVal : subtotal;
-
-            // ESTE ES EL TEMPLATE CLÁSICO INTACTO Y PROBADO
             const template = `
                 <div style="padding: 20px 40px; font-family: Arial, sans-serif; color: #000; background: white; font-size: 13px;">
                     <h2 style="text-align: center; font-size: 24px; margin-bottom: 20px; letter-spacing: 2px;">PRESUPUESTO</h2>
@@ -413,12 +450,8 @@
                     </div>
 
                     <div style="display: flex; justify-content: space-between; margin-bottom: 15px; border: 1px solid #000;">
-                        <div style="flex: 1; padding: 10px; border-right: 1px solid #000; text-transform: capitalize;">
-                            ${fecha}
-                        </div>
-                        <div style="width: 250px; padding: 10px; display: flex; align-items: center;">
-                            Nº Presupuesto: <div style="border: 1px solid #000; width: 80px; height: 20px; margin-left: 10px; padding-left: 5px;">${numero}</div>
-                        </div>
+                        <div style="flex: 1; padding: 10px; border-right: 1px solid #000; text-transform: capitalize;">${fecha}</div>
+                        <div style="width: 250px; padding: 10px; display: flex; align-items: center;">Nº Presupuesto: <div style="border: 1px solid #000; width: 80px; height: 20px; margin-left: 10px; padding-left: 5px;">${numero}</div></div>
                     </div>
 
                     <div style="border: 1px solid #000; padding: 10px; margin-bottom: 20px; line-height: 1.8;">
@@ -437,47 +470,70 @@
                                 <th style="padding: 10px; text-align: right;">VALOR SIN IVA</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            ${filasHTML}
-                        </tbody>
+                        <tbody>${filasHTML}</tbody>
                     </table>
 
                     <div style="display: flex; border: 1px solid #000; min-height: 120px;">
-                        <div style="flex: 1; padding: 10px; border-right: 1px solid #000; position: relative;">
-                            <strong>EFECTIVO S/ FACTURA</strong>
-                        </div>
+                        <div style="flex: 1; padding: 10px; border-right: 1px solid #000; position: relative;"><strong>EFECTIVO S/ FACTURA</strong></div>
                         <div style="width: 250px; padding: 10px; line-height: 2;">
-                            <div style="display: flex; justify-content: space-between;">
-                                <strong>SUBTOTAL:</strong> <span>$ ${fPlata(subtotal)}</span>
-                            </div>
-                            ${showIVA ? `
-                            <div style="display: flex; justify-content: space-between;">
-                                <strong>IVA 21%:</strong> <span>$ ${fPlata(ivaVal)}</span>
-                            </div>` : ''}
-                            <div style="display: flex; justify-content: space-between; margin-top: 15px; font-size: 16px; border-top: 1px solid #000; padding-top: 5px;">
-                                <strong>TOTAL:</strong> <strong>$ ${fPlata(totalFinal)}</strong>
-                            </div>
+                            <div style="display: flex; justify-content: space-between;"><strong>SUBTOTAL:</strong> <span>$ ${fPlata(subtotal)}</span></div>
+                            ${mostrarIvaPdf ? `<div style="display: flex; justify-content: space-between;"><strong>IVA 21%:</strong> <span>$ ${fPlata(ivaVal)}</span></div>` : ''}
+                            <div style="display: flex; justify-content: space-between; margin-top: 15px; font-size: 16px; border-top: 1px solid #000; padding-top: 5px;"><strong>TOTAL:</strong> <strong>$ ${fPlata(totalFinal)}</strong></div>
                         </div>
                     </div>
                 </div>
             `;
 
-            // Opciones ORIGINALES limpias para evitar que se corte a la mitad
             const opt = {
-                margin:       0.5,
-                filename:     `Presupuesto_${cliente.replace(/\s+/g, '_')}.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true }, 
-                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+                margin: 0.5,
+                filename: `Presupuesto_${cliente.replace(/\s+/g, '_')}_N${numero}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true }, 
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
             };
 
-            const element = document.createElement('div');
+            const element = document.getElementById('pdf-container');
             element.innerHTML = template;
 
             html2pdf().set(opt).from(element).save().then(() => {
-                mostrarNotificacion("PDF Generado correctamente.");
-                cerrarModalPresupuesto();
+                element.innerHTML = '';
             });
+        }
+
+
+        /* --- CARGAR HISTORIAL DESDE LA NUBE --- */
+        onSnapshot(presupuestosRef, (s) => {
+            historialPresupuestos = [];
+            s.forEach(d => historialPresupuestos.push({...d.data(), id: d.id}));
+            historialPresupuestos.sort((a,b) => b.timestamp - a.timestamp);
+            renderizarTablaHistorial();
+        });
+
+        function renderizarTablaHistorial() {
+            const tb = document.getElementById('listaHistorial');
+            tb.innerHTML = '';
+            historialPresupuestos.forEach(pres => {
+                tb.innerHTML += `
+                    <tr>
+                        <td><strong>${pres.numero}</strong></td>
+                        <td>${pres.fecha}</td>
+                        <td>${pres.cliente}</td>
+                        <td>${pres.vehiculo}</td>
+                        <td style="font-weight: 600;">$ ${fPlata(pres.total)}</td>
+                        <td class="actions">
+                            <button class="btn-icon" onclick="reimprimir('${pres.id}')" style="color:var(--primary)" title="Reimprimir PDF"><i data-lucide="printer"></i></button>
+                            <button class="btn-icon" onclick="confirm('¿Borrar este presupuesto del historial?') && deleteDoc(doc(db,'presupuestos','${pres.id}'))" style="color:var(--danger)" title="Eliminar"><i data-lucide="trash-2"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        window.reimprimir = (id) => {
+            const pres = historialPresupuestos.find(p => p.id === id);
+            if(!pres) return;
+            ejecutarDescargaPDF(pres.cliente, pres.vehiculo, pres.fecha, pres.numero, pres.items, pres.subtotal, pres.iva, pres.total, pres.showIVA);
         }
 
         /* --- LÓGICA DE STOCK (FIREBASE) --- */
