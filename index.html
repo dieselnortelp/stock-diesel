@@ -263,8 +263,6 @@
         </div>
     </div>
 
-    <div id="pdf-container" style="position: absolute; top: -9999px; left: -9999px; width: 800px; background: white; z-index: -1;"></div>
-
     <div id="toast" class="toast"><i data-lucide="check-circle-2"></i> <span id="toast-msg"></span></div>
 
     <footer>
@@ -313,7 +311,7 @@
         window.abrirModalHistorial = () => document.getElementById('modal-historial').classList.add('active');
         window.cerrarModalHistorial = () => document.getElementById('modal-historial').classList.remove('active');
 
-        /* --- LÓGICA DE PRESUPUESTO --- */
+        /* --- LÓGICA DE PRESUPUESTO EDITABLE CON VISIBILIDAD --- */
         let itemsPresupuesto = [];
         let showIVA = true;
         const fPlata = (n) => parseFloat(n).toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
@@ -429,7 +427,7 @@
             cerrarModalPresupuesto();
         }
 
-        /* --- MOTOR DE PDF CLÁSICO CENTRADO Y COMPLETO --- */
+        /* --- MOTOR DE PDF CLÁSICO ARREGLADO (RENDERING DIRECTO EN MEMORIA) --- */
         function ejecutarDescargaPDF(cliente, vehiculo, fecha, numero, listaItems, subtotal, ivaVal, totalFinal, mostrarIvaPdf) {
             let filasHTML = '';
             listaItems.forEach(item => {
@@ -446,9 +444,9 @@
                     </tr>`;
             });
 
-            // Estructura adaptada al tamaño exacto de 800px para que no rompa ni quede corto
+            // Usamos un STRING directamente sin agregarlo al DOM
             const template = `
-                <div style="width: 100%; box-sizing: border-box; padding: 40px; font-family: Arial, sans-serif; color: #000; background: white; font-size: 14px;">
+                <div style="width: 800px; box-sizing: border-box; padding: 40px; font-family: Arial, sans-serif; color: #000; background: white; font-size: 14px;">
                     <h2 style="text-align: center; font-size: 26px; margin-bottom: 25px; letter-spacing: 2px;">PRESUPUESTO</h2>
 
                     <div style="display: flex; border: 1px solid #000; margin-bottom: 15px;">
@@ -497,24 +495,21 @@
                 </div>
             `;
 
-            // Insertarlo en el contenedor físico
-            const container = document.getElementById('pdf-container');
-            container.innerHTML = template;
-
-            // Al forzar a la librería a capturar un DOM que tiene explícitamente 800px evita que corte a la mitad.
+            // Al pasarle el string, html2pdf crea un iframe automático seguro
+            // Y con windowWidth: 900 forzamos a que tenga espacio de sobra para dibujar
             const opt = {
-                margin: 0.2, // Reduje el margen del PDF para aprovechar más espacio
+                margin: 0.2,
                 filename: `Presupuesto_${cliente.replace(/\s+/g, '_')}_N${numero}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, width: 800, windowWidth: 800 }, 
+                html2canvas: { scale: 2, useCORS: true, windowWidth: 900 }, 
                 jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
             };
 
-            html2pdf().set(opt).from(container).save().then(() => {
-                container.innerHTML = ''; // Limpiar el contenedor físico después de tomarle foto
+            html2pdf().set(opt).from(template).save().then(() => {
                 mostrarNotificacion("PDF Generado.");
             });
         }
+
 
         /* --- CARGAR HISTORIAL DESDE LA NUBE --- */
         onSnapshot(presupuestosRef, (s) => {
