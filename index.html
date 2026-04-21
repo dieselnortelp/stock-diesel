@@ -33,17 +33,16 @@
         .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
 
         .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-        .stat-card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); padding: 1.5rem; display: flex; align-items: center; gap: 1.25rem; box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1); transition: transform 0.2s, box-shadow 0.2s; }
+        .stat-card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); padding: 1.5rem; display: flex; align-items: center; gap: 1.25rem; box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1); transition: transform 0.2s; }
         .stat-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1); }
         .stat-icon { width: 56px; height: 56px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; }
         .icon-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
         .icon-red { background: linear-gradient(135deg, #ef4444, #b91c1c); }
         .icon-green { background: linear-gradient(135deg, #22c55e, #15803d); }
-        .stat-info h3 { font-size: 0.875rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+        .stat-info h3 { font-size: 0.875rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
         .stat-info p { font-size: 1.75rem; font-weight: 700; color: var(--text-main); line-height: 1; }
 
-        .card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1); margin-bottom: 2rem; overflow: hidden; transition: box-shadow 0.3s; }
-        .card:hover { box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+        .card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1); margin-bottom: 2rem; overflow: hidden; }
         .card-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); background-color: #fcfcfd; }
         .card-header h2 { font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
 
@@ -51,29 +50,27 @@
         .form-grid-full { grid-column: 1 / -1; }
         .input-group { display: flex; flex-direction: column; gap: 6px; }
         label { font-size: 0.875rem; font-weight: 500; color: var(--text-muted); }
-        input, select, textarea { padding: 0.625rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; font-family: 'Inter', sans-serif; transition: border-color 0.2s, box-shadow 0.2s; }
-        input:focus, select:focus, textarea:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
-        input[type="file"] { padding: 0.4rem; background: #f8fafc; cursor: pointer; }
+        input, select, textarea { padding: 0.625rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; font-family: 'Inter', sans-serif; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); }
+        input[type="file"] { padding: 0.4rem; background: #f8fafc; cursor: pointer; border: 1px dashed var(--primary); }
 
-        .btn-add { background-color: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 1.5rem 1.5rem auto; transition: background 0.2s, transform 0.1s; width: calc(100% - 3rem); max-width: 300px; }
+        .btn-add { background-color: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 1.5rem 1.5rem auto; width: calc(100% - 3rem); max-width: 300px; }
         .btn-add:hover { background-color: var(--primary-hover); }
-        .btn-add:active { transform: scale(0.98); }
         
         .btn-pdf { background-color: #0f172a; margin-top: 1rem; }
         .btn-pdf:hover { background-color: #1e293b; }
 
         .search-area { padding: 0 1.5rem 1.5rem; position: relative; }
-        .search-input { width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border-radius: 8px; border: 1px solid var(--border); transition: border-color 0.2s; }
-        .search-input:focus { outline: none; border-color: #3b82f6; }
+        .search-input { width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border-radius: 8px; border: 1px solid var(--border); }
         .search-icon { position: absolute; left: 2.2rem; top: 0.8rem; color: var(--text-muted); }
 
         .table-container { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; text-align: left; min-width: 800px; }
-        th { background-color: #1e293b; padding: 1rem; font-size: 0.8rem; text-transform: uppercase; color: white; font-weight: 600; letter-spacing: 0.05em; }
-        td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; vertical-align: middle; transition: background-color 0.2s; }
+        th { background-color: #1e293b; padding: 1rem; font-size: 0.8rem; text-transform: uppercase; color: white; font-weight: 600; }
+        td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; vertical-align: middle; }
         tr:hover td { background-color: #f1f5f9; }
 
-        .thumb-img { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .thumb-img { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); }
         .qr-canvas { width: 50px; height: 50px; border-radius: 4px; }
 
         .stock-badge { padding: 0.35rem 0.6rem; border-radius: 6px; font-weight: 600; text-align: center; display: inline-block; min-width: 40px; font-size: 0.875rem;}
@@ -81,18 +78,15 @@
         .stock-ok { background-color: #f0fdf4; color: #16a34a; border: 1px solid #86efac; }
 
         .actions { display: flex; gap: 4px; }
-        .btn-icon { border: none; background: none; cursor: pointer; padding: 6px; border-radius: 6px; transition: background 0.2s, color 0.2s; }
+        .btn-icon { border: none; background: none; cursor: pointer; padding: 6px; border-radius: 6px; }
         .btn-icon:hover { background: #e2e8f0; }
-        .delete-btn { color: var(--text-muted); }
-        .delete-btn:hover { color: var(--danger); background: #fef2f2; }
+        .delete-btn { color: var(--danger); }
         .stock-btn { color: var(--success); }
-        .stock-btn:hover { background: #f0fdf4; }
         .stock-btn-minus { color: var(--warning); }
-        .stock-btn-minus:hover { background: #fef3c7; }
 
         #loader { display: none; margin: 1rem 1.5rem; color: var(--primary); font-size: 0.9rem; font-weight: 600; align-items: center; gap: 8px; }
 
-        .toast { position: fixed; bottom: 20px; right: 20px; background: #0f172a; color: white; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 12px; transform: translateY(150%); opacity: 0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1000; font-weight: 500; font-size: 0.95rem; }
+        .toast { position: fixed; bottom: 20px; right: 20px; background: #0f172a; color: white; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 12px; transform: translateY(150%); opacity: 0; transition: all 0.3s; z-index: 1000; }
         .toast.show { transform: translateY(0); opacity: 1; }
         .toast-icon { color: #38bdf8; }
 
@@ -139,40 +133,32 @@
 
         <section class="card">
             <div class="card-header">
-                <h2><i data-lucide="file-signature"></i> Generar Nuevo Presupuesto</h2>
+                <h2><i data-lucide="file-signature"></i> Generar Planilla de Presupuesto</h2>
             </div>
             <div class="form-grid">
                 <div class="input-group">
-                    <label>Nombre del Cliente / Empresa</label>
+                    <label>CLIENTE (Nombre/Empresa)</label>
                     <input type="text" id="pres-cliente" placeholder="Ej: Transporte Los Andes">
                 </div>
                 <div class="input-group">
-                    <label>Vehículo / Motor</label>
+                    <label>ORDEN (Vehículo/Patente)</label>
                     <input type="text" id="pres-vehiculo" placeholder="Ej: Scania G340">
                 </div>
                 <div class="input-group form-grid-full">
-                    <label>Detalle del Servicio a Realizar</label>
-                    <textarea id="pres-detalle" rows="3" placeholder="Ej: Calibración y reparación de 6 inyectores Bosch. Limpieza de sistema..."></textarea>
+                    <label>Detalle: PRESUPUESTO SOLICITADO...</label>
+                    <textarea id="pres-detalle" rows="3" placeholder="Ej: Remanufacturado de Inyectores, Limpieza, Calibración..."></textarea>
                 </div>
                 <div class="input-group">
-                    <label>Costo de Repuestos ($)</label>
+                    <label>Costo Repuestos (Sin IVA)</label>
                     <input type="number" id="pres-repuestos" placeholder="0.00">
                 </div>
                 <div class="input-group">
-                    <label>Costo Mano de Obra ($)</label>
+                    <label>Costo Mano de Obra (Sin IVA)</label>
                     <input type="number" id="pres-manoobra" placeholder="0.00">
-                </div>
-                <div class="input-group">
-                    <label>Validez del Presupuesto</label>
-                    <select id="pres-validez">
-                        <option value="7 días">7 días</option>
-                        <option value="15 días">15 días</option>
-                        <option value="30 días">30 días</option>
-                    </select>
                 </div>
             </div>
             <button class="btn-add btn-pdf" onclick="generarPDF()">
-                <i data-lucide="printer"></i> Crear y Descargar PDF
+                <i data-lucide="printer"></i> Descargar Planilla PDF
             </button>
         </section>
 
@@ -220,7 +206,7 @@
                     <input type="file" id="imagen" accept="image/*">
                 </div>
             </div>
-            <div id="loader"><i data-lucide="loader-2" class="spin"></i> Sincronizando con la nube...</div>
+            <div id="loader"><i data-lucide="loader-2" class="spin"></i> Sincronizando...</div>
             <button class="btn-add" onclick="agregarRepuesto()" id="btn-submit">
                 <i data-lucide="save"></i> Guardar en Inventario
             </button>
@@ -250,7 +236,7 @@
                         </tr>
                     </thead>
                     <tbody id="listaRepuestos">
-                        </tbody>
+                    </tbody>
                 </table>
             </div>
         </section>
@@ -294,109 +280,127 @@
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        /* --- LÓGICA DE PRESUPUESTOS (NUEVO) --- */
+        /* --- GENERADOR DE PDF CON LOGO OFICIAL LOCAL --- */
         window.generarPDF = function() {
-            const cliente = document.getElementById('pres-cliente').value || 'Consumidor Final';
-            const vehiculo = document.getElementById('pres-vehiculo').value || 'N/A';
-            const detalle = document.getElementById('pres-detalle').value || 'Servicio de taller';
-            const validez = document.getElementById('pres-validez').value;
+            const cliente = document.getElementById('pres-cliente').value || '';
+            const vehiculo = document.getElementById('pres-vehiculo').value || '';
+            const detalle = document.getElementById('pres-detalle').value || '';
             
             const costoRepuestos = parseFloat(document.getElementById('pres-repuestos').value) || 0;
             const costoManoObra = parseFloat(document.getElementById('pres-manoobra').value) || 0;
-            const total = costoRepuestos + costoManoObra;
+            
+            const subtotal = costoRepuestos + costoManoObra;
+            const iva = subtotal * 0.21;
+            const total = subtotal + iva;
 
-            const fecha = new Date().toLocaleDateString('es-AR');
-            const numeroPresupuesto = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+            const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const fechaActual = new Date().toLocaleDateString('es-AR', opcionesFecha);
 
-            // Plantilla HTML del Presupuesto Moderno
+            // Toma la imagen logo.jpg que subiste a GitHub
+            const contenidoLogo = `<img src="logo.jpg" style="max-width: 220px; max-height: 100px; object-fit: contain;">`;
+
             const template = `
-                <div style="padding: 40px; font-family: 'Inter', sans-serif; color: #1e293b; background: white;">
-                    <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #1e3a8a; padding-bottom: 20px; margin-bottom: 30px;">
-                        <div>
-                            <h1 style="color: #1e3a8a; font-size: 28px; margin: 0;">DIESEL NORTE</h1>
-                            <p style="margin: 5px 0 0; font-size: 14px; color: #64748b;">Servicio Integral de Inyección Diesel</p>
-                        </div>
-                        <div style="text-align: right; font-size: 14px;">
-                            <p style="margin: 0;">Av. 72 #773, La Plata</p>
-                            <p style="margin: 5px 0;">Tel: 2216745202</p>
-                            <p style="margin: 0;">dieselnorte@hotmail.es</p>
-                        </div>
-                    </div>
+                <div style="padding: 20px 40px; font-family: Arial, sans-serif; color: #000; background: white; font-size: 13px;">
+                    
+                    <h2 style="text-align: center; font-size: 24px; margin-bottom: 20px; letter-spacing: 2px;">PRESUPUESTO</h2>
 
-                    <div style="margin-bottom: 40px;">
-                        <h2 style="font-size: 20px; margin-bottom: 15px; color: #1e3a8a;">PRESUPUESTO DE SERVICIO #${numeroPresupuesto}</h2>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: #f8fafc; padding: 20px; border-radius: 8px;">
-                            <div>
-                                <p style="margin: 0 0 8px;"><strong>Cliente:</strong> ${cliente}</p>
-                                <p style="margin: 0;"><strong>Vehículo/Motor:</strong> ${vehiculo}</p>
-                            </div>
-                            <div style="text-align: right;">
-                                <p style="margin: 0 0 8px;"><strong>Fecha:</strong> ${fecha}</p>
-                                <p style="margin: 0;"><strong>Validez:</strong> ${validez}</p>
-                            </div>
+                    <div style="display: flex; border: 1px solid #000; margin-bottom: 15px;">
+                        <div style="flex: 1; padding: 10px; border-right: 1px solid #000; line-height: 1.8;">
+                            <p style="margin: 0;"><strong>Nombre:</strong> DIESEL NORTE</p>
+                            <p style="margin: 0;"><strong>Dirección:</strong> Av. 72 773, B1904 La Plata.</p>
+                            <p style="margin: 0;"><strong>Teléfonos:</strong> 22161624400 / 2216745202</p>
+                            <p style="margin: 0;"><strong>Correo:</strong> dieselnorte@hotmail.es</p>
+                        </div>
+                        <div style="width: 250px; padding: 10px; text-align: center; display: flex; justify-content: center; align-items: center; background-color: #ffffff;">
+                            ${contenidoLogo}
                         </div>
                     </div>
 
-                    <div style="margin-bottom: 40px;">
-                        <h3 style="font-size: 16px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 15px;">Detalle del Trabajo</h3>
-                        <p style="white-space: pre-wrap; font-size: 14px; line-height: 1.6; color: #334155;">${detalle}</p>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px; border: 1px solid #000;">
+                        <div style="flex: 1; padding: 10px; border-right: 1px solid #000; text-transform: capitalize;">
+                            ${fechaActual}
+                        </div>
+                        <div style="width: 250px; padding: 10px; display: flex; align-items: center;">
+                            Nº Presupuesto: <div style="border: 1px solid #000; width: 80px; height: 20px; margin-left: 10px;"></div>
+                        </div>
                     </div>
 
-                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 40px;">
+                    <div style="border: 1px solid #000; padding: 10px; margin-bottom: 20px; line-height: 1.8;">
+                        <p style="margin: 0;"><strong>CLIENTE:</strong> ${cliente}</p>
+                        <p style="margin: 0;"><strong>ORDEN:</strong> ${vehiculo}</p>
+                        <p style="margin: 0;"><strong>Presupuesto de:</strong> PRESUPUESTO SOLICITADO SIN TRAER INYECTORES</p>
+                        <p style="margin: 0;"><strong>GARANTIA DIESEL</strong></p>
+                    </div>
+
+                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: 20px;">
                         <thead>
-                            <tr style="background-color: #1e293b; color: white;">
-                                <th style="padding: 12px; text-align: left; border-radius: 6px 0 0 6px;">Concepto</th>
-                                <th style="padding: 12px; text-align: right; border-radius: 0 6px 6px 0;">Importe</th>
+                            <tr style="border-bottom: 1px solid #000;">
+                                <th style="padding: 10px; text-align: left; border-right: 1px solid #000; width: 40%;">CONCEPTO:</th>
+                                <th style="padding: 10px; text-align: center; border-right: 1px solid #000;">PRECIO UNITARIO</th>
+                                <th style="padding: 10px; text-align: center; border-right: 1px solid #000;">CANTIDAD</th>
+                                <th style="padding: 10px; text-align: right;">VALOR SIN IVA</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr style="border-bottom: 1px solid #e2e8f0;">
-                                <td style="padding: 15px 12px;">Materiales y Repuestos</td>
-                                <td style="padding: 15px 12px; text-align: right;">$ ${costoRepuestos.toLocaleString('es-AR', {minimumFractionDigits: 2})}</td>
+                            <tr style="border-bottom: 1px solid #ccc;">
+                                <td style="padding: 10px; border-right: 1px solid #000; vertical-align: top;">
+                                    <strong>ACTIVIDAD</strong><br><br>
+                                    <span style="white-space: pre-wrap; font-size: 12px;">${detalle}</span>
+                                </td>
+                                <td style="padding: 10px; text-align: center; border-right: 1px solid #000; vertical-align: top;">$ ${costoRepuestos.toLocaleString('es-AR', {minimumFractionDigits: 2})}</td>
+                                <td style="padding: 10px; text-align: center; border-right: 1px solid #000; vertical-align: top;">
+                                    <div style="border: 1px solid #000; border-radius: 50%; width: 25px; height: 25px; line-height: 25px; margin: 0 auto;">1</div>
+                                </td>
+                                <td style="padding: 10px; text-align: right; vertical-align: top;">$ ${costoRepuestos.toLocaleString('es-AR', {minimumFractionDigits: 2})}</td>
                             </tr>
-                            <tr style="border-bottom: 1px solid #e2e8f0;">
-                                <td style="padding: 15px 12px;">Mano de Obra Especializada</td>
-                                <td style="padding: 15px 12px; text-align: right;">$ ${costoManoObra.toLocaleString('es-AR', {minimumFractionDigits: 2})}</td>
+                            <tr>
+                                <td style="padding: 10px; border-right: 1px solid #000;">Mano de Obra</td>
+                                <td style="padding: 10px; text-align: center; border-right: 1px solid #000;">$ ${costoManoObra.toLocaleString('es-AR', {minimumFractionDigits: 2})}</td>
+                                <td style="padding: 10px; text-align: center; border-right: 1px solid #000;">1</td>
+                                <td style="padding: 10px; text-align: right;">$ ${costoManoObra.toLocaleString('es-AR', {minimumFractionDigits: 2})}</td>
                             </tr>
                         </tbody>
                     </table>
 
-                    <div style="display: flex; justify-content: flex-end; margin-bottom: 50px;">
-                        <div style="background: #1e3a8a; color: white; padding: 15px 30px; border-radius: 8px; text-align: center; min-width: 250px;">
-                            <p style="margin: 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Total Presupuestado</p>
-                            <p style="margin: 5px 0 0; font-size: 24px; font-weight: bold;">$ ${total.toLocaleString('es-AR', {minimumFractionDigits: 2})}</p>
+                    <div style="display: flex; border: 1px solid #000; min-height: 120px;">
+                        <div style="flex: 1; padding: 10px; border-right: 1px solid #000; position: relative;">
+                            <strong>EFECTIVO S/ FACTURA</strong>
+                            <div style="position: absolute; bottom: 10px; left: 10px; right: 10px;">
+                                <div style="border-top: 1px solid #000; width: 100%; text-align: center; padding-top: 5px;">
+                                    Atención: Katia / Pilar
+                                </div>
+                            </div>
                         </div>
-                    </div>
-
-                    <div style="text-align: center; font-size: 12px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 20px;">
-                        <p style="margin: 0 0 5px;">Los trabajos cuentan con garantía de taller. Los precios pueden variar según disponibilidad de importación.</p>
-                        <p style="margin: 0;">Ante cualquier consulta, comuníquese con nuestras asesoras Katia o Pilar.</p>
+                        <div style="width: 250px; padding: 10px; line-height: 2;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <strong>SUBTOTAL:</strong> <span>$ ${subtotal.toLocaleString('es-AR', {minimumFractionDigits: 2})}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <strong>IVA 21%:</strong> <span>$ ${iva.toLocaleString('es-AR', {minimumFractionDigits: 2})}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-top: 15px; font-size: 16px;">
+                                <strong>TOTAL:</strong> <strong>$ ${total.toLocaleString('es-AR', {minimumFractionDigits: 2})}</strong>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
 
             const opt = {
-                margin:       0,
+                margin:       [0.5, 0.5, 0.5, 0.5],
                 filename:     `Presupuesto_DieselNorte_${cliente.replace(/\s+/g, '_')}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2 },
+                html2canvas:  { scale: 2, useCORS: true }, // useCORS permite cargar imágenes locales
                 jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
             };
 
-            // Crear div temporal y renderizar
             const element = document.createElement('div');
             element.innerHTML = template;
             html2pdf().set(opt).from(element).save().then(() => {
-                mostrarNotificacion("PDF generado y descargado correctamente.");
-                // Limpiar formulario
-                document.getElementById('pres-cliente').value = '';
-                document.getElementById('pres-vehiculo').value = '';
-                document.getElementById('pres-detalle').value = '';
-                document.getElementById('pres-repuestos').value = '';
-                document.getElementById('pres-manoobra').value = '';
+                mostrarNotificacion("Planilla PDF generada correctamente.");
             });
         }
-        /* -------------------------------------- */
+        /* ------------------------------------------------------------- */
 
 
         // Lógica de Inventario (Firebase)
@@ -412,9 +416,7 @@
         function leerImagen(input, callback) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    callback(e.target.result);
-                };
+                reader.onload = function(e) { callback(e.target.result); };
                 reader.readAsDataURL(input.files[0]);
             } else {
                 callback('https://via.placeholder.com/50?text=No+Img');
@@ -436,25 +438,21 @@
             
             leerImagen(inputImg, async function(imagenBase64) {
                 const nuevo = {
-                    nombre: nombre,
-                    marca: document.getElementById('marca').value,
-                    codigo: codigo,
-                    categoria: document.getElementById('categoria').value,
+                    nombre: nombre, marca: document.getElementById('marca').value,
+                    codigo: codigo, categoria: document.getElementById('categoria').value,
                     ubicacion: document.getElementById('ubicacion').value,
                     minimo: parseInt(document.getElementById('minimo').value),
                     cantidad: parseInt(document.getElementById('cantidad').value),
-                    imagen: imagenBase64,
-                    fecha: Date.now() 
+                    imagen: imagenBase64, fecha: Date.now() 
                 };
 
                 try {
                     await addDoc(repuestosRef, nuevo);
-                    document.querySelectorAll('input[type="text"], input[type="file"]').forEach(i => i.value = '');
+                    document.querySelectorAll('input[type="text"]:not(#pres-cliente):not(#pres-vehiculo), input[type="file"]').forEach(i => i.value = '');
                     document.getElementById('minimo').value = 5;
                     document.getElementById('cantidad').value = 0;
                     mostrarNotificacion("¡Repuesto guardado!");
                 } catch (e) {
-                    console.error("Error: ", e);
                     mostrarNotificacion("❌ Error de conexión.");
                 } finally {
                     btn.style.display = 'flex';
@@ -465,18 +463,12 @@
 
         window.cambiarStock = async function(idFirebase, cantidadSuma, cantidadActual) {
             const nuevaCantidad = Math.max(0, cantidadActual + cantidadSuma);
-            const docRef = doc(db, "repuestos", idFirebase);
-            try {
-                await updateDoc(docRef, { cantidad: nuevaCantidad });
-            } catch(e) {
-                console.error("Error", e);
-            }
+            try { await updateDoc(doc(db, "repuestos", idFirebase), { cantidad: nuevaCantidad }); } catch(e) {}
         }
 
         window.eliminarRepuesto = async function(idFirebase) {
             if(confirm("¿Eliminar este repuesto definitivamente?")) {
-                const docRef = doc(db, "repuestos", idFirebase);
-                await deleteDoc(docRef);
+                await deleteDoc(doc(db, "repuestos", idFirebase));
                 mostrarNotificacion("Repuesto eliminado.");
             }
         }
@@ -487,39 +479,30 @@
             tbody.innerHTML = '';
             
             let qrsADibujar = [];
-            let totalPiezas = 0;
-            let alertasStock = 0;
+            let totalPiezas = 0, alertasStock = 0;
             let categoriasSet = new Set();
 
             inventario.forEach(item => {
                 const esBajo = item.cantidad <= item.minimo;
-                
                 totalPiezas += item.cantidad;
                 if(esBajo) alertasStock++;
                 if(item.categoria) categoriasSet.add(item.categoria);
 
-                if(item.nombre.toLowerCase().includes(query) || 
-                   item.codigo.toLowerCase().includes(query) || 
-                   item.marca.toLowerCase().includes(query)) {
-                    
+                if(item.nombre.toLowerCase().includes(query) || item.codigo.toLowerCase().includes(query) || item.marca.toLowerCase().includes(query)) {
                     const row = `
                         <tr>
-                            <td><img src="${item.imagen}" class="thumb-img" alt="Repuesto"></td>
+                            <td><img src="${item.imagen}" class="thumb-img"></td>
                             <td><canvas id="qr-${item.idFirebase}" class="qr-canvas"></canvas></td>
                             <td><strong>${item.codigo}</strong></td>
                             <td>${item.nombre}</td>
                             <td>${item.marca} <br><small>${item.categoria}</small></td>
                             <td>${item.ubicacion}</td>
                             <td>${item.minimo}</td>
-                            <td>
-                                <span class="stock-badge ${esBajo ? 'stock-low' : 'stock-ok'}">
-                                    ${item.cantidad}
-                                </span>
-                            </td>
+                            <td><span class="stock-badge ${esBajo ? 'stock-low' : 'stock-ok'}">${item.cantidad}</span></td>
                             <td class="actions">
-                                <button class="btn-icon stock-btn" onclick="cambiarStock('${item.idFirebase}', 1, ${item.cantidad})" title="Sumar"><i data-lucide="plus-circle"></i></button>
-                                <button class="btn-icon stock-btn-minus" onclick="cambiarStock('${item.idFirebase}', -1, ${item.cantidad})" title="Restar"><i data-lucide="minus-circle"></i></button>
-                                <button class="btn-icon delete-btn" onclick="eliminarRepuesto('${item.idFirebase}')" title="Eliminar"><i data-lucide="trash-2"></i></button>
+                                <button class="btn-icon stock-btn" onclick="cambiarStock('${item.idFirebase}', 1, ${item.cantidad})"><i data-lucide="plus-circle"></i></button>
+                                <button class="btn-icon stock-btn-minus" onclick="cambiarStock('${item.idFirebase}', -1, ${item.cantidad})"><i data-lucide="minus-circle"></i></button>
+                                <button class="btn-icon delete-btn" onclick="eliminarRepuesto('${item.idFirebase}')"><i data-lucide="trash-2"></i></button>
                             </td>
                         </tr>
                     `;
@@ -533,14 +516,8 @@
             document.getElementById('stat-tipos').innerText = categoriasSet.size;
 
             lucide.createIcons();
-
             qrsADibujar.forEach(qrInfo => {
-                new QRious({
-                    element: document.getElementById(`qr-${qrInfo.id}`),
-                    value: qrInfo.codigo,
-                    size: 60,
-                    level: 'M'
-                });
+                new QRious({ element: document.getElementById(`qr-${qrInfo.id}`), value: qrInfo.codigo, size: 60, level: 'M' });
             });
         }
     </script>
