@@ -16,14 +16,14 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text-main); line-height: 1.5; padding-bottom: 40px; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text-main); line-height: 1.5; padding-bottom: 40px; position: relative; }
 
         header { background-color: var(--primary); color: white; padding: 1.5rem 2rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
         .header-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
         .logo-area { display: flex; align-items: center; gap: 12px; }
         .logo-area h1 { font-size: 1.5rem; font-weight: 700; }
 
-        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; position: relative; z-index: 10; }
 
         .top-controls { display: flex; justify-content: flex-end; margin-bottom: 1.5rem; }
         .btn-main-action { background-color: #0f172a; color: white; border: none; padding: 0.85rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s; font-size: 1rem; }
@@ -311,7 +311,7 @@
         window.abrirModalHistorial = () => document.getElementById('modal-historial').classList.add('active');
         window.cerrarModalHistorial = () => document.getElementById('modal-historial').classList.remove('active');
 
-        /* --- LÓGICA DE PRESUPUESTO EDITABLE CON VISIBILIDAD --- */
+        /* --- LÓGICA DE PRESUPUESTO EDITABLE --- */
         let itemsPresupuesto = [];
         let showIVA = true;
         const fPlata = (n) => parseFloat(n).toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
@@ -427,7 +427,7 @@
             cerrarModalPresupuesto();
         }
 
-        /* --- MOTOR DE PDF INFALIBLE (FUERZA BRUTA EN DOM) --- */
+        /* --- MOTOR DE PDF INFALIBLE --- */
         function ejecutarDescargaPDF(cliente, vehiculo, fecha, numero, listaItems, subtotal, ivaVal, totalFinal, mostrarIvaPdf) {
             let filasHTML = '';
             listaItems.forEach(item => {
@@ -444,14 +444,15 @@
                     </tr>`;
             });
 
-            const htmlCompleto = `
-                <div style="width: 800px; padding: 30px; border: 1px solid #fff; background: white; font-family: Arial, sans-serif; color: #000;">
+            // Usamos tablas simples que se acomodan estrictamente a los 800px sin romperse
+            const templateHTML = `
+                <div style="width: 800px; padding: 40px; box-sizing: border-box; background: white; font-family: Arial, sans-serif; color: #000;">
                     <h2 style="text-align: center; font-size: 26px; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px;">PRESUPUESTO</h2>
 
-                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: 15px; table-layout: fixed;">
+                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: 15px;">
                         <tr>
-                            <td style="width: 65%; padding: 12px; border-right: 1px solid #000; vertical-align: top;">
-                                <p style="font-size: 16px; margin: 0 0 5px;"><strong>DIESEL NORTE</strong></p>
+                            <td style="width: 65%; padding: 12px; border-right: 1px solid #000; vertical-align: top; line-height: 1.6;">
+                                <p style="margin: 0 0 5px; font-size: 16px;"><strong>DIESEL NORTE</strong></p>
                                 <p style="margin: 0 0 5px;">Av. 72 773, La Plata.</p>
                                 <p style="margin: 0;">Tel: 2216745202 | dieselnorte@hotmail.es</p>
                             </td>
@@ -461,7 +462,7 @@
                         </tr>
                     </table>
 
-                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: 15px; table-layout: fixed;">
+                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: 15px;">
                         <tr>
                             <td style="width: 65%; padding: 12px; border-right: 1px solid #000; text-transform: capitalize;">
                                 ${fecha}
@@ -472,13 +473,13 @@
                         </tr>
                     </table>
 
-                    <div style="border: 1px solid #000; padding: 12px; margin-bottom: 25px;">
+                    <div style="border: 1px solid #000; padding: 12px; margin-bottom: 25px; line-height: 1.6;">
                         <p style="margin: 0 0 8px;"><strong>CLIENTE:</strong> ${cliente}</p>
                         <p style="margin: 0 0 8px;"><strong>ORDEN/VEHÍCULO:</strong> ${vehiculo}</p>
                         <p style="margin: 0;"><strong>TRABAJOS Y REPUESTOS SOLICITADOS - GARANTÍA DIESEL</strong></p>
                     </div>
 
-                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: 25px; table-layout: fixed;">
+                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: 25px;">
                         <thead>
                             <tr style="background: #f2f2f2; border-bottom: 1px solid #000;">
                                 <th style="padding: 10px; text-align: left; border-right: 1px solid #000; width: 45%;">CONCEPTO / DETALLE</th>
@@ -490,10 +491,12 @@
                         <tbody>${filasHTML}</tbody>
                     </table>
 
-                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; table-layout: fixed;">
+                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #000;">
                         <tr>
-                            <td style="width: 55%; vertical-align: top; padding: 10px;">
-                                <strong>EFECTIVO S/ FACTURA</strong>
+                            <td style="width: 55%; vertical-align: top; padding: 15px;">
+                                <div style="border: 1px solid #000; padding: 15px; width: 250px; text-align: center; font-weight: bold;">
+                                    EFECTIVO S/ FACTURA
+                                </div>
                             </td>
                             <td style="width: 45%; vertical-align: top; padding: 0;">
                                 <table style="width: 100%; border-collapse: collapse; border-left: 1px solid #000;">
@@ -507,7 +510,7 @@
                                         <td style="padding: 10px; text-align: right; border-bottom: 1px solid #ccc;">$ ${fPlata(ivaVal)}</td>
                                     </tr>` : ''}
                                     <tr style="background: #f9f9f9;">
-                                        <td style="padding: 15px 10px; text-align: left; font-size: 18px; font-weight: bold; border-top: 1px solid #000;">TOTAL:</td>
+                                        <td style="padding: 15px 10px; text-align: left; font-size: 18px; font-weight: bold; border-top: 1px solid #000; text-transform: uppercase;">Total:</td>
                                         <td style="padding: 15px 10px; text-align: right; font-size: 18px; font-weight: bold; border-top: 1px solid #000;">$ ${fPlata(totalFinal)}</td>
                                     </tr>
                                 </table>
@@ -517,38 +520,35 @@
                 </div>
             `;
 
-            // CREAR EL ELEMENTO EN EL DOM PERO FUERA DE LA VISTA
-            const tempDiv = document.createElement('div');
-            tempDiv.style.position = 'absolute';
-            tempDiv.style.left = '-9999px';
-            tempDiv.style.top = '0';
-            tempDiv.style.width = '800px';
-            tempDiv.style.backgroundColor = 'white';
-            tempDiv.innerHTML = htmlCompleto;
-            
-            document.body.appendChild(tempDiv);
+            // En lugar de ocultarlo, lo creamos justo debajo del modal, donde la cámara lo puede ver perfectamente.
+            const printDiv = document.createElement('div');
+            printDiv.id = 'pdf-render-box';
+            printDiv.style.position = 'absolute';
+            printDiv.style.top = '0';
+            printDiv.style.left = '0';
+            printDiv.style.width = '800px';
+            printDiv.style.zIndex = '1'; // Detrás del modal negro (z-index 1000)
+            printDiv.style.background = 'white';
+            printDiv.innerHTML = templateHTML;
 
-            // OPCIONES ESTRICTAS PARA QUE LA CÁMARA NO SE CONFUNDA
+            document.body.appendChild(printDiv);
+
+            // Al darle windowWidth de 800, html2canvas toma la foto exacta de nuestro contenedor.
             const opt = {
                 margin: 0.2,
                 filename: `Presupuesto_${cliente.replace(/\s+/g, '_')}_N${numero}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { 
-                    scale: 2, 
-                    useCORS: true,
-                    width: 800,           // Fuerza el ancho de la cámara
-                    windowWidth: 800,     // Finge que estás en un monitor de 800px
-                    scrollX: 0,           // Reinicia la posición horizontal
-                    scrollY: 0            // Reinicia la posición vertical
-                }, 
+                html2canvas: { scale: 2, useCORS: true, width: 800, windowWidth: 800 }, 
                 jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
             };
 
-            // GENERAR Y LIMPIAR
-            html2pdf().set(opt).from(tempDiv).save().then(() => {
-                document.body.removeChild(tempDiv);
-                mostrarNotificacion("PDF Generado.");
-            });
+            // Pequeña pausa para asegurar que el logo esté listo
+            setTimeout(() => {
+                html2pdf().set(opt).from(printDiv).save().then(() => {
+                    document.body.removeChild(printDiv);
+                    mostrarNotificacion("PDF Generado.");
+                });
+            }, 500);
         }
 
         /* --- CARGAR HISTORIAL DESDE LA NUBE --- */
