@@ -311,7 +311,7 @@
         window.abrirModalHistorial = () => document.getElementById('modal-historial').classList.add('active');
         window.cerrarModalHistorial = () => document.getElementById('modal-historial').classList.remove('active');
 
-        /* --- LÓGICA DE PRESUPUESTO EDITABLE --- */
+        /* --- LÓGICA DE PRESUPUESTO EDITABLE CON VISIBILIDAD --- */
         let itemsPresupuesto = [];
         let showIVA = true;
         const fPlata = (n) => parseFloat(n).toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
@@ -419,7 +419,7 @@
                 });
                 mostrarNotificacion("Guardado en la Nube.");
             } catch(e) {
-                console.error("Error al guardar presupuesto:", e);
+                console.error(e);
                 alert("Error al guardar, pero se generará el PDF.");
             }
 
@@ -427,9 +427,7 @@
             cerrarModalPresupuesto();
         }
 
-        /* --- MOTOR DE PDF CLÁSICO ARREGLADO DEFINITIVAMENTE ---
-           Usa renderizado en sandbox (iFrame) para ignorar el ancho del celular.
-        */
+        /* --- MOTOR DE PDF INFALIBLE (FUERZA BRUTA EN DOM) --- */
         function ejecutarDescargaPDF(cliente, vehiculo, fecha, numero, listaItems, subtotal, ivaVal, totalFinal, mostrarIvaPdf) {
             let filasHTML = '';
             listaItems.forEach(item => {
@@ -446,28 +444,16 @@
                     </tr>`;
             });
 
-            // Diseño puro en tablas y anchos fijos dentro de un contenedor de 800px
             const htmlCompleto = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <style>
-                    body { font-family: Arial, sans-serif; color: #000; background: white; margin: 0; padding: 0; }
-                    .invoice-box { width: 800px; padding: 30px; border: 1px solid #eee; background: white; }
-                    table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-                    p { margin: 0; padding: 0; line-height: 1.6; }
-                </style>
-            </head>
-            <body>
-                <div class="invoice-box">
+                <div style="width: 800px; padding: 30px; border: 1px solid #fff; background: white; font-family: Arial, sans-serif; color: #000;">
                     <h2 style="text-align: center; font-size: 26px; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px;">PRESUPUESTO</h2>
 
-                    <table style="border: 1px solid #000; margin-bottom: 15px;">
+                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: 15px; table-layout: fixed;">
                         <tr>
                             <td style="width: 65%; padding: 12px; border-right: 1px solid #000; vertical-align: top;">
-                                <p style="font-size: 16px;"><strong>DIESEL NORTE</strong></p>
-                                <p>Av. 72 773, La Plata.</p>
-                                <p>Tel: 2216745202 | dieselnorte@hotmail.es</p>
+                                <p style="font-size: 16px; margin: 0 0 5px;"><strong>DIESEL NORTE</strong></p>
+                                <p style="margin: 0 0 5px;">Av. 72 773, La Plata.</p>
+                                <p style="margin: 0;">Tel: 2216745202 | dieselnorte@hotmail.es</p>
                             </td>
                             <td style="width: 35%; padding: 12px; text-align: center; vertical-align: middle;">
                                 <img src="logo.jpg" style="max-width: 200px; max-height: 90px; object-fit: contain;">
@@ -475,7 +461,7 @@
                         </tr>
                     </table>
 
-                    <table style="border: 1px solid #000; margin-bottom: 15px;">
+                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: 15px; table-layout: fixed;">
                         <tr>
                             <td style="width: 65%; padding: 12px; border-right: 1px solid #000; text-transform: capitalize;">
                                 ${fecha}
@@ -487,12 +473,12 @@
                     </table>
 
                     <div style="border: 1px solid #000; padding: 12px; margin-bottom: 25px;">
-                        <p style="margin-bottom: 8px;"><strong>CLIENTE:</strong> ${cliente}</p>
-                        <p style="margin-bottom: 8px;"><strong>ORDEN/VEHÍCULO:</strong> ${vehiculo}</p>
-                        <p><strong>TRABAJOS Y REPUESTOS SOLICITADOS - GARANTÍA DIESEL</strong></p>
+                        <p style="margin: 0 0 8px;"><strong>CLIENTE:</strong> ${cliente}</p>
+                        <p style="margin: 0 0 8px;"><strong>ORDEN/VEHÍCULO:</strong> ${vehiculo}</p>
+                        <p style="margin: 0;"><strong>TRABAJOS Y REPUESTOS SOLICITADOS - GARANTÍA DIESEL</strong></p>
                     </div>
 
-                    <table style="border: 1px solid #000; margin-bottom: 25px;">
+                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: 25px; table-layout: fixed;">
                         <thead>
                             <tr style="background: #f2f2f2; border-bottom: 1px solid #000;">
                                 <th style="padding: 10px; text-align: left; border-right: 1px solid #000; width: 45%;">CONCEPTO / DETALLE</th>
@@ -504,15 +490,13 @@
                         <tbody>${filasHTML}</tbody>
                     </table>
 
-                    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; table-layout: fixed;">
                         <tr>
-                            <td style="width: 55%; vertical-align: top;">
-                                <div style="border: 1px solid #000; padding: 15px; width: 250px; text-align: center;">
-                                    <strong>EFECTIVO S/ FACTURA</strong>
-                                </div>
+                            <td style="width: 55%; vertical-align: top; padding: 10px;">
+                                <strong>EFECTIVO S/ FACTURA</strong>
                             </td>
-                            <td style="width: 45%; vertical-align: top;">
-                                <table style="width: 100%; border-collapse: collapse; border: 2px solid #000;">
+                            <td style="width: 45%; vertical-align: top; padding: 0;">
+                                <table style="width: 100%; border-collapse: collapse; border-left: 1px solid #000;">
                                     <tr>
                                         <td style="padding: 10px; text-align: left; border-bottom: 1px solid #ccc;">SUBTOTAL:</td>
                                         <td style="padding: 10px; text-align: right; border-bottom: 1px solid #ccc;">$ ${fPlata(subtotal)}</td>
@@ -523,58 +507,49 @@
                                         <td style="padding: 10px; text-align: right; border-bottom: 1px solid #ccc;">$ ${fPlata(ivaVal)}</td>
                                     </tr>` : ''}
                                     <tr style="background: #f9f9f9;">
-                                        <td style="padding: 15px 10px; text-align: left; font-size: 18px; font-weight: bold; text-transform: uppercase;">Total:</td>
-                                        <td style="padding: 15px 10px; text-align: right; font-size: 18px; font-weight: bold;">$ ${fPlata(totalFinal)}</td>
+                                        <td style="padding: 15px 10px; text-align: left; font-size: 18px; font-weight: bold; border-top: 1px solid #000;">TOTAL:</td>
+                                        <td style="padding: 15px 10px; text-align: right; font-size: 18px; font-weight: bold; border-top: 1px solid #000;">$ ${fPlata(totalFinal)}</td>
                                     </tr>
                                 </table>
                             </td>
                         </tr>
                     </table>
                 </div>
-            </body>
-            </html>
             `;
 
-            // SOLUCIÓN TÉCNICA: RENDERIZADO EN SANDBOX (iFrame invisible)
-            const iframe = document.createElement('iframe');
-            iframe.style.position = 'absolute';
-            iframe.style.width = '1024px'; // Ancho forzado de escritorio
-            iframe.style.height = '1px';
-            iframe.style.visibility = 'hidden';
-            iframe.style.top = '-9999px';
-            document.body.appendChild(iframe);
+            // CREAR EL ELEMENTO EN EL DOM PERO FUERA DE LA VISTA
+            const tempDiv = document.createElement('div');
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.left = '-9999px';
+            tempDiv.style.top = '0';
+            tempDiv.style.width = '800px';
+            tempDiv.style.backgroundColor = 'white';
+            tempDiv.innerHTML = htmlCompleto;
+            
+            document.body.appendChild(tempDiv);
 
-            const iframedoc = iframe.contentDocument || iframe.contentWindow.document;
-            iframedoc.open();
-            iframedoc.write(htmlCompleto);
-            iframedoc.close();
-
-            // Esperar a que carguen las imágenes (logo) dentro del iframe
-            iframe.onload = function() {
-                const target = iframedoc.body; // Capturamos el body del iframe, no la ventana actual
-
-                const opt = {
-                    margin: 0.2,
-                    filename: `Presupuesto_${cliente.replace(/\s+/g, '_')}_N${numero}.pdf`,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { 
-                        scale: 2, 
-                        useCORS: true,
-                        logging: false,
-                        width: 850, // Ancho de captura fijo
-                        windowWidth: 1024 // Simula ventana ancha
-                    }, 
-                    jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-                };
-
-                // Guardar y limpiar
-                html2pdf().set(opt).from(target).save().then(() => {
-                    document.body.removeChild(iframe); // Eliminar el sandbox
-                    mostrarNotificacion("PDF Generado.");
-                });
+            // OPCIONES ESTRICTAS PARA QUE LA CÁMARA NO SE CONFUNDA
+            const opt = {
+                margin: 0.2,
+                filename: `Presupuesto_${cliente.replace(/\s+/g, '_')}_N${numero}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { 
+                    scale: 2, 
+                    useCORS: true,
+                    width: 800,           // Fuerza el ancho de la cámara
+                    windowWidth: 800,     // Finge que estás en un monitor de 800px
+                    scrollX: 0,           // Reinicia la posición horizontal
+                    scrollY: 0            // Reinicia la posición vertical
+                }, 
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
             };
-        }
 
+            // GENERAR Y LIMPIAR
+            html2pdf().set(opt).from(tempDiv).save().then(() => {
+                document.body.removeChild(tempDiv);
+                mostrarNotificacion("PDF Generado.");
+            });
+        }
 
         /* --- CARGAR HISTORIAL DESDE LA NUBE --- */
         onSnapshot(presupuestosRef, (s) => {
