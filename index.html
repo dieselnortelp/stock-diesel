@@ -428,119 +428,66 @@
             cerrarModalPresupuesto();
         }
 
-        /* --- MOTOR DE PDF INFALIBLE ---
-           Usa el método `.firstElementChild` y un ancho rígido de 790px 
-           para asegurar que HTML2PDF procese el tamaño exacto sin recortes.
-        */
+        /* --- EL CÓDIGO EXACTO QUE FUNCIONÓ DE LA VERSIÓN ANTERIOR --- */
         function ejecutarDescargaPDF(cliente, vehiculo, fecha, numero, listaItems, subtotal, ivaVal, totalFinal, mostrarIvaPdf) {
             let filasHTML = '';
             listaItems.forEach(item => {
                 const tf = item.precio * item.cantidad;
+                // Si el ojito está cerrado, imprime un guion en vez del número
                 let txtPrecio = item.mostrarPrecio ? `$ ${fPlata(item.precio)}` : '-';
                 let txtTotal = item.mostrarPrecio ? `$ ${fPlata(tf)}` : '-';
 
-                filasHTML += `
-                    <tr style="border-bottom: 1px solid #000; height: 35px;">
-                        <td style="padding: 5px 10px; border-right: 1px solid #000; width: 45%;">${item.concepto}</td>
-                        <td style="padding: 5px 10px; border-right: 1px solid #000; width: 20%; text-align: center;">${txtPrecio}</td>
-                        <td style="padding: 5px 10px; border-right: 1px solid #000; width: 10%; text-align: center;">${item.cantidad}</td>
-                        <td style="padding: 5px 10px; width: 25%; text-align: right;">${txtTotal}</td>
-                    </tr>`;
+                // Usamos la misma fila que en tu código
+                filasHTML += `<tr style="border-bottom:1px solid #000"><td style="padding:10px;border-right:1px solid #000">${item.concepto}</td><td style="text-align:center;border-right:1px solid #000">${txtPrecio}</td><td style="text-align:center;border-right:1px solid #000">${item.cantidad}</td><td style="text-align:right">${txtTotal}</td></tr>`;
             });
 
-            // Se encapsula en un div con width fijo de 790px (Ancho de un A4 a 96dpi)
+            // EL TEMPLATE EXACTO DEL CÓDIGO QUE ANDABA, SOLO CON LA INYECCIÓN DE VARIABLES
             const template = `
-                <div style="width: 790px; max-width: 790px; margin: 0 auto; padding: 30px; box-sizing: border-box; background: white; font-family: Arial, sans-serif; font-size: 13px; color: #000;">
-                    
-                    <h2 style="text-align: center; font-size: 24px; font-weight: bold; letter-spacing: 2px; margin-bottom: 15px;">PRESUPUESTO</h2>
-                    
-                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: 10px; table-layout: fixed;">
-                        <tr>
-                            <td style="width: 60%; padding: 10px; border-right: 1px solid #000; line-height: 1.6;">
-                                <strong>DIESEL NORTE</strong><br>
-                                Av. 72 773, B1904 La Plata.<br>
-                                Telefonos: 22161624400 / 2216745202<br>
-                                Correo: dieselnorte@hotmail.es
-                            </td>
-                            <td style="width: 40%; text-align: center; vertical-align: middle; padding: 10px;">
-                                <img src="logo.jpg" style="max-height: 80px; max-width: 180px; object-fit: contain;">
-                            </td>
-                        </tr>
-                    </table>
-
-                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: 10px; table-layout: fixed;">
-                        <tr>
-                            <td style="width: 60%; padding: 10px; border-right: 1px solid #000;">
-                                ${fecha}
-                            </td>
-                            <td style="width: 40%; padding: 10px; font-weight: bold;">
-                                Nº Presupuesto: <span style="display:inline-block; border:1px solid #000; width: 80px; text-align:center; margin-left:10px; font-weight:normal;">${numero}</span>
-                            </td>
-                        </tr>
-                    </table>
-
-                    <div style="border: 1px solid #000; padding: 10px; margin-bottom: 15px; line-height: 1.6;">
-                        <strong>CLIENTE / Nombre:</strong> ${cliente}<br>
-                        <strong>ORDEN:</strong> ${vehiculo}<br>
-                        <strong>Presupuesto de:</strong> TRABAJOS Y REPUESTOS SOLICITADOS<br>
-                        <strong>GARANTIA DIESEL</strong>
+                <div style="padding:30px 40px; font-family:Arial, sans-serif; color:#000; background:white; font-size:13px;">
+                    <h2 style="text-align:center; font-size:24px; margin-bottom:20px;">PRESUPUESTO</h2>
+                    <div style="display:flex; border:1px solid #000; margin-bottom:15px;">
+                        <div style="flex:1; padding:10px; border-right:1px solid #000;">
+                            <p><strong>DIESEL NORTE</strong></p>
+                            <p>Av. 72 773, La Plata.</p>
+                            <p>Tel: 2216745202 | dieselnorte@hotmail.es</p>
+                        </div>
+                        <div style="width:220px; padding:10px; text-align:center; display:flex; align-items:center; justify-content:center;">
+                            <img src="logo.jpg" style="max-width:180px; max-height:80px;">
+                        </div>
                     </div>
-
-                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: 15px; table-layout: fixed;">
-                        <thead>
-                            <tr style="border-bottom: 1px solid #000; background-color: #f8f8f8;">
-                                <th style="padding: 10px; text-align: left; border-right: 1px solid #000; width: 45%;">CONCEPTO / DETALLE:</th>
-                                <th style="padding: 10px; text-align: center; border-right: 1px solid #000; width: 20%;">PRECIO UNITARIO</th>
-                                <th style="padding: 10px; text-align: center; border-right: 1px solid #000; width: 10%;">CANTIDAD</th>
-                                <th style="padding: 10px; text-align: right; width: 25%;">VALOR SIN IVA</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${filasHTML}
-                        </tbody>
+                    <div style="display:flex; border:1px solid #000; margin-bottom:15px;">
+                        <div style="flex:1; padding:10px; border-right:1px solid #000; text-transform:capitalize;">${fecha}</div>
+                        <div style="width:220px; padding:10px;">Nº: ${numero}</div>
+                    </div>
+                    <div style="border:1px solid #000; padding:10px; margin-bottom:20px; line-height:1.6;">
+                        <p><strong>CLIENTE:</strong> ${cliente}</p>
+                        <p><strong>ORDEN/VEHÍCULO:</strong> ${vehiculo}</p>
+                        <p><strong>GARANTÍA DIESEL</strong></p>
+                    </div>
+                    <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px;">
+                        <thead><tr style="background:#eee; border-bottom:1px solid #000"><th style="padding:10px;text-align:left;border-right:1px solid #000">CONCEPTO</th><th style="width:120px;border-right:1px solid #000">UNITARIO</th><th style="width:70px;border-right:1px solid #000">CANT.</th><th style="width:120px;text-align:right">SUBTOTAL</th></tr></thead>
+                        <tbody>${filasHTML}</tbody>
                     </table>
+                    <div style="display:flex; border:1px solid #000; min-height:100px;">
+                        <div style="flex:1; padding:10px; border-right:1px solid #000;"><strong>EFECTIVO S/ FACTURA</strong></div>
+                        <div style="width:220px; padding:10px; line-height:1.8;">
+                            <div style="display:flex;justify-content:space-between"><span>SUBTOTAL:</span><span>$ ${fPlata(subtotal)}</span></div>
+                            ${mostrarIvaPdf ? `<div style="display:flex;justify-content:space-between"><span>IVA 21%:</span><span>$ ${fPlata(ivaVal)}</span></div>` : ''}
+                            <div style="display:flex;justify-content:space-between;margin-top:10px;font-weight:bold;font-size:15px"><span>TOTAL:</span><span>$ ${fPlata(totalFinal)}</span></div>
+                        </div>
+                    </div>
+                </div>`;
 
-                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; table-layout: fixed;">
-                        <tr>
-                            <td style="width: 60%; padding: 10px; border-right: 1px solid #000; vertical-align: top;">
-                                <strong>EFECTIVO S/ FACTURA</strong>
-                            </td>
-                            <td style="width: 40%; padding: 10px;">
-                                <table style="width: 100%; border-collapse: collapse;">
-                                    <tr>
-                                        <td style="text-align: left; padding: 5px 0;"><strong>SUBTOTAL:</strong></td>
-                                        <td style="text-align: right; padding: 5px 0;">$ ${fPlata(subtotal)}</td>
-                                    </tr>
-                                    ${mostrarIvaPdf ? `
-                                    <tr>
-                                        <td style="text-align: left; padding: 5px 0;"><strong>IVA 21%:</strong></td>
-                                        <td style="text-align: right; padding: 5px 0;">$ ${fPlata(ivaVal)}</td>
-                                    </tr>` : ''}
-                                    <tr>
-                                        <td style="text-align: left; padding: 10px 0 0 0; font-size: 16px; border-top: 1px solid #000;"><strong>TOTAL:</strong></td>
-                                        <td style="text-align: right; padding: 10px 0 0 0; font-size: 16px; border-top: 1px solid #000;"><strong>$ ${fPlata(totalFinal)}</strong></td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            `;
+            // SE PASA EL STRING A UN DIV CREADO AL VUELO, IGUAL QUE EN EL CÓDIGO QUE FUNCIONABA
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = template;
 
-            // Creamos un elemento en memoria para pasar a html2pdf
-            const element = document.createElement('div');
-            element.innerHTML = template;
-
-            // Al pasar element.firstElementChild, forzamos a html2canvas a tomar exactamente 790px
-            const opt = {
-                margin:       0.2, // Margen mínimo
-                filename:     `Presupuesto_${cliente.replace(/\s+/g, '_')}.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true }, 
-                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-            };
-
-            html2pdf().set(opt).from(element.firstElementChild).save().then(() => {
+            html2pdf().set({ 
+                margin: 0.5, 
+                filename: `Presupuesto_${cliente.replace(/\s+/g, '_')}.pdf`, 
+                html2canvas: {scale: 2, useCORS: true}, 
+                jsPDF: {unit: 'in', format: 'a4'} 
+            }).from(wrapper).save().then(() => {
                 mostrarNotificacion("PDF Generado correctamente.");
             });
         }
