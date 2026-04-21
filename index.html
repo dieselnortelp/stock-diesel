@@ -97,11 +97,9 @@
 
         .modal-footer { padding: 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 1rem; background: #fcfcfd; border-radius: 0 0 12px 12px; }
 
-        /* TOAST (Notificaciones) */
         .toast { position: fixed; bottom: 20px; left: 50%; background: #0f172a; color: white; padding: 1rem 1.5rem; border-radius: 8px; display: flex; align-items: center; gap: 12px; transform: translate(-50%, 150%); opacity: 0; transition: all 0.3s; z-index: 2000; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
         .toast.show { transform: translate(-50%, 0); opacity: 1; }
 
-        /* BOTÓN FLOTANTE HISTORIAL */
         .fab-btn { position: fixed; bottom: 30px; right: 30px; background-color: var(--primary); color: white; border: none; width: 60px; height: 60px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 100; transition: transform 0.2s, background-color 0.2s; }
         .fab-btn:hover { transform: scale(1.05); background-color: var(--primary-hover); }
 
@@ -265,6 +263,8 @@
         </div>
     </div>
 
+    <div id="pdf-container" style="position: absolute; top: -9999px; left: -9999px; width: 800px; background: white; z-index: -1;"></div>
+
     <div id="toast" class="toast"><i data-lucide="check-circle-2"></i> <span id="toast-msg"></span></div>
 
     <footer>
@@ -313,7 +313,7 @@
         window.abrirModalHistorial = () => document.getElementById('modal-historial').classList.add('active');
         window.cerrarModalHistorial = () => document.getElementById('modal-historial').classList.remove('active');
 
-        /* --- LÓGICA DE PRESUPUESTO EDITABLE CON VISIBILIDAD --- */
+        /* --- LÓGICA DE PRESUPUESTO --- */
         let itemsPresupuesto = [];
         let showIVA = true;
         const fPlata = (n) => parseFloat(n).toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
@@ -421,15 +421,15 @@
                 });
                 mostrarNotificacion("Guardado en la Nube.");
             } catch(e) {
-                console.error("Error al guardar presupuesto:", e);
-                alert("Error al guardar en la nube, pero se generará el PDF.");
+                console.error(e);
+                alert("Error al guardar, pero se generará el PDF.");
             }
 
             ejecutarDescargaPDF(cliente, vehiculo, fecha, numero, itemsPresupuesto, subtotal, ivaVal, totalFinal, showIVA);
             cerrarModalPresupuesto();
         }
 
-        /* --- MOTOR DE PDF CLÁSICO SOLUCIONADO (CREA EN MEMORIA) --- */
+        /* --- MOTOR DE PDF CLÁSICO CENTRADO Y COMPLETO --- */
         function ejecutarDescargaPDF(cliente, vehiculo, fecha, numero, listaItems, subtotal, ivaVal, totalFinal, mostrarIvaPdf) {
             let filasHTML = '';
             listaItems.forEach(item => {
@@ -439,82 +439,82 @@
 
                 filasHTML += `
                     <tr style="border-bottom:1px solid #000">
-                        <td style="padding:10px;border-right:1px solid #000">${item.concepto}</td>
-                        <td style="text-align:center;border-right:1px solid #000">${txtPrecio}</td>
-                        <td style="text-align:center;border-right:1px solid #000">${item.cantidad}</td>
-                        <td style="text-align:right">${txtTotal}</td>
+                        <td style="padding:10px;border-right:1px solid #000; width:45%;">${item.concepto}</td>
+                        <td style="text-align:center;border-right:1px solid #000; width:20%;">${txtPrecio}</td>
+                        <td style="text-align:center;border-right:1px solid #000; width:10%;">${item.cantidad}</td>
+                        <td style="text-align:right; width:25%; padding-right:10px;">${txtTotal}</td>
                     </tr>`;
             });
 
+            // Estructura adaptada al tamaño exacto de 800px para que no rompa ni quede corto
             const template = `
-                <div style="width: 800px; box-sizing: border-box; padding: 30px 40px; font-family: Arial, sans-serif; color: #000; background: white; font-size: 13px;">
-                    <h2 style="text-align: center; font-size: 24px; margin-bottom: 20px; letter-spacing: 2px;">PRESUPUESTO</h2>
+                <div style="width: 100%; box-sizing: border-box; padding: 40px; font-family: Arial, sans-serif; color: #000; background: white; font-size: 14px;">
+                    <h2 style="text-align: center; font-size: 26px; margin-bottom: 25px; letter-spacing: 2px;">PRESUPUESTO</h2>
 
                     <div style="display: flex; border: 1px solid #000; margin-bottom: 15px;">
-                        <div style="flex: 1; padding: 10px; border-right: 1px solid #000; line-height: 1.8;">
-                            <p style="margin: 0;"><strong>Nombre:</strong> DIESEL NORTE</p>
-                            <p style="margin: 0;"><strong>Dirección:</strong> Av. 72 773, B1904 La Plata.</p>
-                            <p style="margin: 0;"><strong>Teléfonos:</strong> 22161624400 / 2216745202</p>
-                            <p style="margin: 0;"><strong>Correo:</strong> dieselnorte@hotmail.es</p>
+                        <div style="flex: 1; padding: 12px; border-right: 1px solid #000; line-height: 1.8;">
+                            <p style="margin: 0 0 5px;"><strong>DIESEL NORTE</strong></p>
+                            <p style="margin: 0 0 5px;">Av. 72 773, La Plata.</p>
+                            <p style="margin: 0;">Tel: 2216745202 | dieselnorte@hotmail.es</p>
                         </div>
-                        <div style="width: 250px; padding: 10px; text-align: center; display: flex; justify-content: center; align-items: center; background-color: #ffffff;">
-                            <img src="logo.jpg" style="max-width: 220px; max-height: 100px; object-fit: contain;">
+                        <div style="width: 250px; padding: 12px; text-align: center; display: flex; justify-content: center; align-items: center;">
+                            <img src="logo.jpg" style="max-width: 200px; max-height: 90px; object-fit: contain;">
                         </div>
                     </div>
 
                     <div style="display: flex; justify-content: space-between; margin-bottom: 15px; border: 1px solid #000;">
-                        <div style="flex: 1; padding: 10px; border-right: 1px solid #000; text-transform: capitalize;">${fecha}</div>
-                        <div style="width: 250px; padding: 10px; display: flex; align-items: center;">Nº Presupuesto: <div style="border: 1px solid #000; width: 80px; height: 20px; margin-left: 10px; padding-left: 5px;">${numero}</div></div>
+                        <div style="flex: 1; padding: 12px; border-right: 1px solid #000; text-transform: capitalize;">${fecha}</div>
+                        <div style="width: 250px; padding: 12px; display: flex; align-items: center;">Nº Presupuesto: <div style="border: 1px solid #000; width: 80px; height: 20px; margin-left: 10px; padding-left: 5px;">${numero}</div></div>
                     </div>
 
-                    <div style="border: 1px solid #000; padding: 10px; margin-bottom: 20px; line-height: 1.8;">
-                        <p style="margin: 0;"><strong>CLIENTE:</strong> ${cliente}</p>
-                        <p style="margin: 0;"><strong>ORDEN/VEHÍCULO:</strong> ${vehiculo}</p>
+                    <div style="border: 1px solid #000; padding: 12px; margin-bottom: 25px; line-height: 1.8;">
+                        <p style="margin: 0 0 5px;"><strong>CLIENTE:</strong> ${cliente}</p>
+                        <p style="margin: 0 0 5px;"><strong>ORDEN/VEHÍCULO:</strong> ${vehiculo}</p>
                         <p style="margin: 0;"><strong>Presupuesto de:</strong> TRABAJOS Y REPUESTOS SOLICITADOS</p>
                         <p style="margin: 0;"><strong>GARANTIA DIESEL</strong></p>
                     </div>
 
-                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: 20px;">
+                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: 25px; table-layout: fixed;">
                         <thead>
-                            <tr style="border-bottom: 1px solid #000; background: #f8f8f8;">
-                                <th style="padding: 10px; text-align: left; border-right: 1px solid #000; width: 45%;">CONCEPTO / DETALLE:</th>
-                                <th style="padding: 10px; text-align: center; border-right: 1px solid #000;">PRECIO UNITARIO</th>
-                                <th style="padding: 10px; text-align: center; border-right: 1px solid #000;">CANTIDAD</th>
-                                <th style="padding: 10px; text-align: right;">VALOR SIN IVA</th>
+                            <tr style="border-bottom: 1px solid #000; background: #f4f4f4;">
+                                <th style="padding: 12px; text-align: left; border-right: 1px solid #000; width: 45%;">CONCEPTO / DETALLE:</th>
+                                <th style="padding: 12px; text-align: center; border-right: 1px solid #000; width: 20%;">PRECIO UNITARIO</th>
+                                <th style="padding: 12px; text-align: center; border-right: 1px solid #000; width: 10%;">CANT.</th>
+                                <th style="padding: 12px; text-align: right; width: 25%;">VALOR SIN IVA</th>
                             </tr>
                         </thead>
                         <tbody>${filasHTML}</tbody>
                     </table>
 
                     <div style="display: flex; border: 1px solid #000; min-height: 120px;">
-                        <div style="flex: 1; padding: 10px; border-right: 1px solid #000; position: relative;"><strong>EFECTIVO S/ FACTURA</strong></div>
-                        <div style="width: 250px; padding: 10px; line-height: 2;">
+                        <div style="flex: 1; padding: 12px; border-right: 1px solid #000;"><strong>EFECTIVO S/ FACTURA</strong></div>
+                        <div style="width: 250px; padding: 12px; line-height: 2;">
                             <div style="display: flex; justify-content: space-between;"><strong>SUBTOTAL:</strong> <span>$ ${fPlata(subtotal)}</span></div>
                             ${mostrarIvaPdf ? `<div style="display: flex; justify-content: space-between;"><strong>IVA 21%:</strong> <span>$ ${fPlata(ivaVal)}</span></div>` : ''}
-                            <div style="display: flex; justify-content: space-between; margin-top: 15px; font-size: 16px; border-top: 1px solid #000; padding-top: 5px;"><strong>TOTAL:</strong> <strong>$ ${fPlata(totalFinal)}</strong></div>
+                            <div style="display: flex; justify-content: space-between; margin-top: 15px; font-size: 18px; border-top: 1px solid #000; padding-top: 10px;"><strong>TOTAL:</strong> <strong>$ ${fPlata(totalFinal)}</strong></div>
                         </div>
                     </div>
                 </div>
             `;
 
-            // En lugar de usar un contenedor escondido (display:none), creamos el div en la memoria
-            // Esto evita que html2canvas lo dibuje "en blanco" o recortado
-            const element = document.createElement('div');
-            element.innerHTML = template;
+            // Insertarlo en el contenedor físico
+            const container = document.getElementById('pdf-container');
+            container.innerHTML = template;
 
+            // Al forzar a la librería a capturar un DOM que tiene explícitamente 800px evita que corte a la mitad.
             const opt = {
-                margin: 0.5,
+                margin: 0.2, // Reduje el margen del PDF para aprovechar más espacio
                 filename: `Presupuesto_${cliente.replace(/\s+/g, '_')}_N${numero}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true }, 
+                html2canvas: { scale: 2, useCORS: true, width: 800, windowWidth: 800 }, 
                 jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
             };
 
-            html2pdf().set(opt).from(element).save().then(() => {
-                mostrarNotificacion("PDF Generado correctamente.");
+            html2pdf().set(opt).from(container).save().then(() => {
+                container.innerHTML = ''; // Limpiar el contenedor físico después de tomarle foto
+                mostrarNotificacion("PDF Generado.");
             });
         }
-
 
         /* --- CARGAR HISTORIAL DESDE LA NUBE --- */
         onSnapshot(presupuestosRef, (s) => {
@@ -551,7 +551,6 @@
             ejecutarDescargaPDF(pres.cliente, pres.vehiculo, pres.fecha, pres.numero, pres.items, pres.subtotal, pres.iva, pres.total, pres.showIVA);
         }
 
-        /* --- SOLUCIÓN: FUNCIÓN GLOBAL PARA ELIMINAR DE LA NUBE --- */
         window.borrarPresupuesto = async (id) => {
             if(confirm('¿Borrar este presupuesto del historial? Esta acción no se puede deshacer.')) {
                 try {
