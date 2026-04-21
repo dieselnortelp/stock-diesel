@@ -10,16 +10,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
-            --primary: #1e3a8a;
-            --primary-hover: #172554;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-            --danger: #ef4444;
-            --success: #22c55e;
-            --warning: #f59e0b;
+            --primary: #1e3a8a; --primary-hover: #172554; --bg: #f8fafc; --card-bg: #ffffff;
+            --text-main: #1e293b; --text-muted: #64748b; --border: #e2e8f0;
+            --danger: #ef4444; --success: #22c55e; --warning: #f59e0b;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -31,6 +24,11 @@
         .logo-area h1 { font-size: 1.5rem; font-weight: 700; }
 
         .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+
+        /* Controles Superiores */
+        .top-controls { display: flex; justify-content: flex-end; margin-bottom: 1.5rem; }
+        .btn-main-action { background-color: #0f172a; color: white; border: none; padding: 0.85rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.2s, transform 0.1s; font-size: 1rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .btn-main-action:hover { background-color: #1e293b; transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
 
         .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
         .stat-card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); padding: 1.5rem; display: flex; align-items: center; gap: 1.25rem; box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1); transition: transform 0.2s; }
@@ -54,11 +52,8 @@
         input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); }
         input[type="file"] { padding: 0.4rem; background: #f8fafc; cursor: pointer; border: 1px dashed var(--primary); }
 
-        .btn-add { background-color: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 1.5rem 1.5rem auto; width: calc(100% - 3rem); max-width: 300px; }
+        .btn-add { background-color: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 1.5rem 1.5rem auto; width: calc(100% - 3rem); max-width: 300px; transition: background 0.2s; }
         .btn-add:hover { background-color: var(--primary-hover); }
-        
-        .btn-pdf { background-color: #0f172a; margin-top: 1rem; }
-        .btn-pdf:hover { background-color: #1e293b; }
 
         .search-area { padding: 0 1.5rem 1.5rem; position: relative; }
         .search-input { width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border-radius: 8px; border: 1px solid var(--border); }
@@ -86,7 +81,39 @@
 
         #loader { display: none; margin: 1rem 1.5rem; color: var(--primary); font-size: 0.9rem; font-weight: 600; align-items: center; gap: 8px; }
 
-        .toast { position: fixed; bottom: 20px; right: 20px; background: #0f172a; color: white; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 12px; transform: translateY(150%); opacity: 0; transition: all 0.3s; z-index: 1000; }
+        /* MODAL DE PRESUPUESTOS */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.7); display: none; justify-content: center; align-items: flex-start; padding: 2rem 1rem; z-index: 1000; overflow-y: auto; backdrop-filter: blur(4px); }
+        .modal-overlay.active { display: flex; }
+        .modal-content { background: white; border-radius: 12px; width: 100%; max-width: 900px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); animation: modalIn 0.3s ease-out; }
+        @keyframes modalIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-header { padding: 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border-radius: 12px 12px 0 0; }
+        .modal-header h2 { display: flex; align-items: center; gap: 8px; font-size: 1.25rem; color: var(--text-main); }
+        .close-btn { background: none; border: none; cursor: pointer; color: var(--text-muted); transition: color 0.2s; }
+        .close-btn:hover { color: var(--danger); }
+        .modal-body { padding: 1.5rem; }
+        
+        .pres-header-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; background: #f1f5f9; padding: 1rem; border-radius: 8px; }
+        
+        /* Tabla de ítems del presupuesto */
+        .items-table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+        .items-table th { background: #e2e8f0; color: var(--text-main); padding: 0.75rem; font-size: 0.85rem; }
+        .items-table td { padding: 0.5rem; border-bottom: 1px solid var(--border); }
+        .items-table input { width: 100%; padding: 0.5rem; border: 1px solid transparent; background: transparent; }
+        .items-table input:focus { background: white; border: 1px solid var(--primary); }
+        
+        .add-item-row { display: grid; grid-template-columns: 3fr 1fr 1fr auto; gap: 0.5rem; margin-bottom: 2rem; }
+        .btn-add-item { background: #3b82f6; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+        .btn-add-item:hover { background: #2563eb; }
+
+        .pres-totals { border-top: 2px solid var(--border); padding-top: 1rem; text-align: right; width: 300px; margin-left: auto; }
+        .pres-totals div { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 1rem; }
+        .pres-totals .total-final { font-size: 1.25rem; font-weight: 700; color: var(--primary); border-top: 1px solid var(--border); padding-top: 0.5rem; }
+
+        .modal-footer { padding: 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 1rem; background: #fcfcfd; border-radius: 0 0 12px 12px; }
+        .btn-cancel { background: white; border: 1px solid var(--border); color: var(--text-main); padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; }
+        .btn-cancel:hover { background: #f1f5f9; }
+
+        .toast { position: fixed; bottom: 20px; right: 20px; background: #0f172a; color: white; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 12px; transform: translateY(150%); opacity: 0; transition: all 0.3s; z-index: 2000; }
         .toast.show { transform: translateY(0); opacity: 1; }
         .toast-icon { color: #38bdf8; }
 
@@ -107,6 +134,12 @@
 
     <div class="container">
         
+        <div class="top-controls">
+            <button class="btn-main-action" onclick="abrirModalPresupuesto()">
+                <i data-lucide="file-signature"></i> Crear Nuevo Presupuesto
+            </button>
+        </div>
+
         <div class="dashboard-grid">
             <div class="stat-card">
                 <div class="stat-icon icon-blue"><i data-lucide="layers" size="28"></i></div>
@@ -130,37 +163,6 @@
                 </div>
             </div>
         </div>
-
-        <section class="card">
-            <div class="card-header">
-                <h2><i data-lucide="file-signature"></i> Generar Planilla de Presupuesto</h2>
-            </div>
-            <div class="form-grid">
-                <div class="input-group">
-                    <label>CLIENTE (Nombre/Empresa)</label>
-                    <input type="text" id="pres-cliente" placeholder="Ej: Transporte Los Andes">
-                </div>
-                <div class="input-group">
-                    <label>ORDEN (Vehículo/Patente)</label>
-                    <input type="text" id="pres-vehiculo" placeholder="Ej: Scania G340">
-                </div>
-                <div class="input-group form-grid-full">
-                    <label>Detalle: PRESUPUESTO SOLICITADO...</label>
-                    <textarea id="pres-detalle" rows="3" placeholder="Ej: Remanufacturado de Inyectores, Limpieza, Calibración..."></textarea>
-                </div>
-                <div class="input-group">
-                    <label>Costo Repuestos (Sin IVA)</label>
-                    <input type="number" id="pres-repuestos" placeholder="0.00">
-                </div>
-                <div class="input-group">
-                    <label>Costo Mano de Obra (Sin IVA)</label>
-                    <input type="number" id="pres-manoobra" placeholder="0.00">
-                </div>
-            </div>
-            <button class="btn-add btn-pdf" onclick="generarPDF()">
-                <i data-lucide="printer"></i> Descargar Planilla PDF
-            </button>
-        </section>
 
         <section class="card">
             <div class="card-header">
@@ -242,6 +244,71 @@
         </section>
     </div>
 
+    <div id="modal-presupuesto" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i data-lucide="calculator"></i> Constructor de Presupuestos</h2>
+                <button class="close-btn" onclick="cerrarModalPresupuesto()"><i data-lucide="x" size="24"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="pres-header-grid">
+                    <div class="input-group">
+                        <label>Cliente / Empresa</label>
+                        <input type="text" id="modal-cliente" placeholder="Nombre del cliente">
+                    </div>
+                    <div class="input-group">
+                        <label>Orden / Vehículo</label>
+                        <input type="text" id="modal-vehiculo" placeholder="Patente o modelo">
+                    </div>
+                    <div class="input-group">
+                        <label>Fecha del Documento</label>
+                        <input type="text" id="modal-fecha" placeholder="Ej: Martes, 21 de abril de 2026">
+                    </div>
+                    <div class="input-group">
+                        <label>Nº Presupuesto (Opcional)</label>
+                        <input type="text" id="modal-numero" placeholder="Ej: 0015">
+                    </div>
+                </div>
+
+                <h3 style="font-size: 1rem; margin-bottom: 0.5rem; color: var(--text-main);">Detalle de Trabajos y Repuestos</h3>
+                <table class="items-table" id="tabla-items-presupuesto">
+                    <thead>
+                        <tr>
+                            <th style="text-align: left; width: 50%;">Concepto / Actividad</th>
+                            <th style="text-align: center; width: 15%;">Precio Unit.</th>
+                            <th style="text-align: center; width: 10%;">Cant.</th>
+                            <th style="text-align: right; width: 15%;">Total</th>
+                            <th style="width: 10%;"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-items-presupuesto">
+                        </tbody>
+                </table>
+
+                <div class="add-item-row">
+                    <input type="text" id="item-concepto" placeholder="Ej: Calibración Inyector Bosch..." style="padding: 0.6rem; border: 1px solid var(--border); border-radius: 6px;">
+                    <input type="number" id="item-precio" placeholder="$ Precio" style="padding: 0.6rem; border: 1px solid var(--border); border-radius: 6px;">
+                    <input type="number" id="item-cantidad" value="1" min="1" style="padding: 0.6rem; border: 1px solid var(--border); border-radius: 6px; text-align: center;">
+                    <button class="btn-add-item" onclick="agregarItemAlPresupuesto()">
+                        <i data-lucide="plus"></i> Añadir Fila
+                    </button>
+                </div>
+
+                <div class="pres-totals">
+                    <div><span>Subtotal:</span> <span id="calc-subtotal">$ 0.00</span></div>
+                    <div><span>IVA (21%):</span> <span id="calc-iva">$ 0.00</span></div>
+                    <div class="total-final"><span>Total General:</span> <span id="calc-total">$ 0.00</span></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="cerrarModalPresupuesto()">Cancelar</button>
+                <button class="btn-main-action" onclick="generarPDF_Dinamico()">
+                    <i data-lucide="printer"></i> Generar y Descargar PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div id="toast" class="toast">
         <i data-lucide="check-circle-2" class="toast-icon"></i> 
         <span id="toast-msg">Mensaje</span>
@@ -280,28 +347,122 @@
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        /* --- GENERADOR DE PDF CON LOGO OFICIAL LOCAL --- */
-        window.generarPDF = function() {
-            const cliente = document.getElementById('pres-cliente').value || '';
-            const vehiculo = document.getElementById('pres-vehiculo').value || '';
-            const detalle = document.getElementById('pres-detalle').value || '';
+        /* =========================================================
+           NUEVA LÓGICA DE PRESUPUESTOS DINÁMICOS
+        ========================================================= */
+        let itemsPresupuesto = [];
+        
+        // Formatear moneda
+        const formatearPlata = (num) => parseFloat(num).toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+        window.abrirModalPresupuesto = function() {
+            // Poner fecha de hoy por defecto
+            const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('modal-fecha').value = new Date().toLocaleDateString('es-AR', opcionesFecha);
+            // Generar un número aleatorio de 4 dígitos para empezar
+            document.getElementById('modal-numero').value = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
             
-            const costoRepuestos = parseFloat(document.getElementById('pres-repuestos').value) || 0;
-            const costoManoObra = parseFloat(document.getElementById('pres-manoobra').value) || 0;
+            document.getElementById('modal-presupuesto').classList.add('active');
+            renderizarItemsPresupuesto();
+        }
+
+        window.cerrarModalPresupuesto = function() {
+            document.getElementById('modal-presupuesto').classList.remove('active');
+        }
+
+        window.agregarItemAlPresupuesto = function() {
+            const concepto = document.getElementById('item-concepto').value;
+            const precio = parseFloat(document.getElementById('item-precio').value) || 0;
+            const cantidad = parseInt(document.getElementById('item-cantidad').value) || 1;
+
+            if(!concepto) return alert("Escribe un concepto o actividad.");
+
+            itemsPresupuesto.push({ concepto, precio, cantidad });
             
-            const subtotal = costoRepuestos + costoManoObra;
+            // Limpiar inputs
+            document.getElementById('item-concepto').value = '';
+            document.getElementById('item-precio').value = '';
+            document.getElementById('item-cantidad').value = '1';
+            
+            renderizarItemsPresupuesto();
+        }
+
+        window.eliminarItemPresupuesto = function(index) {
+            itemsPresupuesto.splice(index, 1);
+            renderizarItemsPresupuesto();
+        }
+
+        function renderizarItemsPresupuesto() {
+            const tbody = document.getElementById('lista-items-presupuesto');
+            tbody.innerHTML = '';
+            let subtotal = 0;
+
+            itemsPresupuesto.forEach((item, index) => {
+                const totalFila = item.precio * item.cantidad;
+                subtotal += totalFila;
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${item.concepto}</td>
+                        <td style="text-align: center;">$ ${formatearPlata(item.precio)}</td>
+                        <td style="text-align: center;">${item.cantidad}</td>
+                        <td style="text-align: right; font-weight: 500;">$ ${formatearPlata(totalFila)}</td>
+                        <td style="text-align: right;">
+                            <button onclick="eliminarItemPresupuesto(${index})" class="btn-icon" style="color: var(--danger);"><i data-lucide="trash-2" size="18"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // Si está vacío
+            if(itemsPresupuesto.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); font-style: italic;">No hay ítems agregados aún.</td></tr>`;
+            }
+
+            // Actualizar cálculos
             const iva = subtotal * 0.21;
             const total = subtotal + iva;
 
-            const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const fechaActual = new Date().toLocaleDateString('es-AR', opcionesFecha);
+            document.getElementById('calc-subtotal').innerText = `$ ${formatearPlata(subtotal)}`;
+            document.getElementById('calc-iva').innerText = `$ ${formatearPlata(iva)}`;
+            document.getElementById('calc-total').innerText = `$ ${formatearPlata(total)}`;
+            
+            lucide.createIcons();
+        }
 
-            // Toma la imagen logo.jpg que subiste a GitHub
+        window.generarPDF_Dinamico = function() {
+            if(itemsPresupuesto.length === 0) return alert("Agrega al menos un ítem al presupuesto.");
+
+            const cliente = document.getElementById('modal-cliente').value || 'Consumidor Final';
+            const vehiculo = document.getElementById('modal-vehiculo').value || 'N/A';
+            const fecha = document.getElementById('modal-fecha').value;
+            const numero = document.getElementById('modal-numero').value;
+            
+            let subtotal = 0;
+            let filasHTML = '';
+
+            itemsPresupuesto.forEach((item) => {
+                const totalFila = item.precio * item.cantidad;
+                subtotal += totalFila;
+                
+                filasHTML += `
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                        <td style="padding: 10px; border-right: 1px solid #000;">
+                            <span style="white-space: pre-wrap; font-size: 13px;">${item.concepto}</span>
+                        </td>
+                        <td style="padding: 10px; text-align: center; border-right: 1px solid #000;">$ ${formatearPlata(item.precio)}</td>
+                        <td style="padding: 10px; text-align: center; border-right: 1px solid #000;">${item.cantidad}</td>
+                        <td style="padding: 10px; text-align: right;">$ ${formatearPlata(totalFila)}</td>
+                    </tr>
+                `;
+            });
+
+            const iva = subtotal * 0.21;
+            const total = subtotal + iva;
             const contenidoLogo = `<img src="logo.jpg" style="max-width: 220px; max-height: 100px; object-fit: contain;">`;
 
             const template = `
                 <div style="padding: 20px 40px; font-family: Arial, sans-serif; color: #000; background: white; font-size: 13px;">
-                    
                     <h2 style="text-align: center; font-size: 24px; margin-bottom: 20px; letter-spacing: 2px;">PRESUPUESTO</h2>
 
                     <div style="display: flex; border: 1px solid #000; margin-bottom: 15px;">
@@ -318,47 +479,31 @@
 
                     <div style="display: flex; justify-content: space-between; margin-bottom: 15px; border: 1px solid #000;">
                         <div style="flex: 1; padding: 10px; border-right: 1px solid #000; text-transform: capitalize;">
-                            ${fechaActual}
+                            ${fecha}
                         </div>
                         <div style="width: 250px; padding: 10px; display: flex; align-items: center;">
-                            Nº Presupuesto: <div style="border: 1px solid #000; width: 80px; height: 20px; margin-left: 10px;"></div>
+                            Nº Presupuesto: <div style="border: 1px solid #000; width: 80px; height: 20px; margin-left: 10px; padding-left: 5px;">${numero}</div>
                         </div>
                     </div>
 
                     <div style="border: 1px solid #000; padding: 10px; margin-bottom: 20px; line-height: 1.8;">
                         <p style="margin: 0;"><strong>CLIENTE:</strong> ${cliente}</p>
                         <p style="margin: 0;"><strong>ORDEN:</strong> ${vehiculo}</p>
-                        <p style="margin: 0;"><strong>Presupuesto de:</strong> PRESUPUESTO SOLICITADO SIN TRAER INYECTORES</p>
+                        <p style="margin: 0;"><strong>Presupuesto de:</strong> TRABAJOS Y REPUESTOS SOLICITADOS</p>
                         <p style="margin: 0;"><strong>GARANTIA DIESEL</strong></p>
                     </div>
 
                     <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: 20px;">
                         <thead>
                             <tr style="border-bottom: 1px solid #000;">
-                                <th style="padding: 10px; text-align: left; border-right: 1px solid #000; width: 40%;">CONCEPTO:</th>
+                                <th style="padding: 10px; text-align: left; border-right: 1px solid #000; width: 45%;">CONCEPTO / DETALLE:</th>
                                 <th style="padding: 10px; text-align: center; border-right: 1px solid #000;">PRECIO UNITARIO</th>
                                 <th style="padding: 10px; text-align: center; border-right: 1px solid #000;">CANTIDAD</th>
                                 <th style="padding: 10px; text-align: right;">VALOR SIN IVA</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr style="border-bottom: 1px solid #ccc;">
-                                <td style="padding: 10px; border-right: 1px solid #000; vertical-align: top;">
-                                    <strong>ACTIVIDAD</strong><br><br>
-                                    <span style="white-space: pre-wrap; font-size: 12px;">${detalle}</span>
-                                </td>
-                                <td style="padding: 10px; text-align: center; border-right: 1px solid #000; vertical-align: top;">$ ${costoRepuestos.toLocaleString('es-AR', {minimumFractionDigits: 2})}</td>
-                                <td style="padding: 10px; text-align: center; border-right: 1px solid #000; vertical-align: top;">
-                                    <div style="border: 1px solid #000; border-radius: 50%; width: 25px; height: 25px; line-height: 25px; margin: 0 auto;">1</div>
-                                </td>
-                                <td style="padding: 10px; text-align: right; vertical-align: top;">$ ${costoRepuestos.toLocaleString('es-AR', {minimumFractionDigits: 2})}</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 10px; border-right: 1px solid #000;">Mano de Obra</td>
-                                <td style="padding: 10px; text-align: center; border-right: 1px solid #000;">$ ${costoManoObra.toLocaleString('es-AR', {minimumFractionDigits: 2})}</td>
-                                <td style="padding: 10px; text-align: center; border-right: 1px solid #000;">1</td>
-                                <td style="padding: 10px; text-align: right;">$ ${costoManoObra.toLocaleString('es-AR', {minimumFractionDigits: 2})}</td>
-                            </tr>
+                            ${filasHTML}
                         </tbody>
                     </table>
 
@@ -373,13 +518,13 @@
                         </div>
                         <div style="width: 250px; padding: 10px; line-height: 2;">
                             <div style="display: flex; justify-content: space-between;">
-                                <strong>SUBTOTAL:</strong> <span>$ ${subtotal.toLocaleString('es-AR', {minimumFractionDigits: 2})}</span>
+                                <strong>SUBTOTAL:</strong> <span>$ ${formatearPlata(subtotal)}</span>
                             </div>
                             <div style="display: flex; justify-content: space-between;">
-                                <strong>IVA 21%:</strong> <span>$ ${iva.toLocaleString('es-AR', {minimumFractionDigits: 2})}</span>
+                                <strong>IVA 21%:</strong> <span>$ ${formatearPlata(iva)}</span>
                             </div>
                             <div style="display: flex; justify-content: space-between; margin-top: 15px; font-size: 16px;">
-                                <strong>TOTAL:</strong> <strong>$ ${total.toLocaleString('es-AR', {minimumFractionDigits: 2})}</strong>
+                                <strong>TOTAL:</strong> <strong>$ ${formatearPlata(total)}</strong>
                             </div>
                         </div>
                     </div>
@@ -388,19 +533,24 @@
 
             const opt = {
                 margin:       [0.5, 0.5, 0.5, 0.5],
-                filename:     `Presupuesto_DieselNorte_${cliente.replace(/\s+/g, '_')}.pdf`,
+                filename:     `Presupuesto_${numero}_${cliente.replace(/\s+/g, '_')}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true }, // useCORS permite cargar imágenes locales
+                html2canvas:  { scale: 2, useCORS: true },
                 jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
             };
 
             const element = document.createElement('div');
             element.innerHTML = template;
             html2pdf().set(opt).from(element).save().then(() => {
-                mostrarNotificacion("Planilla PDF generada correctamente.");
+                mostrarNotificacion("PDF generado y descargado.");
+                cerrarModalPresupuesto();
+                // Limpiar formulario para el próximo
+                document.getElementById('modal-cliente').value = '';
+                document.getElementById('modal-vehiculo').value = '';
+                itemsPresupuesto = [];
             });
         }
-        /* ------------------------------------------------------------- */
+        /* ========================================================= */
 
 
         // Lógica de Inventario (Firebase)
@@ -448,7 +598,7 @@
 
                 try {
                     await addDoc(repuestosRef, nuevo);
-                    document.querySelectorAll('input[type="text"]:not(#pres-cliente):not(#pres-vehiculo), input[type="file"]').forEach(i => i.value = '');
+                    document.querySelectorAll('section input[type="text"], section input[type="file"]').forEach(i => i.value = '');
                     document.getElementById('minimo').value = 5;
                     document.getElementById('cantidad').value = 0;
                     mostrarNotificacion("¡Repuesto guardado!");
