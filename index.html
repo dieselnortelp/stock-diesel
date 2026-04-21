@@ -16,7 +16,7 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text-main); line-height: 1.5; padding-bottom: 40px; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text-main); line-height: 1.5; padding-bottom: 80px; }
 
         header { background-color: var(--primary); color: white; padding: 1.5rem 2rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
         .header-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
@@ -97,11 +97,12 @@
 
         .modal-footer { padding: 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 1rem; background: #fcfcfd; border-radius: 0 0 12px 12px; }
 
-        .toast { position: fixed; bottom: 20px; left: 50%; background: #0f172a; color: white; padding: 1rem 1.5rem; border-radius: 8px; display: flex; align-items: center; gap: 12px; transform: translate(-50%, 150%); opacity: 0; transition: all 0.3s; z-index: 2000; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
-        .toast.show { transform: translate(-50%, 0); opacity: 1; }
-
+        /* BOTÓN FLOTANTE */
         .fab-btn { position: fixed; bottom: 30px; right: 30px; background-color: var(--primary); color: white; border: none; width: 60px; height: 60px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 100; transition: transform 0.2s, background-color 0.2s; }
         .fab-btn:hover { transform: scale(1.05); background-color: var(--primary-hover); }
+
+        .toast { position: fixed; bottom: 30px; left: 50%; background: #0f172a; color: white; padding: 1rem 1.5rem; border-radius: 8px; display: flex; align-items: center; gap: 12px; transform: translate(-50%, 150%); opacity: 0; transition: all 0.3s; z-index: 2000; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+        .toast.show { transform: translate(-50%, 0); opacity: 1; }
 
         footer { text-align: center; margin-top: 3rem; color: var(--text-muted); font-size: 0.85rem; padding: 2rem; border-top: 1px solid var(--border); }
     </style>
@@ -188,7 +189,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2><i data-lucide="history"></i> Historial de Presupuestos Emitidos</h2>
-                <button class="close-btn" onclick="cerrarModalHistorial()"><i data-lucide="x" size="24"></i></button>
+                <button class="close-btn" onclick="cerrarModalHistorial()" style="background:none;border:none;cursor:pointer;"><i data-lucide="x" size="24"></i></button>
             </div>
             <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
                 <div class="table-container">
@@ -214,7 +215,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2><i data-lucide="calculator"></i> Generador de Presupuesto</h2>
-                <button class="close-btn" onclick="cerrarModalPresupuesto()"><i data-lucide="x" size="24"></i></button>
+                <button class="close-btn" onclick="cerrarModalPresupuesto()" style="background:none;border:none;cursor:pointer;"><i data-lucide="x" size="24"></i></button>
             </div>
             <div class="modal-body">
                 <div class="pres-header-grid">
@@ -241,7 +242,7 @@
                     <input type="text" id="item-concepto" placeholder="Ej: Reparación Inyector Bosch...">
                     <input type="number" id="item-precio" placeholder="Precio ($)">
                     <input type="number" id="item-cantidad" value="1" min="1">
-                    <button class="btn-add-item" onclick="agregarItemAlPresupuesto()"><i data-lucide="plus"></i> Añadir</button>
+                    <button class="btn-add-item" onclick="agregarItemAlPresupuesto()" style="background:var(--primary);color:white;border:none;border-radius:6px;cursor:pointer;padding:0 15px;"><i data-lucide="plus"></i> Añadir</button>
                 </div>
 
                 <div class="pres-totals">
@@ -257,7 +258,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn-icon" style="margin-right: auto; color: var(--text-muted)" onclick="itemsPresupuesto = []; renderizarItemsPresupuesto();">Limpiar Todo</button>
+                <button class="btn-icon" style="margin-right: auto; color: var(--text-muted); cursor:pointer;" onclick="itemsPresupuesto = []; renderizarItemsPresupuesto();">Limpiar Todo</button>
                 <button class="btn-main-action" onclick="generarYGuardarPDF()"><i data-lucide="printer"></i> Guardar y Generar PDF</button>
             </div>
         </div>
@@ -311,7 +312,7 @@
         window.abrirModalHistorial = () => document.getElementById('modal-historial').classList.add('active');
         window.cerrarModalHistorial = () => document.getElementById('modal-historial').classList.remove('active');
 
-        /* --- LÓGICA DE PRESUPUESTO EDITABLE --- */
+        /* --- LÓGICA DE PRESUPUESTO EDITABLE CON VISIBILIDAD --- */
         let itemsPresupuesto = [];
         let showIVA = true;
         const fPlata = (n) => parseFloat(n).toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
@@ -385,14 +386,14 @@
                         <td>
                             <div style="display: flex; gap: 5px; align-items: center;">
                                 <input type="number" class="editable-input" value="${item.precio}" oninput="editarFilaPresupuesto(${i}, 'precio', this.value)" style="text-align: center; ${isHidden ? 'opacity: 0.4; background: #f1f5f9;' : ''}">
-                                <button onclick="togglePrecioItem(${i})" class="btn-icon" title="Mostrar/Ocultar en PDF" style="padding: 4px; ${isHidden ? 'color: var(--danger);' : 'color: var(--primary);'}">
+                                <button onclick="togglePrecioItem(${i})" class="btn-icon" title="Mostrar/Ocultar en PDF" style="padding: 4px; border:none; background:none; cursor:pointer; ${isHidden ? 'color: var(--danger);' : 'color: var(--primary);'}">
                                     <i data-lucide="${item.mostrarPrecio ? 'eye' : 'eye-off'}" size="18"></i>
                                 </button>
                             </div>
                         </td>
                         <td><input type="number" class="editable-input" value="${item.cantidad}" oninput="editarFilaPresupuesto(${i}, 'cantidad', this.value)" style="text-align: center;"></td>
                         <td style="text-align: right; font-weight: 600; ${isHidden ? 'opacity: 0.4;' : ''}" id="total-fila-${i}">$ ${fPlata(item.precio * item.cantidad)}</td>
-                        <td><button onclick="itemsPresupuesto.splice(${i},1); renderizarItemsPresupuesto();" class="btn-icon" style="color:red;"><i data-lucide="trash-2" size="16"></i></button></td>
+                        <td><button onclick="itemsPresupuesto.splice(${i},1); renderizarItemsPresupuesto();" class="btn-icon" style="border:none;background:none;color:red;cursor:pointer;"><i data-lucide="trash-2" size="16"></i></button></td>
                     </tr>`;
             });
             actualizarTotalesUI();
@@ -428,22 +429,30 @@
             cerrarModalPresupuesto();
         }
 
-        /* --- RESTAURACIÓN ABSOLUTA DEL GENERADOR QUE SÍ FUNCIONA --- */
+        /* --- LA SOLUCIÓN CLÁSICA PERFECTA: MEDIDAS FIJAS EN PÍXELES --- */
         function ejecutarDescargaPDF(cliente, vehiculo, fecha, numero, listaItems, subtotal, ivaVal, totalFinal, mostrarIvaPdf) {
             let filasHTML = '';
             listaItems.forEach(item => {
                 const tf = item.precio * item.cantidad;
+                // Lógica del "Ojito" para ocultar precio unitario en el documento
                 let txtPrecio = item.mostrarPrecio ? `$ ${fPlata(item.precio)}` : '-';
                 let txtTotal = item.mostrarPrecio ? `$ ${fPlata(tf)}` : '-';
 
-                // CON LAS MEDIDAS FIJAS EXACTAS DE TU CÓDIGO (120px, 70px)
-                filasHTML += `<tr style="border-bottom:1px solid #000"><td style="padding:10px;border-right:1px solid #000">${item.concepto}</td><td style="width:120px;text-align:center;border-right:1px solid #000">${txtPrecio}</td><td style="width:70px;text-align:center;border-right:1px solid #000">${item.cantidad}</td><td style="width:120px;text-align:right">${txtTotal}</td></tr>`;
+                // Estas son las medidas exactas de la tabla que me enviaste y que no se corta
+                filasHTML += `
+                    <tr style="border-bottom:1px solid #000">
+                        <td style="padding:10px;border-right:1px solid #000">${item.concepto}</td>
+                        <td style="width:120px;text-align:center;border-right:1px solid #000">${txtPrecio}</td>
+                        <td style="width:70px;text-align:center;border-right:1px solid #000">${item.cantidad}</td>
+                        <td style="width:120px;text-align:right">${txtTotal}</td>
+                    </tr>`;
             });
 
-            // EL TEMPLATE EXACTO QUE PASASTE EN TU RESPUESTA
+            // Agregamos un width de 780px a la caja principal para forzar al celular a leerlo como compu
             const template = `
-                <div style="padding:30px 40px; font-family:Arial, sans-serif; color:#000; background:white; font-size:13px;">
+                <div style="width: 780px; padding:30px 40px; font-family:Arial, sans-serif; color:#000; background:white; font-size:13px; box-sizing: border-box;">
                     <h2 style="text-align:center; font-size:24px; margin-bottom:20px;">PRESUPUESTO</h2>
+                    
                     <div style="display:flex; border:1px solid #000; margin-bottom:15px;">
                         <div style="flex:1; padding:10px; border-right:1px solid #000;">
                             <p><strong>DIESEL NORTE</strong></p>
@@ -454,19 +463,30 @@
                             <img src="logo.jpg" style="max-width:180px; max-height:80px;">
                         </div>
                     </div>
+                    
                     <div style="display:flex; border:1px solid #000; margin-bottom:15px;">
                         <div style="flex:1; padding:10px; border-right:1px solid #000; text-transform:capitalize;">${fecha}</div>
                         <div style="width:220px; padding:10px;">Nº: ${numero}</div>
                     </div>
+                    
                     <div style="border:1px solid #000; padding:10px; margin-bottom:20px; line-height:1.6;">
                         <p><strong>CLIENTE:</strong> ${cliente}</p>
                         <p><strong>ORDEN/VEHÍCULO:</strong> ${vehiculo}</p>
                         <p><strong>GARANTÍA DIESEL</strong></p>
                     </div>
-                    <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px;">
-                        <thead><tr style="background:#eee; border-bottom:1px solid #000"><th style="padding:10px;text-align:left;border-right:1px solid #000">CONCEPTO</th><th style="width:120px;border-right:1px solid #000">UNITARIO</th><th style="width:70px;border-right:1px solid #000">CANT.</th><th style="width:120px;text-align:right">SUBTOTAL</th></tr></thead>
+                    
+                    <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px; table-layout: fixed;">
+                        <thead>
+                            <tr style="background:#eee; border-bottom:1px solid #000">
+                                <th style="padding:10px;text-align:left;border-right:1px solid #000">CONCEPTO</th>
+                                <th style="width:120px;border-right:1px solid #000">UNITARIO</th>
+                                <th style="width:70px;border-right:1px solid #000">CANT.</th>
+                                <th style="width:120px;text-align:right">SUBTOTAL</th>
+                            </tr>
+                        </thead>
                         <tbody>${filasHTML}</tbody>
                     </table>
+                    
                     <div style="display:flex; border:1px solid #000; min-height:100px;">
                         <div style="flex:1; padding:10px; border-right:1px solid #000;"><strong>EFECTIVO S/ FACTURA</strong></div>
                         <div style="width:220px; padding:10px; line-height:1.8;">
@@ -477,12 +497,12 @@
                     </div>
                 </div>`;
 
-            // SE ENVÍA COMO STRING DIRECTAMENTE (EVITA ERRORES DE CSS DEL NAVEGADOR)
+            // Le indicamos explícitamente a html2canvas que el ancho de la ventana que dibuja es 850px
             html2pdf().set({ 
                 margin: 0.5, 
                 filename: `Presupuesto_${cliente.replace(/\s+/g, '_')}.pdf`, 
-                html2canvas: {scale: 2, useCORS: true}, 
-                jsPDF: {unit: 'in', format: 'a4'} 
+                html2canvas: { scale: 2, useCORS: true, windowWidth: 850 }, 
+                jsPDF: { unit: 'in', format: 'a4' } 
             }).from(template).save().then(() => {
                 mostrarNotificacion("PDF Generado correctamente.");
             });
@@ -508,8 +528,8 @@
                         <td>${pres.vehiculo}</td>
                         <td style="font-weight: 600;">$ ${fPlata(pres.total)}</td>
                         <td class="actions">
-                            <button class="btn-icon" onclick="reimprimir('${pres.id}')" style="color:var(--primary)" title="Reimprimir PDF"><i data-lucide="printer"></i></button>
-                            <button class="btn-icon" onclick="borrarPresupuesto('${pres.id}')" style="color:var(--danger)" title="Eliminar"><i data-lucide="trash-2"></i></button>
+                            <button class="btn-icon" onclick="reimprimir('${pres.id}')" style="color:var(--primary);border:none;background:none;cursor:pointer;" title="Reimprimir PDF"><i data-lucide="printer"></i></button>
+                            <button class="btn-icon" onclick="borrarPresupuesto('${pres.id}')" style="color:var(--danger);border:none;background:none;cursor:pointer;" title="Eliminar"><i data-lucide="trash-2"></i></button>
                         </td>
                     </tr>
                 `;
@@ -593,9 +613,9 @@
                             <td>${item.minimo}</td>
                             <td><span class="stock-badge ${esBajo?'stock-low':'stock-ok'}">${item.cantidad}</span></td>
                             <td class="actions">
-                                <button class="btn-icon" onclick="cambiarStock('${item.id}', 1, ${item.cantidad})" style="color:green"><i data-lucide="plus-circle"></i></button>
-                                <button class="btn-icon" onclick="cambiarStock('${item.id}', -1, ${item.cantidad})" style="color:orange"><i data-lucide="minus-circle"></i></button>
-                                <button class="btn-icon" onclick="confirm('¿Borrar?') && deleteDoc(doc(db,'repuestos','${item.id}'))" style="color:red"><i data-lucide="trash-2"></i></button>
+                                <button class="btn-icon" onclick="cambiarStock('${item.id}', 1, ${item.cantidad})" style="color:green;border:none;background:none;cursor:pointer;"><i data-lucide="plus-circle"></i></button>
+                                <button class="btn-icon" onclick="cambiarStock('${item.id}', -1, ${item.cantidad})" style="color:orange;border:none;background:none;cursor:pointer;"><i data-lucide="minus-circle"></i></button>
+                                <button class="btn-icon" onclick="confirm('¿Borrar?') && deleteDoc(doc(db,'repuestos','${item.id}'))" style="color:red;border:none;background:none;cursor:pointer;"><i data-lucide="trash-2"></i></button>
                             </td>
                         </tr>`;
                     setTimeout(() => new QRious({ element: document.getElementById(`qr-${item.id}`), value: item.codigo, size: 60 }), 100);
