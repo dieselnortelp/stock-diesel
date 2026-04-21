@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control de Stock y Presupuestos - Diesel Norte</title>
+    <title>Gestión Diesel Norte - Stock y Presupuestos</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
@@ -25,35 +25,29 @@
 
         .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
 
-        /* Controles Superiores */
         .top-controls { display: flex; justify-content: flex-end; margin-bottom: 1.5rem; }
-        .btn-main-action { background-color: #0f172a; color: white; border: none; padding: 0.85rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background 0.2s, transform 0.1s; font-size: 1rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        .btn-main-action:hover { background-color: #1e293b; transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        .btn-main-action { background-color: #0f172a; color: white; border: none; padding: 0.85rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s; font-size: 1rem; }
+        .btn-main-action:hover { background-color: #1e293b; transform: translateY(-2px); }
 
         .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-        .stat-card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); padding: 1.5rem; display: flex; align-items: center; gap: 1.25rem; box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1); transition: transform 0.2s; }
-        .stat-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1); }
+        .stat-card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); padding: 1.5rem; display: flex; align-items: center; gap: 1.25rem; box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1); }
         .stat-icon { width: 56px; height: 56px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; }
         .icon-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
         .icon-red { background: linear-gradient(135deg, #ef4444, #b91c1c); }
         .icon-green { background: linear-gradient(135deg, #22c55e, #15803d); }
         .stat-info h3 { font-size: 0.875rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
-        .stat-info p { font-size: 1.75rem; font-weight: 700; color: var(--text-main); line-height: 1; }
+        .stat-info p { font-size: 1.75rem; font-weight: 700; color: var(--text-main); }
 
         .card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1); margin-bottom: 2rem; overflow: hidden; }
         .card-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); background-color: #fcfcfd; }
         .card-header h2 { font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
 
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; padding: 1.5rem; }
-        .form-grid-full { grid-column: 1 / -1; }
         .input-group { display: flex; flex-direction: column; gap: 6px; }
         label { font-size: 0.875rem; font-weight: 500; color: var(--text-muted); }
         input, select, textarea { padding: 0.625rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; font-family: 'Inter', sans-serif; }
-        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); }
-        input[type="file"] { padding: 0.4rem; background: #f8fafc; cursor: pointer; border: 1px dashed var(--primary); }
-
-        .btn-add { background-color: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 1.5rem 1.5rem auto; width: calc(100% - 3rem); max-width: 300px; transition: background 0.2s; }
-        .btn-add:hover { background-color: var(--primary-hover); }
+        
+        .btn-add { background-color: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 1.5rem 1.5rem auto; width: calc(100% - 3rem); max-width: 300px; }
 
         .search-area { padding: 0 1.5rem 1.5rem; position: relative; }
         .search-input { width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border-radius: 8px; border: 1px solid var(--border); }
@@ -63,59 +57,45 @@
         table { width: 100%; border-collapse: collapse; text-align: left; min-width: 800px; }
         th { background-color: #1e293b; padding: 1rem; font-size: 0.8rem; text-transform: uppercase; color: white; font-weight: 600; }
         td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; vertical-align: middle; }
-        tr:hover td { background-color: #f1f5f9; }
 
         .thumb-img { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); }
         .qr-canvas { width: 50px; height: 50px; border-radius: 4px; }
 
-        .stock-badge { padding: 0.35rem 0.6rem; border-radius: 6px; font-weight: 600; text-align: center; display: inline-block; min-width: 40px; font-size: 0.875rem;}
+        .stock-badge { padding: 0.35rem 0.6rem; border-radius: 6px; font-weight: 600; display: inline-block; min-width: 40px; text-align: center; font-size: 0.875rem;}
         .stock-low { background-color: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; }
         .stock-ok { background-color: #f0fdf4; color: #16a34a; border: 1px solid #86efac; }
 
         .actions { display: flex; gap: 4px; }
         .btn-icon { border: none; background: none; cursor: pointer; padding: 6px; border-radius: 6px; }
         .btn-icon:hover { background: #e2e8f0; }
-        .delete-btn { color: var(--danger); }
-        .stock-btn { color: var(--success); }
-        .stock-btn-minus { color: var(--warning); }
 
-        #loader { display: none; margin: 1rem 1.5rem; color: var(--primary); font-size: 0.9rem; font-weight: 600; align-items: center; gap: 8px; }
-
-        /* MODAL DE PRESUPUESTOS */
+        /* MODAL DE PRESUPUESTOS MEJORADO */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.7); display: none; justify-content: center; align-items: flex-start; padding: 2rem 1rem; z-index: 1000; overflow-y: auto; backdrop-filter: blur(4px); }
         .modal-overlay.active { display: flex; }
-        .modal-content { background: white; border-radius: 12px; width: 100%; max-width: 900px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); animation: modalIn 0.3s ease-out; }
-        @keyframes modalIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-content { background: white; border-radius: 12px; width: 100%; max-width: 1000px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
         .modal-header { padding: 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border-radius: 12px 12px 0 0; }
-        .modal-header h2 { display: flex; align-items: center; gap: 8px; font-size: 1.25rem; color: var(--text-main); }
-        .close-btn { background: none; border: none; cursor: pointer; color: var(--text-muted); transition: color 0.2s; }
-        .close-btn:hover { color: var(--danger); }
         .modal-body { padding: 1.5rem; }
         
-        .pres-header-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; background: #f1f5f9; padding: 1rem; border-radius: 8px; }
+        .pres-header-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; background: #f1f5f9; padding: 1.25rem; border-radius: 8px; }
         
-        /* Tabla de ítems del presupuesto */
-        .items-table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
-        .items-table th { background: #e2e8f0; color: var(--text-main); padding: 0.75rem; font-size: 0.85rem; }
-        .items-table td { padding: 0.5rem; border-bottom: 1px solid var(--border); }
-        .items-table input { width: 100%; padding: 0.5rem; border: 1px solid transparent; background: transparent; }
-        .items-table input:focus { background: white; border: 1px solid var(--primary); }
+        .items-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+        .items-table th { background: #1e293b; color: white; padding: 0.75rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .items-table td { padding: 0.4rem; border-bottom: 1px solid var(--border); }
         
-        .add-item-row { display: grid; grid-template-columns: 3fr 1fr 1fr auto; gap: 0.5rem; margin-bottom: 2rem; }
-        .btn-add-item { background: #3b82f6; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 4px; }
-        .btn-add-item:hover { background: #2563eb; }
-
-        .pres-totals { border-top: 2px solid var(--border); padding-top: 1rem; text-align: right; width: 300px; margin-left: auto; }
+        /* Estilos para que la edición sea fácil */
+        .editable-input { width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px; background: #fff; font-size: 0.9rem; transition: border-color 0.2s; }
+        .editable-input:focus { border-color: var(--primary); outline: none; background: #eff6ff; }
+        
+        .add-item-row { display: grid; grid-template-columns: 3fr 1fr 1fr auto; gap: 0.75rem; margin-bottom: 2rem; padding: 1rem; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; }
+        
+        .pres-totals { border-top: 2px solid var(--border); padding-top: 1rem; text-align: right; width: 320px; margin-left: auto; }
         .pres-totals div { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 1rem; }
-        .pres-totals .total-final { font-size: 1.25rem; font-weight: 700; color: var(--primary); border-top: 1px solid var(--border); padding-top: 0.5rem; }
+        .pres-totals .total-final { font-size: 1.4rem; font-weight: 700; color: var(--primary); border-top: 2px solid var(--primary); padding-top: 0.5rem; margin-top: 0.5rem; }
 
         .modal-footer { padding: 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 1rem; background: #fcfcfd; border-radius: 0 0 12px 12px; }
-        .btn-cancel { background: white; border: 1px solid var(--border); color: var(--text-main); padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; }
-        .btn-cancel:hover { background: #f1f5f9; }
 
-        .toast { position: fixed; bottom: 20px; right: 20px; background: #0f172a; color: white; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 12px; transform: translateY(150%); opacity: 0; transition: all 0.3s; z-index: 2000; }
+        .toast { position: fixed; bottom: 20px; right: 20px; background: #0f172a; color: white; padding: 1rem 1.5rem; border-radius: 8px; display: flex; align-items: center; gap: 12px; transform: translateY(150%); opacity: 0; transition: all 0.3s; z-index: 2000; }
         .toast.show { transform: translateY(0); opacity: 1; }
-        .toast-icon { color: #38bdf8; }
 
         footer { text-align: center; margin-top: 3rem; color: var(--text-muted); font-size: 0.85rem; padding: 2rem; border-top: 1px solid var(--border); }
     </style>
@@ -133,7 +113,6 @@
     </header>
 
     <div class="container">
-        
         <div class="top-controls">
             <button class="btn-main-action" onclick="abrirModalPresupuesto()">
                 <i data-lucide="file-signature"></i> Crear Nuevo Presupuesto
@@ -142,103 +121,54 @@
 
         <div class="dashboard-grid">
             <div class="stat-card">
-                <div class="stat-icon icon-blue"><i data-lucide="layers" size="28"></i></div>
-                <div class="stat-info">
-                    <h3>Total Piezas en Stock</h3>
-                    <p id="stat-total">0</p>
-                </div>
+                <div class="stat-icon icon-blue"><i data-lucide="layers"></i></div>
+                <div class="stat-info"><h3>Stock Total</h3><p id="stat-total">0</p></div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon icon-red"><i data-lucide="alert-circle" size="28"></i></div>
-                <div class="stat-info">
-                    <h3>Alertas de Reposición</h3>
-                    <p id="stat-bajos">0</p>
-                </div>
+                <div class="stat-icon icon-red"><i data-lucide="alert-circle"></i></div>
+                <div class="stat-info"><h3>Reposición</h3><p id="stat-bajos">0</p></div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon icon-green"><i data-lucide="tags" size="28"></i></div>
-                <div class="stat-info">
-                    <h3>Categorías Activas</h3>
-                    <p id="stat-tipos">0</p>
-                </div>
+                <div class="stat-icon icon-green"><i data-lucide="tags"></i></div>
+                <div class="stat-info"><h3>Categorías</h3><p id="stat-tipos">0</p></div>
             </div>
         </div>
 
         <section class="card">
-            <div class="card-header">
-                <h2><i data-lucide="plus-circle"></i> Añadir Nuevo Repuesto al Stock</h2>
-            </div>
+            <div class="card-header"><h2><i data-lucide="plus-circle"></i> Nuevo Repuesto en Stock</h2></div>
             <div class="form-grid">
-                <div class="input-group">
-                    <label>Nombre del Repuesto</label>
-                    <input type="text" id="nombre" placeholder="Ej: Inyector Bosch 0445">
-                </div>
-                <div class="input-group">
-                    <label>Marca</label>
-                    <input type="text" id="marca" placeholder="Ej: Bosch, Delphi">
-                </div>
-                <div class="input-group">
-                    <label>Código / Part Number</label>
-                    <input type="text" id="codigo" placeholder="Ej: F 00R J02 177">
-                </div>
-                <div class="input-group">
-                    <label>Categoría</label>
+                <div class="input-group"><label>Nombre</label><input type="text" id="nombre"></div>
+                <div class="input-group"><label>Marca</label><input type="text" id="marca"></div>
+                <div class="input-group"><label>Código</label><input type="text" id="codigo"></div>
+                <div class="input-group"><label>Categoría</label>
                     <select id="categoria">
                         <option value="Inyector">Inyector</option>
                         <option value="Bomba">Bomba</option>
                         <option value="Kit">Kit de Sellos</option>
-                        <option value="Válvula">Válvula</option>
                         <option value="Otro">Otro</option>
                     </select>
                 </div>
-                <div class="input-group">
-                    <label>Ubicación</label>
-                    <input type="text" id="ubicacion" placeholder="Estante A-12">
-                </div>
-                <div class="input-group">
-                    <label>Stock Mínimo</label>
-                    <input type="number" id="minimo" value="5">
-                </div>
-                <div class="input-group">
-                    <label>Cantidad Inicial</label>
-                    <input type="number" id="cantidad" value="0">
-                </div>
-                <div class="input-group">
-                    <label>Foto del Repuesto</label>
-                    <input type="file" id="imagen" accept="image/*">
-                </div>
+                <div class="input-group"><label>Ubicación</label><input type="text" id="ubicacion"></div>
+                <div class="input-group"><label>Mínimo</label><input type="number" id="minimo" value="5"></div>
+                <div class="input-group"><label>Cantidad</label><input type="number" id="cantidad" value="0"></div>
+                <div class="input-group"><label>Foto</label><input type="file" id="imagen" accept="image/*"></div>
             </div>
-            <div id="loader"><i data-lucide="loader-2" class="spin"></i> Sincronizando...</div>
-            <button class="btn-add" onclick="agregarRepuesto()" id="btn-submit">
-                <i data-lucide="save"></i> Guardar en Inventario
-            </button>
+            <div id="loader" style="display:none;"><i data-lucide="loader-2" class="spin"></i> Conectando...</div>
+            <button class="btn-add" onclick="agregarRepuesto()" id="btn-submit"><i data-lucide="save"></i> Guardar Repuesto</button>
         </section>
 
         <section class="card">
-            <div class="card-header">
-                <h2><i data-lucide="list"></i> Inventario de Repuestos Actual</h2>
-            </div>
+            <div class="card-header"><h2><i data-lucide="list"></i> Inventario de Repuestos</h2></div>
             <div class="search-area">
                 <i data-lucide="search" class="search-icon" size="18"></i>
-                <input type="text" id="buscar" class="search-input" placeholder="Buscar por código, nombre o marca..." onkeyup="filtrarTabla()">
+                <input type="text" id="buscar" class="search-input" placeholder="Buscar por código, nombre..." onkeyup="filtrarTabla()">
             </div>
             <div class="table-container">
                 <table>
                     <thead>
-                        <tr>
-                            <th>Imagen</th>
-                            <th>Código QR</th>
-                            <th>Código</th>
-                            <th>Nombre</th>
-                            <th>Marca / Tipo</th>
-                            <th>Ubicación</th>
-                            <th>Mínimo</th>
-                            <th>Stock</th>
-                            <th>Acciones</th>
-                        </tr>
+                        <tr><th>Imagen</th><th>QR</th><th>Código</th><th>Nombre</th><th>Marca</th><th>Ubicación</th><th>Min.</th><th>Stock</th><th>Acciones</th></tr>
                     </thead>
-                    <tbody id="listaRepuestos">
-                    </tbody>
+                    <tbody id="listaRepuestos"></tbody>
                 </table>
             </div>
         </section>
@@ -247,72 +177,51 @@
     <div id="modal-presupuesto" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h2><i data-lucide="calculator"></i> Constructor de Presupuestos</h2>
+                <h2><i data-lucide="calculator"></i> Generador de Presupuesto</h2>
                 <button class="close-btn" onclick="cerrarModalPresupuesto()"><i data-lucide="x" size="24"></i></button>
             </div>
             <div class="modal-body">
                 <div class="pres-header-grid">
-                    <div class="input-group">
-                        <label>Cliente / Empresa</label>
-                        <input type="text" id="modal-cliente" placeholder="Nombre del cliente">
-                    </div>
-                    <div class="input-group">
-                        <label>Orden / Vehículo</label>
-                        <input type="text" id="modal-vehiculo" placeholder="Patente o modelo">
-                    </div>
-                    <div class="input-group">
-                        <label>Fecha del Documento</label>
-                        <input type="text" id="modal-fecha" placeholder="Ej: Martes, 21 de abril de 2026">
-                    </div>
-                    <div class="input-group">
-                        <label>Nº Presupuesto (Opcional)</label>
-                        <input type="text" id="modal-numero" placeholder="Ej: 0015">
-                    </div>
+                    <div class="input-group"><label>Cliente</label><input type="text" id="modal-cliente" placeholder="Nombre/Empresa"></div>
+                    <div class="input-group"><label>Orden/Vehículo</label><input type="text" id="modal-vehiculo" placeholder="Patente o Modelo"></div>
+                    <div class="input-group"><label>Fecha</label><input type="text" id="modal-fecha"></div>
+                    <div class="input-group"><label>Nº Presupuesto</label><input type="text" id="modal-numero"></div>
                 </div>
 
-                <h3 style="font-size: 1rem; margin-bottom: 0.5rem; color: var(--text-main);">Detalle de Trabajos y Repuestos</h3>
-                <table class="items-table" id="tabla-items-presupuesto">
+                <table class="items-table">
                     <thead>
                         <tr>
-                            <th style="text-align: left; width: 50%;">Concepto / Actividad</th>
-                            <th style="text-align: center; width: 15%;">Precio Unit.</th>
-                            <th style="text-align: center; width: 10%;">Cant.</th>
-                            <th style="text-align: right; width: 15%;">Total</th>
-                            <th style="width: 10%;"></th>
+                            <th style="text-align: left;">Concepto / Actividad (Editable)</th>
+                            <th style="width: 140px;">Precio Unit. ($)</th>
+                            <th style="width: 90px;">Cant.</th>
+                            <th style="width: 140px; text-align: right;">Total</th>
+                            <th style="width: 50px;"></th>
                         </tr>
                     </thead>
-                    <tbody id="lista-items-presupuesto">
-                        </tbody>
+                    <tbody id="lista-items-presupuesto"></tbody>
                 </table>
 
                 <div class="add-item-row">
-                    <input type="text" id="item-concepto" placeholder="Ej: Calibración Inyector Bosch..." style="padding: 0.6rem; border: 1px solid var(--border); border-radius: 6px;">
-                    <input type="number" id="item-precio" placeholder="$ Precio" style="padding: 0.6rem; border: 1px solid var(--border); border-radius: 6px;">
-                    <input type="number" id="item-cantidad" value="1" min="1" style="padding: 0.6rem; border: 1px solid var(--border); border-radius: 6px; text-align: center;">
-                    <button class="btn-add-item" onclick="agregarItemAlPresupuesto()">
-                        <i data-lucide="plus"></i> Añadir Fila
-                    </button>
+                    <input type="text" id="item-concepto" placeholder="Ej: Reparación Inyector Bosch...">
+                    <input type="number" id="item-precio" placeholder="Precio ($)">
+                    <input type="number" id="item-cantidad" value="1" min="1">
+                    <button class="btn-add-item" onclick="agregarItemAlPresupuesto()"><i data-lucide="plus"></i> Añadir</button>
                 </div>
 
                 <div class="pres-totals">
                     <div><span>Subtotal:</span> <span id="calc-subtotal">$ 0.00</span></div>
                     <div><span>IVA (21%):</span> <span id="calc-iva">$ 0.00</span></div>
-                    <div class="total-final"><span>Total General:</span> <span id="calc-total">$ 0.00</span></div>
+                    <div class="total-final"><span>TOTAL FINAL:</span> <span id="calc-total">$ 0.00</span></div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn-cancel" onclick="cerrarModalPresupuesto()">Cancelar</button>
-                <button class="btn-main-action" onclick="generarPDF_Dinamico()">
-                    <i data-lucide="printer"></i> Generar y Descargar PDF
-                </button>
+                <button class="btn-icon" style="margin-right: auto; color: var(--text-muted)" onclick="itemsPresupuesto = []; renderizarItemsPresupuesto();">Limpiar Todo</button>
+                <button class="btn-main-action" onclick="generarPDF_Dinamico()"><i data-lucide="printer"></i> Generar PDF</button>
             </div>
         </div>
     </div>
 
-    <div id="toast" class="toast">
-        <i data-lucide="check-circle-2" class="toast-icon"></i> 
-        <span id="toast-msg">Mensaje</span>
-    </div>
+    <div id="toast" class="toast"><i data-lucide="check-circle-2"></i> <span id="toast-msg"></span></div>
 
     <footer>
         <p>&copy; 2026 Diesel Norte - Servicio de Inyección Diesel</p>
@@ -336,339 +245,208 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const repuestosRef = collection(db, "repuestos");
-
         let inventario = [];
-        lucide.createIcons();
 
-        window.mostrarNotificacion = function(mensaje) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-msg').innerText = mensaje;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
+        window.mostrarNotificacion = (msg) => {
+            const t = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
         }
 
-        /* =========================================================
-           NUEVA LÓGICA DE PRESUPUESTOS DINÁMICOS
-        ========================================================= */
+        /* --- LÓGICA DE PRESUPUESTO EDITABLE --- */
         let itemsPresupuesto = [];
-        
-        // Formatear moneda
-        const formatearPlata = (num) => parseFloat(num).toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        const fPlata = (n) => parseFloat(n).toLocaleString('es-AR', {minimumFractionDigits: 2});
 
-        window.abrirModalPresupuesto = function() {
-            // Poner fecha de hoy por defecto
-            const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('modal-fecha').value = new Date().toLocaleDateString('es-AR', opcionesFecha);
-            // Generar un número aleatorio de 4 dígitos para empezar
-            document.getElementById('modal-numero').value = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-            
+        window.abrirModalPresupuesto = () => {
+            document.getElementById('modal-fecha').value = new Date().toLocaleDateString('es-AR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('modal-numero').value = Math.floor(Math.random() * 9000 + 1000);
             document.getElementById('modal-presupuesto').classList.add('active');
             renderizarItemsPresupuesto();
         }
 
-        window.cerrarModalPresupuesto = function() {
-            document.getElementById('modal-presupuesto').classList.remove('active');
-        }
+        window.cerrarModalPresupuesto = () => document.getElementById('modal-presupuesto').classList.remove('active');
 
-        window.agregarItemAlPresupuesto = function() {
-            const concepto = document.getElementById('item-concepto').value;
-            const precio = parseFloat(document.getElementById('item-precio').value) || 0;
-            const cantidad = parseInt(document.getElementById('item-cantidad').value) || 1;
-
-            if(!concepto) return alert("Escribe un concepto o actividad.");
-
-            itemsPresupuesto.push({ concepto, precio, cantidad });
-            
-            // Limpiar inputs
+        window.agregarItemAlPresupuesto = () => {
+            const c = document.getElementById('item-concepto').value;
+            const p = parseFloat(document.getElementById('item-precio').value) || 0;
+            const q = parseInt(document.getElementById('item-cantidad').value) || 1;
+            if(!c) return;
+            itemsPresupuesto.push({ concepto: c, precio: p, cantidad: q });
             document.getElementById('item-concepto').value = '';
             document.getElementById('item-precio').value = '';
             document.getElementById('item-cantidad').value = '1';
-            
             renderizarItemsPresupuesto();
         }
 
-        window.eliminarItemPresupuesto = function(index) {
-            itemsPresupuesto.splice(index, 1);
-            renderizarItemsPresupuesto();
+        // Función nueva para editar directamente en la tabla
+        window.editarFilaPresupuesto = (index, campo, valor) => {
+            if(campo === 'precio' || campo === 'cantidad') {
+                itemsPresupuesto[index][campo] = parseFloat(valor) || 0;
+            } else {
+                itemsPresupuesto[index][campo] = valor;
+            }
+            actualizarTotalesUI();
+        }
+
+        function actualizarTotalesUI() {
+            let subtotal = 0;
+            itemsPresupuesto.forEach((item, index) => {
+                const totalFila = item.precio * item.cantidad;
+                subtotal += totalFila;
+                const celdaTotal = document.getElementById(`total-fila-${index}`);
+                if(celdaTotal) celdaTotal.innerText = `$ ${fPlata(totalFila)}`;
+            });
+            const iva = subtotal * 0.21;
+            document.getElementById('calc-subtotal').innerText = `$ ${fPlata(subtotal)}`;
+            document.getElementById('calc-iva').innerText = `$ ${fPlata(iva)}`;
+            document.getElementById('calc-total').innerText = `$ ${fPlata(subtotal + iva)}`;
         }
 
         function renderizarItemsPresupuesto() {
             const tbody = document.getElementById('lista-items-presupuesto');
             tbody.innerHTML = '';
-            let subtotal = 0;
-
-            itemsPresupuesto.forEach((item, index) => {
-                const totalFila = item.precio * item.cantidad;
-                subtotal += totalFila;
-
+            itemsPresupuesto.forEach((item, i) => {
                 tbody.innerHTML += `
                     <tr>
-                        <td>${item.concepto}</td>
-                        <td style="text-align: center;">$ ${formatearPlata(item.precio)}</td>
-                        <td style="text-align: center;">${item.cantidad}</td>
-                        <td style="text-align: right; font-weight: 500;">$ ${formatearPlata(totalFila)}</td>
-                        <td style="text-align: right;">
-                            <button onclick="eliminarItemPresupuesto(${index})" class="btn-icon" style="color: var(--danger);"><i data-lucide="trash-2" size="18"></i></button>
-                        </td>
-                    </tr>
-                `;
+                        <td><input type="text" class="editable-input" value="${item.concepto}" oninput="editarFilaPresupuesto(${i}, 'concepto', this.value)"></td>
+                        <td><input type="number" class="editable-input" value="${item.precio}" oninput="editarFilaPresupuesto(${i}, 'precio', this.value)" style="text-align: center;"></td>
+                        <td><input type="number" class="editable-input" value="${item.cantidad}" oninput="editarFilaPresupuesto(${i}, 'cantidad', this.value)" style="text-align: center;"></td>
+                        <td style="text-align: right; font-weight: 600;" id="total-fila-${i}">$ ${fPlata(item.precio * item.cantidad)}</td>
+                        <td><button onclick="itemsPresupuesto.splice(${i},1); renderizarItemsPresupuesto();" class="btn-icon" style="color:red;"><i data-lucide="trash-2" size="16"></i></button></td>
+                    </tr>`;
             });
-
-            // Si está vacío
-            if(itemsPresupuesto.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); font-style: italic;">No hay ítems agregados aún.</td></tr>`;
-            }
-
-            // Actualizar cálculos
-            const iva = subtotal * 0.21;
-            const total = subtotal + iva;
-
-            document.getElementById('calc-subtotal').innerText = `$ ${formatearPlata(subtotal)}`;
-            document.getElementById('calc-iva').innerText = `$ ${formatearPlata(iva)}`;
-            document.getElementById('calc-total').innerText = `$ ${formatearPlata(total)}`;
-            
+            actualizarTotalesUI();
             lucide.createIcons();
         }
 
-        window.generarPDF_Dinamico = function() {
-            if(itemsPresupuesto.length === 0) return alert("Agrega al menos un ítem al presupuesto.");
-
-            const cliente = document.getElementById('modal-cliente').value || 'Consumidor Final';
-            const vehiculo = document.getElementById('modal-vehiculo').value || 'N/A';
+        window.generarPDF_Dinamico = () => {
+            if(itemsPresupuesto.length === 0) return alert("Agrega algún ítem.");
+            const cliente = document.getElementById('modal-cliente').value || 'S/N';
+            const vehiculo = document.getElementById('modal-vehiculo').value || 'S/N';
             const fecha = document.getElementById('modal-fecha').value;
             const numero = document.getElementById('modal-numero').value;
-            
+
             let subtotal = 0;
             let filasHTML = '';
-
-            itemsPresupuesto.forEach((item) => {
-                const totalFila = item.precio * item.cantidad;
-                subtotal += totalFila;
-                
-                filasHTML += `
-                    <tr style="border-bottom: 1px solid #e2e8f0;">
-                        <td style="padding: 10px; border-right: 1px solid #000;">
-                            <span style="white-space: pre-wrap; font-size: 13px;">${item.concepto}</span>
-                        </td>
-                        <td style="padding: 10px; text-align: center; border-right: 1px solid #000;">$ ${formatearPlata(item.precio)}</td>
-                        <td style="padding: 10px; text-align: center; border-right: 1px solid #000;">${item.cantidad}</td>
-                        <td style="padding: 10px; text-align: right;">$ ${formatearPlata(totalFila)}</td>
-                    </tr>
-                `;
+            itemsPresupuesto.forEach(item => {
+                const tf = item.precio * item.cantidad;
+                subtotal += tf;
+                filasHTML += `<tr style="border-bottom:1px solid #000"><td style="padding:10px;border-right:1px solid #000">${item.concepto}</td><td style="text-align:center;border-right:1px solid #000">$ ${fPlata(item.precio)}</td><td style="text-align:center;border-right:1px solid #000">${item.cantidad}</td><td style="text-align:right">$ ${fPlata(tf)}</td></tr>`;
             });
-
-            const iva = subtotal * 0.21;
-            const total = subtotal + iva;
-            const contenidoLogo = `<img src="logo.jpg" style="max-width: 220px; max-height: 100px; object-fit: contain;">`;
 
             const template = `
-                <div style="padding: 20px 40px; font-family: Arial, sans-serif; color: #000; background: white; font-size: 13px;">
-                    <h2 style="text-align: center; font-size: 24px; margin-bottom: 20px; letter-spacing: 2px;">PRESUPUESTO</h2>
-
-                    <div style="display: flex; border: 1px solid #000; margin-bottom: 15px;">
-                        <div style="flex: 1; padding: 10px; border-right: 1px solid #000; line-height: 1.8;">
-                            <p style="margin: 0;"><strong>Nombre:</strong> DIESEL NORTE</p>
-                            <p style="margin: 0;"><strong>Dirección:</strong> Av. 72 773, B1904 La Plata.</p>
-                            <p style="margin: 0;"><strong>Teléfonos:</strong> 22161624400 / 2216745202</p>
-                            <p style="margin: 0;"><strong>Correo:</strong> dieselnorte@hotmail.es</p>
+                <div style="padding:30px 40px; font-family:Arial, sans-serif; color:#000; background:white; font-size:13px;">
+                    <h2 style="text-align:center; font-size:24px; margin-bottom:20px;">PRESUPUESTO</h2>
+                    <div style="display:flex; border:1px solid #000; margin-bottom:15px;">
+                        <div style="flex:1; padding:10px; border-right:1px solid #000;">
+                            <p><strong>DIESEL NORTE</strong></p>
+                            <p>Av. 72 773, La Plata.</p>
+                            <p>Tel: 2216745202 | dieselnorte@hotmail.es</p>
                         </div>
-                        <div style="width: 250px; padding: 10px; text-align: center; display: flex; justify-content: center; align-items: center; background-color: #ffffff;">
-                            ${contenidoLogo}
+                        <div style="width:220px; padding:10px; text-align:center; display:flex; align-items:center; justify-content:center;">
+                            <img src="logo.jpg" style="max-width:180px; max-height:80px;">
                         </div>
                     </div>
-
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px; border: 1px solid #000;">
-                        <div style="flex: 1; padding: 10px; border-right: 1px solid #000; text-transform: capitalize;">
-                            ${fecha}
-                        </div>
-                        <div style="width: 250px; padding: 10px; display: flex; align-items: center;">
-                            Nº Presupuesto: <div style="border: 1px solid #000; width: 80px; height: 20px; margin-left: 10px; padding-left: 5px;">${numero}</div>
-                        </div>
+                    <div style="display:flex; border:1px solid #000; margin-bottom:15px;">
+                        <div style="flex:1; padding:10px; border-right:1px solid #000; text-transform:capitalize;">${fecha}</div>
+                        <div style="width:220px; padding:10px;">Nº: ${numero}</div>
                     </div>
-
-                    <div style="border: 1px solid #000; padding: 10px; margin-bottom: 20px; line-height: 1.8;">
-                        <p style="margin: 0;"><strong>CLIENTE:</strong> ${cliente}</p>
-                        <p style="margin: 0;"><strong>ORDEN:</strong> ${vehiculo}</p>
-                        <p style="margin: 0;"><strong>Presupuesto de:</strong> TRABAJOS Y REPUESTOS SOLICITADOS</p>
-                        <p style="margin: 0;"><strong>GARANTIA DIESEL</strong></p>
+                    <div style="border:1px solid #000; padding:10px; margin-bottom:20px; line-height:1.6;">
+                        <p><strong>CLIENTE:</strong> ${cliente}</p>
+                        <p><strong>ORDEN/VEHÍCULO:</strong> ${vehiculo}</p>
+                        <p><strong>GARANTÍA DIESEL</strong></p>
                     </div>
-
-                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: 20px;">
-                        <thead>
-                            <tr style="border-bottom: 1px solid #000;">
-                                <th style="padding: 10px; text-align: left; border-right: 1px solid #000; width: 45%;">CONCEPTO / DETALLE:</th>
-                                <th style="padding: 10px; text-align: center; border-right: 1px solid #000;">PRECIO UNITARIO</th>
-                                <th style="padding: 10px; text-align: center; border-right: 1px solid #000;">CANTIDAD</th>
-                                <th style="padding: 10px; text-align: right;">VALOR SIN IVA</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${filasHTML}
-                        </tbody>
+                    <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px;">
+                        <thead><tr style="background:#eee; border-bottom:1px solid #000"><th style="padding:10px;text-align:left;border-right:1px solid #000">CONCEPTO</th><th style="width:120px;border-right:1px solid #000">UNITARIO</th><th style="width:70px;border-right:1px solid #000">CANT.</th><th style="width:120px;text-align:right">SUBTOTAL</th></tr></thead>
+                        <tbody>${filasHTML}</tbody>
                     </table>
-
-                    <div style="display: flex; border: 1px solid #000; min-height: 120px;">
-                        <div style="flex: 1; padding: 10px; border-right: 1px solid #000; position: relative;">
-                            <strong>EFECTIVO S/ FACTURA</strong>
-                            <div style="position: absolute; bottom: 10px; left: 10px; right: 10px;">
-                                <div style="border-top: 1px solid #000; width: 100%; text-align: center; padding-top: 5px;">
-                                    Atención: Katia / Pilar
-                                </div>
-                            </div>
-                        </div>
-                        <div style="width: 250px; padding: 10px; line-height: 2;">
-                            <div style="display: flex; justify-content: space-between;">
-                                <strong>SUBTOTAL:</strong> <span>$ ${formatearPlata(subtotal)}</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between;">
-                                <strong>IVA 21%:</strong> <span>$ ${formatearPlata(iva)}</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; margin-top: 15px; font-size: 16px;">
-                                <strong>TOTAL:</strong> <strong>$ ${formatearPlata(total)}</strong>
-                            </div>
+                    <div style="display:flex; border:1px solid #000; min-height:100px;">
+                        <div style="flex:1; padding:10px; border-right:1px solid #000;"><strong>EFECTIVO S/ FACTURA</strong></div>
+                        <div style="width:220px; padding:10px; line-height:1.8;">
+                            <div style="display:flex;justify-content:space-between"><span>SUBTOTAL:</span><span>$ ${fPlata(subtotal)}</span></div>
+                            <div style="display:flex;justify-content:space-between"><span>IVA 21%:</span><span>$ ${fPlata(subtotal*0.21)}</span></div>
+                            <div style="display:flex;justify-content:space-between;margin-top:10px;font-weight:bold;font-size:15px"><span>TOTAL:</span><span>$ ${fPlata(subtotal*1.21)}</span></div>
                         </div>
                     </div>
-                </div>
-            `;
+                </div>`;
 
-            const opt = {
-                margin:       [0.5, 0.5, 0.5, 0.5],
-                filename:     `Presupuesto_${numero}_${cliente.replace(/\s+/g, '_')}.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true },
-                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-            };
-
-            const element = document.createElement('div');
-            element.innerHTML = template;
-            html2pdf().set(opt).from(element).save().then(() => {
-                mostrarNotificacion("PDF generado y descargado.");
+            html2pdf().set({ margin:0.5, filename:`Presupuesto_${cliente}.pdf`, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'in', format:'a4'} }).from(document.createElement('div').innerHTML = template).save().then(() => {
+                mostrarNotificacion("PDF Generado.");
                 cerrarModalPresupuesto();
-                // Limpiar formulario para el próximo
-                document.getElementById('modal-cliente').value = '';
-                document.getElementById('modal-vehiculo').value = '';
-                itemsPresupuesto = [];
             });
         }
-        /* ========================================================= */
 
-
-        // Lógica de Inventario (Firebase)
-        onSnapshot(repuestosRef, (snapshot) => {
-            inventario = []; 
-            snapshot.forEach((documento) => {
-                inventario.push({ ...documento.data(), idFirebase: documento.id });
-            });
-            inventario.sort((a, b) => b.fecha - a.fecha);
-            filtrarTabla(); 
+        /* --- LÓGICA DE STOCK (FIREBASE) --- */
+        onSnapshot(repuestosRef, (s) => {
+            inventario = []; s.forEach(d => inventario.push({...d.data(), id: d.id}));
+            inventario.sort((a,b) => b.fecha - a.fecha);
+            filtrarTabla();
         });
 
-        function leerImagen(input, callback) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) { callback(e.target.result); };
-                reader.readAsDataURL(input.files[0]);
-            } else {
-                callback('https://via.placeholder.com/50?text=No+Img');
-            }
-        }
-
-        window.agregarRepuesto = async function() {
-            const btn = document.getElementById('btn-submit');
-            const loader = document.getElementById('loader');
-            const nombre = document.getElementById('nombre').value;
-            const codigo = document.getElementById('codigo').value;
-
-            if(!nombre || !codigo) return mostrarNotificacion("⚠️ Completa Nombre y Código.");
-
-            btn.style.display = 'none';
-            loader.style.display = 'flex';
-
-            const inputImg = document.getElementById('imagen');
+        window.agregarRepuesto = async () => {
+            const n = document.getElementById('nombre').value;
+            const c = document.getElementById('codigo').value;
+            if(!n || !c) return mostrarNotificacion("Nombre y Código obligatorios.");
+            document.getElementById('btn-submit').style.display = 'none';
+            document.getElementById('loader').style.display = 'flex';
             
-            leerImagen(inputImg, async function(imagenBase64) {
-                const nuevo = {
-                    nombre: nombre, marca: document.getElementById('marca').value,
-                    codigo: codigo, categoria: document.getElementById('categoria').value,
+            const file = document.getElementById('imagen').files[0];
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                await addDoc(repuestosRef, { 
+                    nombre: n, marca: document.getElementById('marca').value, 
+                    codigo: c, categoria: document.getElementById('categoria').value,
                     ubicacion: document.getElementById('ubicacion').value,
                     minimo: parseInt(document.getElementById('minimo').value),
                     cantidad: parseInt(document.getElementById('cantidad').value),
-                    imagen: imagenBase64, fecha: Date.now() 
-                };
-
-                try {
-                    await addDoc(repuestosRef, nuevo);
-                    document.querySelectorAll('section input[type="text"], section input[type="file"]').forEach(i => i.value = '');
-                    document.getElementById('minimo').value = 5;
-                    document.getElementById('cantidad').value = 0;
-                    mostrarNotificacion("¡Repuesto guardado!");
-                } catch (e) {
-                    mostrarNotificacion("❌ Error de conexión.");
-                } finally {
-                    btn.style.display = 'flex';
-                    loader.style.display = 'none';
-                }
-            });
+                    imagen: e.target.result, fecha: Date.now() 
+                });
+                document.querySelectorAll('section input').forEach(i => i.value = '');
+                document.getElementById('btn-submit').style.display = 'flex';
+                document.getElementById('loader').style.display = 'none';
+                mostrarNotificacion("Guardado.");
+            };
+            file ? reader.readAsDataURL(file) : reader.onload({target:{result:'https://via.placeholder.com/50'}});
         }
 
-        window.cambiarStock = async function(idFirebase, cantidadSuma, cantidadActual) {
-            const nuevaCantidad = Math.max(0, cantidadActual + cantidadSuma);
-            try { await updateDoc(doc(db, "repuestos", idFirebase), { cantidad: nuevaCantidad }); } catch(e) {}
-        }
+        window.cambiarStock = async (id, delta, actual) => await updateDoc(doc(db, "repuestos", id), { cantidad: Math.max(0, actual + delta) });
 
-        window.eliminarRepuesto = async function(idFirebase) {
-            if(confirm("¿Eliminar este repuesto definitivamente?")) {
-                await deleteDoc(doc(db, "repuestos", idFirebase));
-                mostrarNotificacion("Repuesto eliminado.");
-            }
-        }
-
-        window.filtrarTabla = function() {
-            const query = document.getElementById('buscar').value.toLowerCase();
-            const tbody = document.getElementById('listaRepuestos');
-            tbody.innerHTML = '';
-            
-            let qrsADibujar = [];
-            let totalPiezas = 0, alertasStock = 0;
-            let categoriasSet = new Set();
+        window.filtrarTabla = () => {
+            const q = document.getElementById('buscar').value.toLowerCase();
+            const tb = document.getElementById('listaRepuestos');
+            tb.innerHTML = '';
+            let total = 0, bajos = 0;
+            const cats = new Set();
 
             inventario.forEach(item => {
                 const esBajo = item.cantidad <= item.minimo;
-                totalPiezas += item.cantidad;
-                if(esBajo) alertasStock++;
-                if(item.categoria) categoriasSet.add(item.categoria);
+                total += item.cantidad; if(esBajo) bajos++; cats.add(item.categoria);
 
-                if(item.nombre.toLowerCase().includes(query) || item.codigo.toLowerCase().includes(query) || item.marca.toLowerCase().includes(query)) {
-                    const row = `
+                if(item.nombre.toLowerCase().includes(q) || item.codigo.toLowerCase().includes(q)) {
+                    tb.innerHTML += `
                         <tr>
                             <td><img src="${item.imagen}" class="thumb-img"></td>
-                            <td><canvas id="qr-${item.idFirebase}" class="qr-canvas"></canvas></td>
+                            <td><canvas id="qr-${item.id}" class="qr-canvas"></canvas></td>
                             <td><strong>${item.codigo}</strong></td>
                             <td>${item.nombre}</td>
-                            <td>${item.marca} <br><small>${item.categoria}</small></td>
+                            <td>${item.marca}</td>
                             <td>${item.ubicacion}</td>
                             <td>${item.minimo}</td>
-                            <td><span class="stock-badge ${esBajo ? 'stock-low' : 'stock-ok'}">${item.cantidad}</span></td>
+                            <td><span class="stock-badge ${esBajo?'stock-low':'stock-ok'}">${item.cantidad}</span></td>
                             <td class="actions">
-                                <button class="btn-icon stock-btn" onclick="cambiarStock('${item.idFirebase}', 1, ${item.cantidad})"><i data-lucide="plus-circle"></i></button>
-                                <button class="btn-icon stock-btn-minus" onclick="cambiarStock('${item.idFirebase}', -1, ${item.cantidad})"><i data-lucide="minus-circle"></i></button>
-                                <button class="btn-icon delete-btn" onclick="eliminarRepuesto('${item.idFirebase}')"><i data-lucide="trash-2"></i></button>
+                                <button class="btn-icon" onclick="cambiarStock('${item.id}', 1, ${item.cantidad})" style="color:green"><i data-lucide="plus-circle"></i></button>
+                                <button class="btn-icon" onclick="cambiarStock('${item.id}', -1, ${item.cantidad})" style="color:orange"><i data-lucide="minus-circle"></i></button>
+                                <button class="btn-icon" onclick="confirm('¿Borrar?') && deleteDoc(doc(db,'repuestos','${item.id}'))" style="color:red"><i data-lucide="trash-2"></i></button>
                             </td>
-                        </tr>
-                    `;
-                    tbody.innerHTML += row;
-                    qrsADibujar.push({ id: item.idFirebase, codigo: item.codigo });
+                        </tr>`;
+                    setTimeout(() => new QRious({ element: document.getElementById(`qr-${item.id}`), value: item.codigo, size: 60 }), 100);
                 }
             });
-            
-            document.getElementById('stat-total').innerText = totalPiezas;
-            document.getElementById('stat-bajos').innerText = alertasStock;
-            document.getElementById('stat-tipos').innerText = categoriasSet.size;
-
+            document.getElementById('stat-total').innerText = total;
+            document.getElementById('stat-bajos').innerText = bajos;
+            document.getElementById('stat-tipos').innerText = cats.size;
             lucide.createIcons();
-            qrsADibujar.forEach(qrInfo => {
-                new QRious({ element: document.getElementById(`qr-${qrInfo.id}`), value: qrInfo.codigo, size: 60, level: 'M' });
-            });
         }
     </script>
 </body>
