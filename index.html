@@ -16,14 +16,14 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text-main); line-height: 1.5; padding-bottom: 40px; position: relative; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text-main); line-height: 1.5; padding-bottom: 40px; }
 
         header { background-color: var(--primary); color: white; padding: 1.5rem 2rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
         .header-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
         .logo-area { display: flex; align-items: center; gap: 12px; }
         .logo-area h1 { font-size: 1.5rem; font-weight: 700; }
 
-        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; position: relative; z-index: 10; }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
 
         .top-controls { display: flex; justify-content: flex-end; margin-bottom: 1.5rem; }
         .btn-main-action { background-color: #0f172a; color: white; border: none; padding: 0.85rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s; font-size: 1rem; }
@@ -427,7 +427,7 @@
             cerrarModalPresupuesto();
         }
 
-        /* --- MOTOR DE PDF INFALIBLE --- */
+        /* --- LA SOLUCIÓN DEFINITIVA PARA QUE NO SALGA EN BLANCO NI CORTADO --- */
         function ejecutarDescargaPDF(cliente, vehiculo, fecha, numero, listaItems, subtotal, ivaVal, totalFinal, mostrarIvaPdf) {
             let filasHTML = '';
             listaItems.forEach(item => {
@@ -444,15 +444,15 @@
                     </tr>`;
             });
 
-            // Usamos tablas simples que se acomodan estrictamente a los 800px sin romperse
-            const templateHTML = `
-                <div style="width: 800px; padding: 40px; box-sizing: border-box; background: white; font-family: Arial, sans-serif; color: #000;">
-                    <h2 style="text-align: center; font-size: 26px; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px;">PRESUPUESTO</h2>
+            // Agregamos min-width para forzar a html2canvas a leerlo como pantalla grande
+            const template = `
+                <div style="width: 800px; min-width: 800px; padding: 40px; box-sizing: border-box; font-family: Arial, sans-serif; color: #000; background: white; font-size: 14px;">
+                    <h2 style="text-align: center; font-size: 26px; margin-bottom: 25px; letter-spacing: 2px;">PRESUPUESTO</h2>
 
                     <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: 15px;">
                         <tr>
                             <td style="width: 65%; padding: 12px; border-right: 1px solid #000; vertical-align: top; line-height: 1.6;">
-                                <p style="margin: 0 0 5px; font-size: 16px;"><strong>DIESEL NORTE</strong></p>
+                                <p style="font-size: 16px; margin: 0 0 5px;"><strong>DIESEL NORTE</strong></p>
                                 <p style="margin: 0 0 5px;">Av. 72 773, La Plata.</p>
                                 <p style="margin: 0;">Tel: 2216745202 | dieselnorte@hotmail.es</p>
                             </td>
@@ -520,36 +520,21 @@
                 </div>
             `;
 
-            // En lugar de ocultarlo, lo creamos justo debajo del modal, donde la cámara lo puede ver perfectamente.
-            const printDiv = document.createElement('div');
-            printDiv.id = 'pdf-render-box';
-            printDiv.style.position = 'absolute';
-            printDiv.style.top = '0';
-            printDiv.style.left = '0';
-            printDiv.style.width = '800px';
-            printDiv.style.zIndex = '1'; // Detrás del modal negro (z-index 1000)
-            printDiv.style.background = 'white';
-            printDiv.innerHTML = templateHTML;
-
-            document.body.appendChild(printDiv);
-
-            // Al darle windowWidth de 800, html2canvas toma la foto exacta de nuestro contenedor.
+            // Le pasamos el string directamente (sin div ocultos), 
+            // y configuramos html2canvas con windowWidth de computadora.
             const opt = {
                 margin: 0.2,
                 filename: `Presupuesto_${cliente.replace(/\s+/g, '_')}_N${numero}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, width: 800, windowWidth: 800 }, 
+                html2canvas: { scale: 2, useCORS: true, windowWidth: 1024 }, 
                 jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
             };
 
-            // Pequeña pausa para asegurar que el logo esté listo
-            setTimeout(() => {
-                html2pdf().set(opt).from(printDiv).save().then(() => {
-                    document.body.removeChild(printDiv);
-                    mostrarNotificacion("PDF Generado.");
-                });
-            }, 500);
+            html2pdf().set(opt).from(template).save().then(() => {
+                mostrarNotificacion("PDF Generado correctamente.");
+            });
         }
+
 
         /* --- CARGAR HISTORIAL DESDE LA NUBE --- */
         onSnapshot(presupuestosRef, (s) => {
