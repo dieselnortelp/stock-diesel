@@ -77,7 +77,7 @@
         .modal-header { padding: 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border-radius: 12px 12px 0 0; }
         .modal-body { padding: 1.5rem; }
         
-        .pres-header-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; background: #f1f5f9; padding: 1.25rem; border-radius: 8px; }
+        .pres-header-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; background: #f1f5f9; padding: 1.25rem; border-radius: 8px; }
         
         .items-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
         .items-table th { background: #1e293b; color: white; padding: 0.75rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
@@ -97,12 +97,11 @@
 
         .modal-footer { padding: 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 1rem; background: #fcfcfd; border-radius: 0 0 12px 12px; }
 
-        /* BOTÓN FLOTANTE */
-        .fab-btn { position: fixed; bottom: 30px; right: 30px; background-color: var(--primary); color: white; border: none; width: 60px; height: 60px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 100; transition: transform 0.2s, background-color 0.2s; }
-        .fab-btn:hover { transform: scale(1.05); background-color: var(--primary-hover); }
-
         .toast { position: fixed; bottom: 20px; left: 50%; background: #0f172a; color: white; padding: 1rem 1.5rem; border-radius: 8px; display: flex; align-items: center; gap: 12px; transform: translate(-50%, 150%); opacity: 0; transition: all 0.3s; z-index: 2000; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
         .toast.show { transform: translate(-50%, 0); opacity: 1; }
+
+        .fab-btn { position: fixed; bottom: 30px; right: 30px; background-color: var(--primary); color: white; border: none; width: 60px; height: 60px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 100; transition: transform 0.2s, background-color 0.2s; }
+        .fab-btn:hover { transform: scale(1.05); background-color: var(--primary-hover); }
 
         footer { text-align: center; margin-top: 3rem; color: var(--text-muted); font-size: 0.85rem; padding: 2rem; border-top: 1px solid var(--border); }
     </style>
@@ -200,6 +199,7 @@
                                 <th>Fecha</th>
                                 <th>Cliente</th>
                                 <th>Vehículo/Orden</th>
+                                <th>Enviado por</th>
                                 <th>Total</th>
                                 <th>Acciones</th>
                             </tr>
@@ -214,16 +214,16 @@
     <div id="modal-presupuesto" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h2><i data-lucide="calculator"></i> Generador de Presupuesto (Talonario)</h2>
+                <h2><i data-lucide="calculator"></i> Generador de Presupuesto</h2>
                 <button class="close-btn" onclick="cerrarModalPresupuesto()" style="background:none;border:none;cursor:pointer;"><i data-lucide="x" size="24"></i></button>
             </div>
             <div class="modal-body">
-                <div class="pres-header-grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));">
+                <div class="pres-header-grid">
                     <div class="input-group"><label>Cliente</label><input type="text" id="modal-cliente" placeholder="Nombre/Empresa"></div>
                     <div class="input-group"><label>Orden/Vehículo</label><input type="text" id="modal-vehiculo" placeholder="Patente o Modelo"></div>
                     <div class="input-group"><label>Fecha</label><input type="text" id="modal-fecha"></div>
                     <div class="input-group"><label>Nº Presupuesto</label><input type="text" id="modal-numero"></div>
-                    <div class="input-group"><label>Enviado por:</label><input type="text" id="modal-enviado" placeholder="Ej: KATIA"></div>
+                    <div class="input-group"><label>Enviado por:</label><input type="text" id="modal-enviado" placeholder="Ej: Katia o Pilar"></div>
                 </div>
 
                 <table class="items-table">
@@ -260,12 +260,12 @@
             </div>
             <div class="modal-footer">
                 <button class="btn-icon" style="margin-right: auto; color: var(--text-muted); cursor:pointer;" onclick="itemsPresupuesto = []; renderizarItemsPresupuesto();">Limpiar Todo</button>
-                <button class="btn-main-action" onclick="generarYGuardarPDF()"><i data-lucide="printer"></i> Generar Presupuesto</button>
+                <button class="btn-main-action" onclick="generarYGuardarPDF()"><i data-lucide="printer"></i> Guardar y Generar PDF</button>
             </div>
         </div>
     </div>
 
-    <div id="toast" class="toast"><i data-lucide="check-circle-2"></i> <span id="toast-msg"></span></div>
+    <div id="toast" class="toast" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #0f172a; color: white; padding: 1rem 1.5rem; border-radius: 8px; display: none; align-items: center; gap: 12px; z-index: 2000;"><i data-lucide="check-circle-2"></i> <span id="toast-msg"></span></div>
 
     <footer>
         <p>&copy; 2026 Diesel Norte - Servicio de Inyección Diesel</p>
@@ -297,16 +297,15 @@
         window.mostrarNotificacion = (msg) => {
             const t = document.getElementById('toast');
             document.getElementById('toast-msg').innerText = msg;
-            t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 3000);
+            t.style.display = 'flex';
+            setTimeout(() => t.style.display = 'none', 3000);
         }
 
         /* --- CONTROL DE MODALES --- */
         window.abrirModalPresupuesto = () => {
-            // Fecha manual con día, número y mes (minúscula) como en la foto
-            const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('modal-fecha').value = new Date().toLocaleDateString('es-AR', opciones);
+            document.getElementById('modal-fecha').value = new Date().toLocaleDateString('es-AR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
             document.getElementById('modal-numero').value = Math.floor(Math.random() * 9000 + 1000);
+            document.getElementById('modal-enviado').value = ""; // Limpiar el campo
             document.getElementById('modal-presupuesto').classList.add('active');
             renderizarItemsPresupuesto();
         }
@@ -315,7 +314,7 @@
         window.abrirModalHistorial = () => document.getElementById('modal-historial').classList.add('active');
         window.cerrarModalHistorial = () => document.getElementById('modal-historial').classList.remove('active');
 
-        /* --- LÓGICA DE PRESUPUESTO EDITABLE --- */
+        /* --- LÓGICA DE PRESUPUESTO EDITABLE CON VISIBILIDAD --- */
         let itemsPresupuesto = [];
         let showIVA = true;
         const fPlata = (n) => parseFloat(n).toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
@@ -406,11 +405,11 @@
         /* --- GUARDAR EN NUBE Y GENERAR PDF --- */
         window.generarYGuardarPDF = async () => {
             if(itemsPresupuesto.length === 0) return alert("Agrega algún ítem.");
-            const cliente = document.getElementById('modal-cliente').value || '';
-            const vehiculo = document.getElementById('modal-vehiculo').value || '';
+            const cliente = document.getElementById('modal-cliente').value || 'S/N';
+            const vehiculo = document.getElementById('modal-vehiculo').value || 'S/N';
             const fecha = document.getElementById('modal-fecha').value;
             const numero = document.getElementById('modal-numero').value;
-            const enviado = document.getElementById('modal-enviado').value || '';
+            const enviado = document.getElementById('modal-enviado').value || 'Katia / Pilar'; // Nuevo campo
 
             let subtotal = 0;
             itemsPresupuesto.forEach(item => subtotal += (item.precio * item.cantidad));
@@ -433,123 +432,68 @@
             cerrarModalPresupuesto();
         }
 
-        /* --- DISEÑO EXACTO AL TALONARIO DE LA FOTO --- */
+        /* --- PLANTILLA CLÁSICA DE DIESEL NORTE CON "ENVIADO POR" --- */
         function ejecutarDescargaPDF(cliente, vehiculo, fecha, numero, enviado, listaItems, subtotal, ivaVal, totalFinal, mostrarIvaPdf) {
             let filasHTML = '';
             listaItems.forEach(item => {
                 const tf = item.precio * item.cantidad;
-                // El ojito en el PDF
-                let txtPrecio = item.mostrarPrecio ? `$ ${fPlata(item.precio)}` : '';
-                let txtTotal = item.mostrarPrecio ? `$ ${fPlata(tf)}` : '';
+                // La lógica del ojito que te gustó: si está desactivado muestra un guión (-)
+                let txtPrecio = item.mostrarPrecio ? `$ ${fPlata(item.precio)}` : '-';
+                let txtTotal = item.mostrarPrecio ? `$ ${fPlata(tf)}` : '-';
 
-                // Sin bordes inferiores para imitar la escritura libre de la foto
-                filasHTML += `
-                    <tr>
-                        <td style="padding: 6px 10px; font-weight: bold; text-transform: uppercase;">${item.concepto}</td>
-                        <td style="text-align: center; padding: 6px 10px;">${txtPrecio}</td>
-                        <td style="text-align: center; padding: 6px 10px;">${item.cantidad}</td>
-                        <td style="text-align: right; padding: 6px 10px;">${txtTotal}</td>
-                    </tr>`;
+                filasHTML += `<tr style="border-bottom:1px solid #000"><td style="padding:10px;border-right:1px solid #000">${item.concepto}</td><td style="width:120px;text-align:center;border-right:1px solid #000">${txtPrecio}</td><td style="width:70px;text-align:center;border-right:1px solid #000">${item.cantidad}</td><td style="width:120px;text-align:right">${txtTotal}</td></tr>`;
             });
 
-            // Ancho bloqueado en un String limpio. Idéntico a la foto que mandaste.
+            // Agregué el ENVIADO POR debajo de la fecha
             const template = `
-                <div style="width: 760px; margin: 0; padding: 20px 40px; font-family: Arial, sans-serif; font-size: 11px; color: #000; background: white;">
-                    
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; font-size: 10px;">
-                        <div>TALLER DE INYECCIÓN</div>
-                        <div style="font-weight: bold;">@dieselnortelp</div>
-                        <div style="text-align: right;">HORARIO: LUNES A VIERNES<br>8 a 17hrs</div>
+                <div style="width: 800px; padding:30px 40px; box-sizing: border-box; font-family:Arial, sans-serif; color:#000; background:white; font-size:13px;">
+                    <h2 style="text-align:center; font-size:24px; margin-bottom:20px;">PRESUPUESTO</h2>
+                    <div style="display:flex; border:1px solid #000; margin-bottom:15px;">
+                        <div style="flex:1; padding:10px; border-right:1px solid #000;">
+                            <p><strong>DIESEL NORTE</strong></p>
+                            <p>Av. 72 773, La Plata.</p>
+                            <p>Tel: 2216745202 | dieselnorte@hotmail.es</p>
+                        </div>
+                        <div style="width:220px; padding:10px; text-align:center; display:flex; align-items:center; justify-content:center;">
+                            <img src="logo.jpg" style="max-width:180px; max-height:80px;">
+                        </div>
                     </div>
-                    
-                    <h2 style="text-align: center; font-size: 18px; font-weight: bold; margin: 0 0 15px 0;">PRESUPUESTO</h2>
-
-                    <table style="width: 100%; border: 1px solid #000; border-collapse: collapse; margin-bottom: 5px;">
-                        <tr>
-                            <td style="padding: 10px; width: 70%; vertical-align: top;">
-                                <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
-                                    <tr><td style="width: 80px; padding-bottom: 3px;">Nombre:</td><td style="padding-bottom: 3px;"><strong>DIESEL NORTE</strong></td></tr>
-                                    <tr><td style="padding-bottom: 3px;">Dirección:</td><td style="padding-bottom: 3px;">Av. 72 773, B1904 La Plata.</td></tr>
-                                    <tr><td style="padding-bottom: 3px;">Teléfonos:</td><td style="padding-bottom: 3px;">22161624400 / 2216745202</td></tr>
-                                    <tr><td>Correo:</td><td>dieselnorte@hotmail.es</td></tr>
-                                </table>
-                            </td>
-                            <td style="padding: 10px; width: 30%; text-align: center; vertical-align: middle; border-left: 1px solid #000;">
-                                <img src="logo.jpg" style="max-width: 140px; max-height: 60px; object-fit: contain;">
-                            </td>
-                        </tr>
+                    <div style="display:flex; border:1px solid #000; margin-bottom:15px;">
+                        <div style="flex:1; padding:10px; border-right:1px solid #000;">
+                            <span style="text-transform:capitalize;">${fecha}</span><br>
+                            <span style="display:inline-block; margin-top:5px;"><strong>PRESUPUESTO ENVIADO POR:</strong> ${enviado.toUpperCase()}</span>
+                        </div>
+                        <div style="width:220px; padding:10px; display:flex; align-items:center;"><strong>Nº:</strong> <span style="margin-left:5px;">${numero}</span></div>
+                    </div>
+                    <div style="border:1px solid #000; padding:10px; margin-bottom:20px; line-height:1.6;">
+                        <p><strong>CLIENTE:</strong> ${cliente}</p>
+                        <p><strong>ORDEN/VEHÍCULO:</strong> ${vehiculo}</p>
+                        <p><strong>GARANTÍA DIESEL</strong></p>
+                    </div>
+                    <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px;">
+                        <thead><tr style="background:#eee; border-bottom:1px solid #000"><th style="padding:10px;text-align:left;border-right:1px solid #000">CONCEPTO</th><th style="width:120px;border-right:1px solid #000">UNITARIO</th><th style="width:70px;border-right:1px solid #000">CANT.</th><th style="width:120px;text-align:right">SUBTOTAL</th></tr></thead>
+                        <tbody>${filasHTML}</tbody>
                     </table>
-
-                    <table style="width: 100%; border: 1px solid #000; border-collapse: collapse; margin-bottom: 10px; text-align: center; font-size: 11px;">
-                        <tr>
-                            <td style="padding: 5px;">
-                                <span style="text-transform: lowercase;">${fecha}</span><br>
-                                PRESUPUESTO ENVIADO POR: &nbsp;&nbsp;&nbsp; <strong>${enviado.toUpperCase()}</strong>
-                            </td>
-                        </tr>
-                    </table>
-
-                    <div style="border: 1px solid #000; padding: 10px; margin-bottom: 15px; font-size: 11px; line-height: 1.6;">
-                        CLIENTE:<br>
-                        <div style="display: flex;"><div style="width: 100px;">Nombre:</div><strong>${cliente.toUpperCase()}</strong></div>
-                        <div style="display: flex;"><div style="width: 100px;">ORDEN:</div></div>
-                        <div style="display: flex;"><div style="width: 100px;">Presupuesto de:</div><strong>${vehiculo.toUpperCase()}</strong></div>
-                        <strong>GARANTIA DIESEL</strong>
+                    <div style="display:flex; border:1px solid #000; min-height:100px;">
+                        <div style="flex:1; padding:10px; border-right:1px solid #000;"><strong>EFECTIVO S/ FACTURA</strong></div>
+                        <div style="width:220px; padding:10px; line-height:1.8;">
+                            <div style="display:flex;justify-content:space-between"><span>SUBTOTAL:</span><span>$ ${fPlata(subtotal)}</span></div>
+                            ${mostrarIvaPdf ? `<div style="display:flex;justify-content:space-between"><span>IVA 21%:</span><span>$ ${fPlata(ivaVal)}</span></div>` : ''}
+                            <div style="display:flex;justify-content:space-between;margin-top:10px;font-weight:bold;font-size:15px"><span>TOTAL:</span><span>$ ${fPlata(totalFinal)}</span></div>
+                        </div>
                     </div>
+                </div>`;
 
-                    <div style="border: 1px solid #000; padding: 10px; min-height: 350px; font-size: 11px;">
-                        <div style="margin-bottom: 15px; font-weight: bold;">CONCEPTO:</div>
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <thead>
-                                <tr style="border-bottom: 1px solid #000;">
-                                    <th style="text-align: left; padding-bottom: 5px; width: 45%;">ACTIVIDAD</th>
-                                    <th style="text-align: center; padding-bottom: 5px; width: 20%;">PRECIO UNITARIO</th>
-                                    <th style="text-align: center; padding-bottom: 5px; width: 15%;">CANTIDAD</th>
-                                    <th style="text-align: right; padding-bottom: 5px; width: 20%;">Valor SIN IVA</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${filasHTML}
-                            </tbody>
-                        </table>
-                    </div>
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = template;
 
-                    <div style="text-align: center; font-weight: bold; font-size: 12px; margin: 15px 0;">
-                        "Presupuesto válido por 48 horas sujeto a disponibilidad de stock de repuestos."
-                    </div>
-
-                    <table style="width: 100%; border: 1px solid #000; border-collapse: collapse; font-size: 12px;">
-                        <tr>
-                            <td style="padding: 15px; vertical-align: top; width: 50%;">
-                                <strong>EFECTIVO S/ FACTURA</strong>
-                            </td>
-                            <td style="padding: 15px; width: 50%; text-align: right; vertical-align: bottom;">
-                                ${mostrarIvaPdf ? `
-                                <div style="display: flex; justify-content: flex-end; margin-bottom: 5px;">
-                                    <span style="margin-right: 20px;">SUBTOTAL:</span>
-                                    <span>$ ${fPlata(subtotal)}</span>
-                                </div>
-                                <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
-                                    <span style="margin-right: 20px;">IVA 21%:</span>
-                                    <span>$ ${fPlata(ivaVal)}</span>
-                                </div>
-                                ` : ''}
-                                <div style="font-size: 16px;">
-                                    <strong>TOTAL:</strong> <span style="margin-left: 30px; font-weight: normal;">$ ${fPlata(totalFinal)}</span>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            `;
-
-            // SE ENVÍA COMO STRING DIRECTO (Evita que la pantalla del celular lo corte)
+            // windowWidth: 850 obliga a html2canvas a tomar la foto como si fuera una computadora, evitando recortes en celulares
             html2pdf().set({ 
-                margin: 0.2, 
+                margin: 0.5, 
                 filename: `Presupuesto_${cliente.replace(/\s+/g, '_')}.pdf`, 
-                html2canvas: { scale: 2, useCORS: true }, 
-                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } 
-            }).from(template).save().then(() => {
+                html2canvas: {scale: 2, useCORS: true, windowWidth: 850}, 
+                jsPDF: {unit: 'in', format: 'a4'} 
+            }).from(wrapper).save().then(() => {
                 mostrarNotificacion("PDF Generado correctamente.");
             });
         }
@@ -566,12 +510,14 @@
             const tb = document.getElementById('listaHistorial');
             tb.innerHTML = '';
             historialPresupuestos.forEach(pres => {
+                const env = pres.enviado || '-'; // Por si hay presupuestos viejos que no lo tengan
                 tb.innerHTML += `
                     <tr>
                         <td><strong>${pres.numero}</strong></td>
                         <td>${pres.fecha}</td>
                         <td>${pres.cliente}</td>
                         <td>${pres.vehiculo}</td>
+                        <td>${env}</td>
                         <td style="font-weight: 600;">$ ${fPlata(pres.total)}</td>
                         <td class="actions">
                             <button class="btn-icon" onclick="reimprimir('${pres.id}')" style="color:var(--primary);border:none;background:none;cursor:pointer;" title="Reimprimir PDF"><i data-lucide="printer"></i></button>
@@ -586,7 +532,8 @@
         window.reimprimir = (id) => {
             const pres = historialPresupuestos.find(p => p.id === id);
             if(!pres) return;
-            ejecutarDescargaPDF(pres.cliente, pres.vehiculo, pres.fecha, pres.numero, pres.enviado || '', pres.items, pres.subtotal, pres.iva, pres.total, pres.showIVA);
+            const env = pres.enviado || 'Katia / Pilar';
+            ejecutarDescargaPDF(pres.cliente, pres.vehiculo, pres.fecha, pres.numero, env, pres.items, pres.subtotal, pres.iva, pres.total, pres.showIVA);
         }
 
         window.borrarPresupuesto = async (id) => {
