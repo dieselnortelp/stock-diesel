@@ -97,7 +97,7 @@
 
         .modal-footer { padding: 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 1rem; background: #fcfcfd; border-radius: 0 0 12px 12px; }
 
-        /* TOAST (Notificaciones) centrado abajo */
+        /* TOAST (Notificaciones) */
         .toast { position: fixed; bottom: 20px; left: 50%; background: #0f172a; color: white; padding: 1rem 1.5rem; border-radius: 8px; display: flex; align-items: center; gap: 12px; transform: translate(-50%, 150%); opacity: 0; transition: all 0.3s; z-index: 2000; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
         .toast.show { transform: translate(-50%, 0); opacity: 1; }
 
@@ -265,8 +265,6 @@
         </div>
     </div>
 
-    <div id="pdf-container" style="display:none;"></div>
-
     <div id="toast" class="toast"><i data-lucide="check-circle-2"></i> <span id="toast-msg"></span></div>
 
     <footer>
@@ -314,7 +312,6 @@
 
         window.abrirModalHistorial = () => document.getElementById('modal-historial').classList.add('active');
         window.cerrarModalHistorial = () => document.getElementById('modal-historial').classList.remove('active');
-
 
         /* --- LÓGICA DE PRESUPUESTO EDITABLE CON VISIBILIDAD --- */
         let itemsPresupuesto = [];
@@ -432,7 +429,7 @@
             cerrarModalPresupuesto();
         }
 
-        /* --- MOTOR DE PDF CLÁSICO COMPARTIDO --- */
+        /* --- MOTOR DE PDF CLÁSICO SOLUCIONADO (CREA EN MEMORIA) --- */
         function ejecutarDescargaPDF(cliente, vehiculo, fecha, numero, listaItems, subtotal, ivaVal, totalFinal, mostrarIvaPdf) {
             let filasHTML = '';
             listaItems.forEach(item => {
@@ -450,7 +447,7 @@
             });
 
             const template = `
-                <div style="padding: 20px 40px; font-family: Arial, sans-serif; color: #000; background: white; font-size: 13px;">
+                <div style="width: 800px; box-sizing: border-box; padding: 30px 40px; font-family: Arial, sans-serif; color: #000; background: white; font-size: 13px;">
                     <h2 style="text-align: center; font-size: 24px; margin-bottom: 20px; letter-spacing: 2px;">PRESUPUESTO</h2>
 
                     <div style="display: flex; border: 1px solid #000; margin-bottom: 15px;">
@@ -500,6 +497,11 @@
                 </div>
             `;
 
+            // En lugar de usar un contenedor escondido (display:none), creamos el div en la memoria
+            // Esto evita que html2canvas lo dibuje "en blanco" o recortado
+            const element = document.createElement('div');
+            element.innerHTML = template;
+
             const opt = {
                 margin: 0.5,
                 filename: `Presupuesto_${cliente.replace(/\s+/g, '_')}_N${numero}.pdf`,
@@ -508,11 +510,8 @@
                 jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
             };
 
-            const element = document.getElementById('pdf-container');
-            element.innerHTML = template;
-
             html2pdf().set(opt).from(element).save().then(() => {
-                element.innerHTML = '';
+                mostrarNotificacion("PDF Generado correctamente.");
             });
         }
 
@@ -557,7 +556,7 @@
             if(confirm('¿Borrar este presupuesto del historial? Esta acción no se puede deshacer.')) {
                 try {
                     await deleteDoc(doc(db, 'presupuestos', id));
-                    mostrarNotificacion("Presupuesto eliminado de la nube.");
+                    mostrarNotificacion("Presupuesto eliminado.");
                 } catch(e) {
                     console.error(e);
                     mostrarNotificacion("Hubo un error al eliminar.");
