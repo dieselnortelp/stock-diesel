@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control de Stock - Diesel Norte</title>
+    <title>Control de Stock y Presupuestos - Diesel Norte</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
             --primary: #1e3a8a;
@@ -31,44 +32,69 @@
 
         .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
 
-        .card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1); margin-bottom: 2rem; overflow: hidden; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); padding: 1.5rem; display: flex; align-items: center; gap: 1.25rem; box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1); transition: transform 0.2s, box-shadow 0.2s; }
+        .stat-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1); }
+        .stat-icon { width: 56px; height: 56px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; }
+        .icon-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .icon-red { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+        .icon-green { background: linear-gradient(135deg, #22c55e, #15803d); }
+        .stat-info h3 { font-size: 0.875rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+        .stat-info p { font-size: 1.75rem; font-weight: 700; color: var(--text-main); line-height: 1; }
+
+        .card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1); margin-bottom: 2rem; overflow: hidden; transition: box-shadow 0.3s; }
+        .card:hover { box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
         .card-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); background-color: #fcfcfd; }
         .card-header h2 { font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
 
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; padding: 1.5rem; }
+        .form-grid-full { grid-column: 1 / -1; }
         .input-group { display: flex; flex-direction: column; gap: 6px; }
         label { font-size: 0.875rem; font-weight: 500; color: var(--text-muted); }
-        input, select { padding: 0.625rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; }
+        input, select, textarea { padding: 0.625rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; font-family: 'Inter', sans-serif; transition: border-color 0.2s, box-shadow 0.2s; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
         input[type="file"] { padding: 0.4rem; background: #f8fafc; cursor: pointer; }
 
-        .btn-add { background-color: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 1.5rem 1.5rem auto; transition: background 0.2s; width: calc(100% - 3rem); max-width: 300px; }
+        .btn-add { background-color: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 1.5rem 1.5rem auto; transition: background 0.2s, transform 0.1s; width: calc(100% - 3rem); max-width: 300px; }
         .btn-add:hover { background-color: var(--primary-hover); }
+        .btn-add:active { transform: scale(0.98); }
+        
+        .btn-pdf { background-color: #0f172a; margin-top: 1rem; }
+        .btn-pdf:hover { background-color: #1e293b; }
 
         .search-area { padding: 0 1.5rem 1.5rem; position: relative; }
-        .search-input { width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border-radius: 8px; border: 1px solid var(--border); }
+        .search-input { width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border-radius: 8px; border: 1px solid var(--border); transition: border-color 0.2s; }
+        .search-input:focus { outline: none; border-color: #3b82f6; }
         .search-icon { position: absolute; left: 2.2rem; top: 0.8rem; color: var(--text-muted); }
 
         .table-container { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; text-align: left; min-width: 800px; }
-        th { background-color: #1e293b; padding: 1rem; font-size: 0.8rem; text-transform: uppercase; color: white; font-weight: 600; }
-        td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; vertical-align: middle; }
-        tr:hover { background-color: #f1f5f9; }
+        th { background-color: #1e293b; padding: 1rem; font-size: 0.8rem; text-transform: uppercase; color: white; font-weight: 600; letter-spacing: 0.05em; }
+        td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; vertical-align: middle; transition: background-color 0.2s; }
+        tr:hover td { background-color: #f1f5f9; }
 
-        .thumb-img { width: 50px; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); background: #fff; }
+        .thumb-img { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
         .qr-canvas { width: 50px; height: 50px; border-radius: 4px; }
 
-        .stock-badge { padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600; text-align: center; display: inline-block; min-width: 40px;}
-        .stock-low { background-color: #fef2f2; color: var(--danger); }
-        .stock-ok { background-color: #f0fdf4; color: var(--success); }
+        .stock-badge { padding: 0.35rem 0.6rem; border-radius: 6px; font-weight: 600; text-align: center; display: inline-block; min-width: 40px; font-size: 0.875rem;}
+        .stock-low { background-color: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; }
+        .stock-ok { background-color: #f0fdf4; color: #16a34a; border: 1px solid #86efac; }
 
         .actions { display: flex; gap: 4px; }
-        .btn-icon { border: none; background: none; cursor: pointer; padding: 6px; border-radius: 4px; }
+        .btn-icon { border: none; background: none; cursor: pointer; padding: 6px; border-radius: 6px; transition: background 0.2s, color 0.2s; }
         .btn-icon:hover { background: #e2e8f0; }
-        .delete-btn { color: var(--danger); }
+        .delete-btn { color: var(--text-muted); }
+        .delete-btn:hover { color: var(--danger); background: #fef2f2; }
         .stock-btn { color: var(--success); }
+        .stock-btn:hover { background: #f0fdf4; }
         .stock-btn-minus { color: var(--warning); }
+        .stock-btn-minus:hover { background: #fef3c7; }
 
-        #loader { display: none; margin: 1rem 1.5rem; color: var(--text-muted); font-size: 0.9rem; font-weight: 500; }
+        #loader { display: none; margin: 1rem 1.5rem; color: var(--primary); font-size: 0.9rem; font-weight: 600; align-items: center; gap: 8px; }
+
+        .toast { position: fixed; bottom: 20px; right: 20px; background: #0f172a; color: white; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 12px; transform: translateY(150%); opacity: 0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1000; font-weight: 500; font-size: 0.95rem; }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast-icon { color: #38bdf8; }
 
         footer { text-align: center; margin-top: 3rem; color: var(--text-muted); font-size: 0.85rem; padding: 2rem; border-top: 1px solid var(--border); }
     </style>
@@ -79,16 +105,80 @@
         <div class="header-content">
             <div class="logo-area">
                 <i data-lucide="settings-2"></i>
-                <h1>Diesel Norte - Control de Stock</h1>
+                <h1>Diesel Norte - Gestión Integral</h1>
             </div>
             <span>La Plata, Arg.</span>
         </div>
     </header>
 
     <div class="container">
+        
+        <div class="dashboard-grid">
+            <div class="stat-card">
+                <div class="stat-icon icon-blue"><i data-lucide="layers" size="28"></i></div>
+                <div class="stat-info">
+                    <h3>Total Piezas en Stock</h3>
+                    <p id="stat-total">0</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon icon-red"><i data-lucide="alert-circle" size="28"></i></div>
+                <div class="stat-info">
+                    <h3>Alertas de Reposición</h3>
+                    <p id="stat-bajos">0</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon icon-green"><i data-lucide="tags" size="28"></i></div>
+                <div class="stat-info">
+                    <h3>Categorías Activas</h3>
+                    <p id="stat-tipos">0</p>
+                </div>
+            </div>
+        </div>
+
         <section class="card">
             <div class="card-header">
-                <h2><i data-lucide="plus-circle"></i> Añadir Nuevo Repuesto</h2>
+                <h2><i data-lucide="file-signature"></i> Generar Nuevo Presupuesto</h2>
+            </div>
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>Nombre del Cliente / Empresa</label>
+                    <input type="text" id="pres-cliente" placeholder="Ej: Transporte Los Andes">
+                </div>
+                <div class="input-group">
+                    <label>Vehículo / Motor</label>
+                    <input type="text" id="pres-vehiculo" placeholder="Ej: Scania G340">
+                </div>
+                <div class="input-group form-grid-full">
+                    <label>Detalle del Servicio a Realizar</label>
+                    <textarea id="pres-detalle" rows="3" placeholder="Ej: Calibración y reparación de 6 inyectores Bosch. Limpieza de sistema..."></textarea>
+                </div>
+                <div class="input-group">
+                    <label>Costo de Repuestos ($)</label>
+                    <input type="number" id="pres-repuestos" placeholder="0.00">
+                </div>
+                <div class="input-group">
+                    <label>Costo Mano de Obra ($)</label>
+                    <input type="number" id="pres-manoobra" placeholder="0.00">
+                </div>
+                <div class="input-group">
+                    <label>Validez del Presupuesto</label>
+                    <select id="pres-validez">
+                        <option value="7 días">7 días</option>
+                        <option value="15 días">15 días</option>
+                        <option value="30 días">30 días</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn-add btn-pdf" onclick="generarPDF()">
+                <i data-lucide="printer"></i> Crear y Descargar PDF
+            </button>
+        </section>
+
+        <section class="card">
+            <div class="card-header">
+                <h2><i data-lucide="plus-circle"></i> Añadir Nuevo Repuesto al Stock</h2>
             </div>
             <div class="form-grid">
                 <div class="input-group">
@@ -130,9 +220,9 @@
                     <input type="file" id="imagen" accept="image/*">
                 </div>
             </div>
-            <div id="loader">Guardando en la base de datos...</div>
-            <button class="btn-add" onclick="agregarRepuesto()">
-                <i data-lucide="save"></i> Agregar Repuesto
+            <div id="loader"><i data-lucide="loader-2" class="spin"></i> Sincronizando con la nube...</div>
+            <button class="btn-add" onclick="agregarRepuesto()" id="btn-submit">
+                <i data-lucide="save"></i> Guardar en Inventario
             </button>
         </section>
 
@@ -154,8 +244,8 @@
                             <th>Nombre</th>
                             <th>Marca / Tipo</th>
                             <th>Ubicación</th>
-                            <th>Stock Min.</th>
-                            <th>Cant. Actual</th>
+                            <th>Mínimo</th>
+                            <th>Stock</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -166,17 +256,20 @@
         </section>
     </div>
 
+    <div id="toast" class="toast">
+        <i data-lucide="check-circle-2" class="toast-icon"></i> 
+        <span id="toast-msg">Mensaje</span>
+    </div>
+
     <footer>
         <p>&copy; 2026 Diesel Norte - Servicio de Inyección Diesel</p>
-        <p>Avenue 72 #773, La Plata | Tel: 2216745202</p>
-        <p>dieselnorte@hotmail.es</p>
+        <p>Av. 72 #773, La Plata | Tel: 2216745202</p>
     </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
         import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
-        // Tus nuevas credenciales
         const firebaseConfig = {
             apiKey: "AIzaSyCx_qCzokPIKPDec36D3If50PW_BdkxRiU",
             authDomain: "dieselnortelp-6d680.firebaseapp.com",
@@ -194,7 +287,119 @@
         let inventario = [];
         lucide.createIcons();
 
-        // Escuchar datos en tiempo real
+        window.mostrarNotificacion = function(mensaje) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = mensaje;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        /* --- LÓGICA DE PRESUPUESTOS (NUEVO) --- */
+        window.generarPDF = function() {
+            const cliente = document.getElementById('pres-cliente').value || 'Consumidor Final';
+            const vehiculo = document.getElementById('pres-vehiculo').value || 'N/A';
+            const detalle = document.getElementById('pres-detalle').value || 'Servicio de taller';
+            const validez = document.getElementById('pres-validez').value;
+            
+            const costoRepuestos = parseFloat(document.getElementById('pres-repuestos').value) || 0;
+            const costoManoObra = parseFloat(document.getElementById('pres-manoobra').value) || 0;
+            const total = costoRepuestos + costoManoObra;
+
+            const fecha = new Date().toLocaleDateString('es-AR');
+            const numeroPresupuesto = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+
+            // Plantilla HTML del Presupuesto Moderno
+            const template = `
+                <div style="padding: 40px; font-family: 'Inter', sans-serif; color: #1e293b; background: white;">
+                    <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #1e3a8a; padding-bottom: 20px; margin-bottom: 30px;">
+                        <div>
+                            <h1 style="color: #1e3a8a; font-size: 28px; margin: 0;">DIESEL NORTE</h1>
+                            <p style="margin: 5px 0 0; font-size: 14px; color: #64748b;">Servicio Integral de Inyección Diesel</p>
+                        </div>
+                        <div style="text-align: right; font-size: 14px;">
+                            <p style="margin: 0;">Av. 72 #773, La Plata</p>
+                            <p style="margin: 5px 0;">Tel: 2216745202</p>
+                            <p style="margin: 0;">dieselnorte@hotmail.es</p>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 40px;">
+                        <h2 style="font-size: 20px; margin-bottom: 15px; color: #1e3a8a;">PRESUPUESTO DE SERVICIO #${numeroPresupuesto}</h2>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: #f8fafc; padding: 20px; border-radius: 8px;">
+                            <div>
+                                <p style="margin: 0 0 8px;"><strong>Cliente:</strong> ${cliente}</p>
+                                <p style="margin: 0;"><strong>Vehículo/Motor:</strong> ${vehiculo}</p>
+                            </div>
+                            <div style="text-align: right;">
+                                <p style="margin: 0 0 8px;"><strong>Fecha:</strong> ${fecha}</p>
+                                <p style="margin: 0;"><strong>Validez:</strong> ${validez}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 40px;">
+                        <h3 style="font-size: 16px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 15px;">Detalle del Trabajo</h3>
+                        <p style="white-space: pre-wrap; font-size: 14px; line-height: 1.6; color: #334155;">${detalle}</p>
+                    </div>
+
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 40px;">
+                        <thead>
+                            <tr style="background-color: #1e293b; color: white;">
+                                <th style="padding: 12px; text-align: left; border-radius: 6px 0 0 6px;">Concepto</th>
+                                <th style="padding: 12px; text-align: right; border-radius: 0 6px 6px 0;">Importe</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 15px 12px;">Materiales y Repuestos</td>
+                                <td style="padding: 15px 12px; text-align: right;">$ ${costoRepuestos.toLocaleString('es-AR', {minimumFractionDigits: 2})}</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 15px 12px;">Mano de Obra Especializada</td>
+                                <td style="padding: 15px 12px; text-align: right;">$ ${costoManoObra.toLocaleString('es-AR', {minimumFractionDigits: 2})}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="display: flex; justify-content: flex-end; margin-bottom: 50px;">
+                        <div style="background: #1e3a8a; color: white; padding: 15px 30px; border-radius: 8px; text-align: center; min-width: 250px;">
+                            <p style="margin: 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Total Presupuestado</p>
+                            <p style="margin: 5px 0 0; font-size: 24px; font-weight: bold;">$ ${total.toLocaleString('es-AR', {minimumFractionDigits: 2})}</p>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; font-size: 12px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+                        <p style="margin: 0 0 5px;">Los trabajos cuentan con garantía de taller. Los precios pueden variar según disponibilidad de importación.</p>
+                        <p style="margin: 0;">Ante cualquier consulta, comuníquese con nuestras asesoras Katia o Pilar.</p>
+                    </div>
+                </div>
+            `;
+
+            const opt = {
+                margin:       0,
+                filename:     `Presupuesto_DieselNorte_${cliente.replace(/\s+/g, '_')}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Crear div temporal y renderizar
+            const element = document.createElement('div');
+            element.innerHTML = template;
+            html2pdf().set(opt).from(element).save().then(() => {
+                mostrarNotificacion("PDF generado y descargado correctamente.");
+                // Limpiar formulario
+                document.getElementById('pres-cliente').value = '';
+                document.getElementById('pres-vehiculo').value = '';
+                document.getElementById('pres-detalle').value = '';
+                document.getElementById('pres-repuestos').value = '';
+                document.getElementById('pres-manoobra').value = '';
+            });
+        }
+        /* -------------------------------------- */
+
+
+        // Lógica de Inventario (Firebase)
         onSnapshot(repuestosRef, (snapshot) => {
             inventario = []; 
             snapshot.forEach((documento) => {
@@ -217,15 +422,15 @@
         }
 
         window.agregarRepuesto = async function() {
-            const btn = document.querySelector('.btn-add');
+            const btn = document.getElementById('btn-submit');
             const loader = document.getElementById('loader');
             const nombre = document.getElementById('nombre').value;
             const codigo = document.getElementById('codigo').value;
 
-            if(!nombre || !codigo) return alert("Nombre y Código son obligatorios");
+            if(!nombre || !codigo) return mostrarNotificacion("⚠️ Completa Nombre y Código.");
 
             btn.style.display = 'none';
-            loader.style.display = 'block';
+            loader.style.display = 'flex';
 
             const inputImg = document.getElementById('imagen');
             
@@ -244,12 +449,13 @@
 
                 try {
                     await addDoc(repuestosRef, nuevo);
-                    document.querySelectorAll('input').forEach(i => i.value = (i.type === 'number' ? 0 : ''));
+                    document.querySelectorAll('input[type="text"], input[type="file"]').forEach(i => i.value = '');
                     document.getElementById('minimo').value = 5;
-                    document.getElementById('imagen').value = '';
+                    document.getElementById('cantidad').value = 0;
+                    mostrarNotificacion("¡Repuesto guardado!");
                 } catch (e) {
-                    console.error("Error añadiendo documento: ", e);
-                    alert("Error al guardar. Revisa tu conexión a internet.");
+                    console.error("Error: ", e);
+                    mostrarNotificacion("❌ Error de conexión.");
                 } finally {
                     btn.style.display = 'flex';
                     loader.style.display = 'none';
@@ -263,14 +469,15 @@
             try {
                 await updateDoc(docRef, { cantidad: nuevaCantidad });
             } catch(e) {
-                console.error("Error actualizando stock", e);
+                console.error("Error", e);
             }
         }
 
         window.eliminarRepuesto = async function(idFirebase) {
-            if(confirm("¿Estás seguro de eliminar este repuesto definitivamente?")) {
+            if(confirm("¿Eliminar este repuesto definitivamente?")) {
                 const docRef = doc(db, "repuestos", idFirebase);
                 await deleteDoc(docRef);
+                mostrarNotificacion("Repuesto eliminado.");
             }
         }
 
@@ -278,14 +485,22 @@
             const query = document.getElementById('buscar').value.toLowerCase();
             const tbody = document.getElementById('listaRepuestos');
             tbody.innerHTML = '';
+            
             let qrsADibujar = [];
+            let totalPiezas = 0;
+            let alertasStock = 0;
+            let categoriasSet = new Set();
 
             inventario.forEach(item => {
+                const esBajo = item.cantidad <= item.minimo;
+                
+                totalPiezas += item.cantidad;
+                if(esBajo) alertasStock++;
+                if(item.categoria) categoriasSet.add(item.categoria);
+
                 if(item.nombre.toLowerCase().includes(query) || 
                    item.codigo.toLowerCase().includes(query) || 
                    item.marca.toLowerCase().includes(query)) {
-                    
-                    const esBajo = item.cantidad <= item.minimo;
                     
                     const row = `
                         <tr>
@@ -313,6 +528,10 @@
                 }
             });
             
+            document.getElementById('stat-total').innerText = totalPiezas;
+            document.getElementById('stat-bajos').innerText = alertasStock;
+            document.getElementById('stat-tipos').innerText = categoriasSet.size;
+
             lucide.createIcons();
 
             qrsADibujar.forEach(qrInfo => {
