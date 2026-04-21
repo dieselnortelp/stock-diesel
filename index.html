@@ -70,7 +70,7 @@
         .btn-icon { border: none; background: none; cursor: pointer; padding: 6px; border-radius: 6px; transition: 0.2s; }
         .btn-icon:hover { background: #e2e8f0; }
 
-        /* MODAL DE PRESUPUESTOS MEJORADO */
+        /* MODALES */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.7); display: none; justify-content: center; align-items: flex-start; padding: 2rem 1rem; z-index: 1000; overflow-y: auto; backdrop-filter: blur(4px); }
         .modal-overlay.active { display: flex; }
         .modal-content { background: white; border-radius: 12px; width: 100%; max-width: 1000px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
@@ -83,7 +83,6 @@
         .items-table th { background: #1e293b; color: white; padding: 0.75rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
         .items-table td { padding: 0.4rem; border-bottom: 1px solid var(--border); }
         
-        /* Estilos para edición */
         .editable-input { width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px; background: #fff; font-size: 0.9rem; transition: border-color 0.2s; }
         .editable-input:focus { border-color: var(--primary); outline: none; background: #eff6ff; }
         
@@ -93,14 +92,18 @@
         .pres-totals div { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 1rem; align-items: center; }
         .pres-totals .total-final { font-size: 1.4rem; font-weight: 700; color: var(--primary); border-top: 2px solid var(--primary); padding-top: 0.5rem; margin-top: 0.5rem; }
 
-        /* Toggle Button */
         .toggle-btn { background: #e2e8f0; border: none; padding: 6px 8px; border-radius: 6px; cursor: pointer; color: var(--text-muted); transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center;}
         .toggle-btn.active { background: var(--primary); color: white; }
 
         .modal-footer { padding: 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 1rem; background: #fcfcfd; border-radius: 0 0 12px 12px; }
 
-        .toast { position: fixed; bottom: 20px; right: 20px; background: #0f172a; color: white; padding: 1rem 1.5rem; border-radius: 8px; display: flex; align-items: center; gap: 12px; transform: translateY(150%); opacity: 0; transition: all 0.3s; z-index: 2000; }
-        .toast.show { transform: translateY(0); opacity: 1; }
+        /* TOAST (Notificaciones) centrado abajo */
+        .toast { position: fixed; bottom: 20px; left: 50%; background: #0f172a; color: white; padding: 1rem 1.5rem; border-radius: 8px; display: flex; align-items: center; gap: 12px; transform: translate(-50%, 150%); opacity: 0; transition: all 0.3s; z-index: 2000; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+        .toast.show { transform: translate(-50%, 0); opacity: 1; }
+
+        /* BOTÓN FLOTANTE HISTORIAL */
+        .fab-btn { position: fixed; bottom: 30px; right: 30px; background-color: var(--primary); color: white; border: none; width: 60px; height: 60px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 100; transition: transform 0.2s, background-color 0.2s; }
+        .fab-btn:hover { transform: scale(1.05); background-color: var(--primary-hover); }
 
         footer { text-align: center; margin-top: 3rem; color: var(--text-muted); font-size: 0.85rem; padding: 2rem; border-top: 1px solid var(--border); }
     </style>
@@ -140,25 +143,6 @@
         </div>
 
         <section class="card">
-            <div class="card-header"><h2><i data-lucide="history"></i> Historial de Presupuestos (Nube)</h2></div>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nº Pres.</th>
-                            <th>Fecha</th>
-                            <th>Cliente</th>
-                            <th>Vehículo/Orden</th>
-                            <th>Total</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="listaHistorial"></tbody>
-                </table>
-            </div>
-        </section>
-
-        <section class="card">
             <div class="card-header"><h2><i data-lucide="plus-circle"></i> Nuevo Repuesto en Stock</h2></div>
             <div class="form-grid">
                 <div class="input-group"><label>Nombre</label><input type="text" id="nombre"></div>
@@ -196,6 +180,36 @@
                 </table>
             </div>
         </section>
+    </div>
+
+    <button class="fab-btn" onclick="abrirModalHistorial()" title="Ver Historial de Presupuestos">
+        <i data-lucide="history"></i>
+    </button>
+
+    <div id="modal-historial" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i data-lucide="history"></i> Historial de Presupuestos Emitidos</h2>
+                <button class="close-btn" onclick="cerrarModalHistorial()"><i data-lucide="x" size="24"></i></button>
+            </div>
+            <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nº Pres.</th>
+                                <th>Fecha</th>
+                                <th>Cliente</th>
+                                <th>Vehículo/Orden</th>
+                                <th>Total</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listaHistorial"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="modal-presupuesto" class="modal-overlay">
@@ -277,7 +291,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const repuestosRef = collection(db, "repuestos");
-        const presupuestosRef = collection(db, "presupuestos"); // Referencia nueva para la nube
+        const presupuestosRef = collection(db, "presupuestos"); 
         
         let inventario = [];
         let historialPresupuestos = [];
@@ -289,19 +303,23 @@
             setTimeout(() => t.classList.remove('show'), 3000);
         }
 
-        /* --- LÓGICA DE PRESUPUESTO EDITABLE CON VISIBILIDAD --- */
-        let itemsPresupuesto = [];
-        let showIVA = true;
-        const fPlata = (n) => parseFloat(n).toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-
+        /* --- CONTROL DE MODALES --- */
         window.abrirModalPresupuesto = () => {
             document.getElementById('modal-fecha').value = new Date().toLocaleDateString('es-AR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
             document.getElementById('modal-numero').value = Math.floor(Math.random() * 9000 + 1000);
             document.getElementById('modal-presupuesto').classList.add('active');
             renderizarItemsPresupuesto();
         }
-
         window.cerrarModalPresupuesto = () => document.getElementById('modal-presupuesto').classList.remove('active');
+
+        window.abrirModalHistorial = () => document.getElementById('modal-historial').classList.add('active');
+        window.cerrarModalHistorial = () => document.getElementById('modal-historial').classList.remove('active');
+
+
+        /* --- LÓGICA DE PRESUPUESTO EDITABLE CON VISIBILIDAD --- */
+        let itemsPresupuesto = [];
+        let showIVA = true;
+        const fPlata = (n) => parseFloat(n).toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
         window.toggleIVA = () => {
             showIVA = !showIVA;
@@ -398,7 +416,6 @@
             const ivaVal = subtotal * 0.21;
             const totalFinal = showIVA ? subtotal + ivaVal : subtotal;
 
-            // 1. GUARDAR EN FIREBASE (LA NUBE)
             try {
                 await addDoc(presupuestosRef, {
                     cliente: cliente, vehiculo: vehiculo, fecha: fecha, numero: numero,
@@ -411,7 +428,6 @@
                 alert("Error al guardar en la nube, pero se generará el PDF.");
             }
 
-            // 2. GENERAR EL PDF
             ejecutarDescargaPDF(cliente, vehiculo, fecha, numero, itemsPresupuesto, subtotal, ivaVal, totalFinal, showIVA);
             cerrarModalPresupuesto();
         }
@@ -522,7 +538,7 @@
                         <td style="font-weight: 600;">$ ${fPlata(pres.total)}</td>
                         <td class="actions">
                             <button class="btn-icon" onclick="reimprimir('${pres.id}')" style="color:var(--primary)" title="Reimprimir PDF"><i data-lucide="printer"></i></button>
-                            <button class="btn-icon" onclick="confirm('¿Borrar este presupuesto del historial?') && deleteDoc(doc(db,'presupuestos','${pres.id}'))" style="color:var(--danger)" title="Eliminar"><i data-lucide="trash-2"></i></button>
+                            <button class="btn-icon" onclick="borrarPresupuesto('${pres.id}')" style="color:var(--danger)" title="Eliminar"><i data-lucide="trash-2"></i></button>
                         </td>
                     </tr>
                 `;
@@ -534,6 +550,19 @@
             const pres = historialPresupuestos.find(p => p.id === id);
             if(!pres) return;
             ejecutarDescargaPDF(pres.cliente, pres.vehiculo, pres.fecha, pres.numero, pres.items, pres.subtotal, pres.iva, pres.total, pres.showIVA);
+        }
+
+        /* --- SOLUCIÓN: FUNCIÓN GLOBAL PARA ELIMINAR DE LA NUBE --- */
+        window.borrarPresupuesto = async (id) => {
+            if(confirm('¿Borrar este presupuesto del historial? Esta acción no se puede deshacer.')) {
+                try {
+                    await deleteDoc(doc(db, 'presupuestos', id));
+                    mostrarNotificacion("Presupuesto eliminado de la nube.");
+                } catch(e) {
+                    console.error(e);
+                    mostrarNotificacion("Hubo un error al eliminar.");
+                }
+            }
         }
 
         /* --- LÓGICA DE STOCK (FIREBASE) --- */
