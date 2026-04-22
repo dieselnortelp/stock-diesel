@@ -1,629 +1,658 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión Diesel Norte - Stock y Presupuestos</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <style>
-        :root {
-            --primary: #1e3a8a; --primary-hover: #172554; --bg: #f8fafc; --card-bg: #ffffff;
-            --text-main: #1e293b; --text-muted: #64748b; --border: #e2e8f0;
-            --danger: #ef4444; --success: #22c55e; --warning: #f59e0b;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestión Diesel Norte - Stock y Presupuestos</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+:root {
+--primary: #1e3a8a; --primary-hover: #172554; --bg: #f8fafc; --card-bg: #ffffff;
+--text-main: #1e293b; --text-muted: #64748b; --border: #e2e8f0;
+--danger: #ef4444; --success: #22c55e; --warning: #f59e0b;
+}
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text-main); line-height: 1.5; padding-bottom: 80px; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text-main); line-height: 1.5; padding-bottom: 40px; }
 
-        header { background-color: var(--primary); color: white; padding: 1.5rem 2rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
-        .header-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-        .logo-area { display: flex; align-items: center; gap: 12px; }
-        .logo-area h1 { font-size: 1.5rem; font-weight: 700; }
+header { background-color: var(--primary); color: white; padding: 1.5rem 2rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+.header-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+.logo-area { display: flex; align-items: center; gap: 12px; }
+.logo-area h1 { font-size: 1.5rem; font-weight: 700; }
 
-        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+.container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
 
-        .top-controls { display: flex; justify-content: flex-end; margin-bottom: 1.5rem; }
-        .btn-main-action { background-color: #0f172a; color: white; border: none; padding: 0.85rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s; font-size: 1rem; }
-        .btn-main-action:hover { background-color: #1e293b; transform: translateY(-2px); }
+.top-controls { display: flex; justify-content: flex-end; margin-bottom: 1.5rem; }
+.btn-main-action { background-color: #0f172a; color: white; border: none; padding: 0.85rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s; font-size: 1rem; }
+.btn-main-action:hover { background-color: #1e293b; transform: translateY(-2px); }
 
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-        .stat-card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); padding: 1.5rem; display: flex; align-items: center; gap: 1.25rem; box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1); }
-        .stat-icon { width: 56px; height: 56px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; }
-        .icon-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
-        .icon-red { background: linear-gradient(135deg, #ef4444, #b91c1c); }
-        .icon-green { background: linear-gradient(135deg, #22c55e, #15803d); }
-        .stat-info h3 { font-size: 0.875rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
-        .stat-info p { font-size: 1.75rem; font-weight: 700; color: var(--text-main); }
+.dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+.stat-card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); padding: 1.5rem; display: flex; align-items: center; gap: 1.25rem; box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1); }
+.stat-icon { width: 56px; height: 56px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; }
+.icon-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+.icon-red { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+.icon-green { background: linear-gradient(135deg, #22c55e, #15803d); }
+.stat-info h3 { font-size: 0.875rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+.stat-info p { font-size: 1.75rem; font-weight: 700; color: var(--text-main); }
 
-        .card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1); margin-bottom: 2rem; overflow: hidden; }
-        .card-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); background-color: #fcfcfd; }
-        .card-header h2 { font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1); margin-bottom: 2rem; overflow: hidden; }
+.card-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); background-color: #fcfcfd; }
+.card-header h2 { font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
 
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; padding: 1.5rem; }
-        .input-group { display: flex; flex-direction: column; gap: 6px; }
-        label { font-size: 0.875rem; font-weight: 500; color: var(--text-muted); }
-        input, select, textarea { padding: 0.625rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; font-family: 'Inter', sans-serif; }
-        
-        .btn-add { background-color: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 1.5rem 1.5rem auto; width: calc(100% - 3rem); max-width: 300px; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; padding: 1.5rem; }
+.input-group { display: flex; flex-direction: column; gap: 6px; }
+label { font-size: 0.875rem; font-weight: 500; color: var(--text-muted); }
+input, select, textarea { padding: 0.625rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; font-family: 'Inter', sans-serif; }
+.btn-add { background-color: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 1.5rem 1.5rem auto; width: calc(100% - 3rem); max-width: 300px; }
 
-        .search-area { padding: 0 1.5rem 1.5rem; position: relative; }
-        .search-input { width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border-radius: 8px; border: 1px solid var(--border); }
-        .search-icon { position: absolute; left: 2.2rem; top: 0.8rem; color: var(--text-muted); }
+.search-area { padding: 0 1.5rem 1.5rem; position: relative; }
+.search-input { width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border-radius: 8px; border: 1px solid var(--border); }
+.search-icon { position: absolute; left: 2.2rem; top: 0.8rem; color: var(--text-muted); }
 
-        .table-container { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 800px; }
-        th { background-color: #1e293b; padding: 1rem; font-size: 0.8rem; text-transform: uppercase; color: white; font-weight: 600; }
-        td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; vertical-align: middle; }
-        tr:hover td { background-color: #f1f5f9; }
+.table-container { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; text-align: left; min-width: 800px; }
+th { background-color: #1e293b; padding: 1rem; font-size: 0.8rem; text-transform: uppercase; color: white; font-weight: 600; }
+td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; vertical-align: middle; }
 
-        .thumb-img { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); }
-        .qr-canvas { width: 50px; height: 50px; border-radius: 4px; }
+.thumb-img { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); }
+.qr-canvas { width: 50px; height: 50px; border-radius: 4px; }
 
-        .stock-badge { padding: 0.35rem 0.6rem; border-radius: 6px; font-weight: 600; display: inline-block; min-width: 40px; text-align: center; font-size: 0.875rem;}
-        .stock-low { background-color: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; }
-        .stock-ok { background-color: #f0fdf4; color: #16a34a; border: 1px solid #86efac; }
+.stock-badge { padding: 0.35rem 0.6rem; border-radius: 6px; font-weight: 600; display: inline-block; min-width: 40px; text-align: center; font-size: 0.875rem;}
+.stock-low { background-color: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; }
+.stock-ok { background-color: #f0fdf4; color: #16a34a; border: 1px solid #86efac; }
 
-        .actions { display: flex; gap: 4px; }
-        .btn-icon { border: none; background: none; cursor: pointer; padding: 6px; border-radius: 6px; transition: 0.2s; }
-        .btn-icon:hover { background: #e2e8f0; }
+.actions { display: flex; gap: 4px; }
+.btn-icon { border: none; background: none; cursor: pointer; padding: 6px; border-radius: 6px; transition: 0.2s; }
+.btn-icon:hover { background: #e2e8f0; }
 
-        /* MODALES */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.7); display: none; justify-content: center; align-items: flex-start; padding: 2rem 1rem; z-index: 1000; overflow-y: auto; backdrop-filter: blur(4px); }
-        .modal-overlay.active { display: flex; }
-        .modal-content { background: white; border-radius: 12px; width: 100%; max-width: 1000px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
-        .modal-header { padding: 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border-radius: 12px 12px 0 0; }
-        .modal-body { padding: 1.5rem; }
-        
-        .pres-header-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; background: #f1f5f9; padding: 1.25rem; border-radius: 8px; }
-        
-        .items-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
-        .items-table th { background: #1e293b; color: white; padding: 0.75rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
-        .items-table td { padding: 0.4rem; border-bottom: 1px solid var(--border); }
-        
-        .editable-input { width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px; background: #fff; font-size: 0.9rem; transition: border-color 0.2s; }
-        .editable-input:focus { border-color: var(--primary); outline: none; background: #eff6ff; }
-        
-        .add-item-row { display: grid; grid-template-columns: 3fr 1.2fr 1fr auto; gap: 0.75rem; margin-bottom: 2rem; padding: 1rem; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; }
-        
-        .pres-totals { border-top: 2px solid var(--border); padding-top: 1rem; text-align: right; width: 340px; margin-left: auto; }
-        .pres-totals div { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 1rem; align-items: center; }
-        .pres-totals .total-final { font-size: 1.4rem; font-weight: 700; color: var(--primary); border-top: 2px solid var(--primary); padding-top: 0.5rem; margin-top: 0.5rem; }
+/* MODAL DE PRESUPUESTOS MEJORADO */
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.7); display: none; justify-content: center; align-items: flex-start; padding: 2rem 1rem; z-index: 1000; overflow-y: auto; backdrop-filter: blur(4px); }
+.modal-overlay.active { display: flex; }
+.modal-content { background: white; border-radius: 12px; width: 100%; max-width: 1000px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
+.modal-header { padding: 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border-radius: 12px 12px 0 0; }
+.modal-body { padding: 1.5rem; }
+.pres-header-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; background: #f1f5f9; padding: 1.25rem; border-radius: 8px; }
+.items-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+.items-table th { background: #1e293b; color: white; padding: 0.75rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.items-table td { padding: 0.4rem; border-bottom: 1px solid var(--border); }
+/* Estilos para edición */
+.editable-input { width: 100%; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 4px; background: #fff; font-size: 0.9rem; transition: border-color 0.2s; }
+.editable-input:focus { border-color: var(--primary); outline: none; background: #eff6ff; }
+.add-item-row { display: grid; grid-template-columns: 3fr 1.2fr 1fr auto; gap: 0.75rem; margin-bottom: 2rem; padding: 1rem; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; }
+.pres-totals { border-top: 2px solid var(--border); padding-top: 1rem; text-align: right; width: 340px; margin-left: auto; }
+.pres-totals div { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 1rem; align-items: center; }
+.pres-totals .total-final { font-size: 1.4rem; font-weight: 700; color: var(--primary); border-top: 2px solid var(--primary); padding-top: 0.5rem; margin-top: 0.5rem; }
 
-        .toggle-btn { background: #e2e8f0; border: none; padding: 6px 8px; border-radius: 6px; cursor: pointer; color: var(--text-muted); transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center;}
-        .toggle-btn.active { background: var(--primary); color: white; }
+/* Toggle Button (Ojito / Checkbox) */
+.toggle-btn { background: #e2e8f0; border: none; padding: 6px 8px; border-radius: 6px; cursor: pointer; color: var(--text-muted); transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center;}
+.toggle-btn.active { background: var(--primary); color: white; }
 
-        .modal-footer { padding: 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 1rem; background: #fcfcfd; border-radius: 0 0 12px 12px; }
+.modal-footer { padding: 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 1rem; background: #fcfcfd; border-radius: 0 0 12px 12px; }
 
-        .toast { position: fixed; bottom: 20px; left: 50%; background: #0f172a; color: white; padding: 1rem 1.5rem; border-radius: 8px; display: flex; align-items: center; gap: 12px; transform: translate(-50%, 150%); opacity: 0; transition: all 0.3s; z-index: 2000; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
-        .toast.show { transform: translate(-50%, 0); opacity: 1; }
+.toast { position: fixed; bottom: 20px; right: 20px; background: #0f172a; color: white; padding: 1rem 1.5rem; border-radius: 8px; display: flex; align-items: center; gap: 12px; transform: translateY(150%); opacity: 0; transition: all 0.3s; z-index: 2000; }
+.toast.show { transform: translateY(0); opacity: 1; }
 
-        .fab-btn { position: fixed; bottom: 30px; right: 30px; background-color: var(--primary); color: white; border: none; width: 60px; height: 60px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 100; transition: transform 0.2s, background-color 0.2s; }
-        .fab-btn:hover { transform: scale(1.05); background-color: var(--primary-hover); }
+/* Botón Flotante para Historial */
+.fab-btn { position: fixed; bottom: 30px; left: 30px; background-color: var(--primary); color: white; border: none; width: 60px; height: 60px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 100; transition: transform 0.2s, background-color 0.2s; }
+.fab-btn:hover { transform: scale(1.05); background-color: var(--primary-hover); }
 
-        footer { text-align: center; margin-top: 3rem; color: var(--text-muted); font-size: 0.85rem; padding: 2rem; border-top: 1px solid var(--border); }
-    </style>
+footer { text-align: center; margin-top: 3rem; color: var(--text-muted); font-size: 0.85rem; padding: 2rem; border-top: 1px solid var(--border); }
+</style>
 </head>
 <body>
 
-    <header>
-        <div class="header-content">
-            <div class="logo-area">
-                <i data-lucide="settings-2"></i>
-                <h1>Diesel Norte - Gestión Integral</h1>
-            </div>
-            <span>La Plata, Arg.</span>
+<header>
+<div class="header-content">
+<div class="logo-area">
+<i data-lucide="settings-2"></i>
+<h1>Diesel Norte - Gestión Integral</h1>
+</div>
+<span>La Plata, Arg.</span>
+</div>
+</header>
+
+<div class="container">
+<div class="top-controls">
+<button class="btn-main-action" onclick="abrirModalPresupuesto()">
+<i data-lucide="file-signature"></i> Crear Nuevo Presupuesto
+</button>
+</div>
+
+<div class="dashboard-grid">
+<div class="stat-card">
+<div class="stat-icon icon-blue"><i data-lucide="layers"></i></div>
+<div class="stat-info"><h3>Stock Total</h3><p id="stat-total">0</p></div>
+</div>
+<div class="stat-card">
+<div class="stat-icon icon-red"><i data-lucide="alert-circle"></i></div>
+<div class="stat-info"><h3>Reposición</h3><p id="stat-bajos">0</p></div>
+</div>
+<div class="stat-card">
+<div class="stat-icon icon-green"><i data-lucide="tags"></i></div>
+<div class="stat-info"><h3>Categorías</h3><p id="stat-tipos">0</p></div>
+</div>
+</div>
+
+<section class="card">
+<div class="card-header"><h2><i data-lucide="plus-circle"></i> Nuevo Repuesto en Stock</h2></div>
+<div class="form-grid">
+<div class="input-group"><label>Nombre</label><input type="text" id="nombre"></div>
+<div class="input-group"><label>Marca</label><input type="text" id="marca"></div>
+<div class="input-group"><label>Código</label><input type="text" id="codigo"></div>
+<div class="input-group"><label>Categoría</label>
+<select id="categoria">
+<option value="Inyector">Inyector</option>
+<option value="Bomba">Bomba</option>
+<option value="Kit">Kit de Sellos</option>
+<option value="Otro">Otro</option>
+</select>
+</div>
+<div class="input-group"><label>Ubicación</label><input type="text" id="ubicacion"></div>
+<div class="input-group"><label>Mínimo</label><input type="number" id="minimo" value="5"></div>
+<div class="input-group"><label>Cantidad</label><input type="number" id="cantidad" value="0"></div>
+<div class="input-group"><label>Foto</label><input type="file" id="imagen" accept="image/*"></div>
+</div>
+<div id="loader" style="display:none;"><i data-lucide="loader-2" class="spin"></i> Conectando...</div>
+<button class="btn-add" onclick="agregarRepuesto()" id="btn-submit"><i data-lucide="save"></i> Guardar Repuesto</button>
+</section>
+
+<section class="card">
+<div class="card-header"><h2><i data-lucide="list"></i> Inventario de Repuestos</h2></div>
+<div class="search-area">
+<i data-lucide="search" class="search-icon" size="18"></i>
+<input type="text" id="buscar" class="search-input" placeholder="Buscar por código, nombre..." onkeyup="filtrarTabla()">
+</div>
+<div class="table-container">
+<table>
+<thead>
+<tr><th>Imagen</th><th>QR</th><th>Código</th><th>Nombre</th><th>Marca</th><th>Ubicación</th><th>Min.</th><th>Stock</th><th>Acciones</th></tr>
+</thead>
+<tbody id="listaRepuestos"></tbody>
+</table>
+</div>
+</section>
+</div>
+
+<button class="fab-btn" onclick="abrirModalHistorial()" title="Ver Historial de Presupuestos">
+    <i data-lucide="history"></i>
+</button>
+
+<div id="modal-historial" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i data-lucide="history"></i> Historial de Presupuestos Emitidos</h2>
+            <button class="close-btn" onclick="cerrarModalHistorial()" style="background:none;border:none;cursor:pointer;"><i data-lucide="x" size="24"></i></button>
         </div>
-    </header>
-
-    <div class="container">
-        <div class="top-controls">
-            <button class="btn-main-action" onclick="abrirModalPresupuesto()">
-                <i data-lucide="file-signature"></i> Crear Nuevo Presupuesto
-            </button>
-        </div>
-
-        <div class="dashboard-grid">
-            <div class="stat-card">
-                <div class="stat-icon icon-blue"><i data-lucide="layers"></i></div>
-                <div class="stat-info"><h3>Stock Total</h3><p id="stat-total">0</p></div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon icon-red"><i data-lucide="alert-circle"></i></div>
-                <div class="stat-info"><h3>Reposición</h3><p id="stat-bajos">0</p></div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon icon-green"><i data-lucide="tags"></i></div>
-                <div class="stat-info"><h3>Categorías</h3><p id="stat-tipos">0</p></div>
-            </div>
-        </div>
-
-        <section class="card">
-            <div class="card-header"><h2><i data-lucide="plus-circle"></i> Nuevo Repuesto en Stock</h2></div>
-            <div class="form-grid">
-                <div class="input-group"><label>Nombre</label><input type="text" id="nombre"></div>
-                <div class="input-group"><label>Marca</label><input type="text" id="marca"></div>
-                <div class="input-group"><label>Código</label><input type="text" id="codigo"></div>
-                <div class="input-group"><label>Categoría</label>
-                    <select id="categoria">
-                        <option value="Inyector">Inyector</option>
-                        <option value="Bomba">Bomba</option>
-                        <option value="Kit">Kit de Sellos</option>
-                        <option value="Otro">Otro</option>
-                    </select>
-                </div>
-                <div class="input-group"><label>Ubicación</label><input type="text" id="ubicacion"></div>
-                <div class="input-group"><label>Mínimo</label><input type="number" id="minimo" value="5"></div>
-                <div class="input-group"><label>Cantidad</label><input type="number" id="cantidad" value="0"></div>
-                <div class="input-group"><label>Foto</label><input type="file" id="imagen" accept="image/*"></div>
-            </div>
-            <div id="loader" style="display:none;"><i data-lucide="loader-2" class="spin"></i> Conectando...</div>
-            <button class="btn-add" onclick="agregarRepuesto()" id="btn-submit"><i data-lucide="save"></i> Guardar Repuesto</button>
-        </section>
-
-        <section class="card">
-            <div class="card-header"><h2><i data-lucide="list"></i> Inventario de Repuestos</h2></div>
-            <div class="search-area">
-                <i data-lucide="search" class="search-icon" size="18"></i>
-                <input type="text" id="buscar" class="search-input" placeholder="Buscar por código, nombre..." onkeyup="filtrarTabla()">
-            </div>
+        <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
             <div class="table-container">
                 <table>
                     <thead>
-                        <tr><th>Imagen</th><th>QR</th><th>Código</th><th>Nombre</th><th>Marca</th><th>Ubicación</th><th>Min.</th><th>Stock</th><th>Acciones</th></tr>
-                    </thead>
-                    <tbody id="listaRepuestos"></tbody>
-                </table>
-            </div>
-        </section>
-    </div>
-
-    <button class="fab-btn" onclick="abrirModalHistorial()" title="Ver Historial de Presupuestos">
-        <i data-lucide="history"></i>
-    </button>
-
-    <div id="modal-historial" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2><i data-lucide="history"></i> Historial de Presupuestos Emitidos</h2>
-                <button class="close-btn" onclick="cerrarModalHistorial()" style="background:none;border:none;cursor:pointer;"><i data-lucide="x" size="24"></i></button>
-            </div>
-            <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Nº Pres.</th>
-                                <th>Fecha</th>
-                                <th>Cliente</th>
-                                <th>Vehículo/Orden</th>
-                                <th>Enviado por</th>
-                                <th>Total</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="listaHistorial"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal-presupuesto" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2><i data-lucide="calculator"></i> Generador de Presupuesto</h2>
-                <button class="close-btn" onclick="cerrarModalPresupuesto()" style="background:none;border:none;cursor:pointer;"><i data-lucide="x" size="24"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class="pres-header-grid">
-                    <div class="input-group"><label>Cliente</label><input type="text" id="modal-cliente" placeholder="Nombre/Empresa"></div>
-                    <div class="input-group"><label>Orden/Vehículo</label><input type="text" id="modal-vehiculo" placeholder="Patente o Modelo"></div>
-                    <div class="input-group"><label>Fecha</label><input type="text" id="modal-fecha"></div>
-                    <div class="input-group"><label>Nº Presupuesto</label><input type="text" id="modal-numero"></div>
-                    <div class="input-group"><label>Enviado por:</label><input type="text" id="modal-enviado" placeholder="Ej: Katia o Pilar"></div>
-                </div>
-
-                <table class="items-table">
-                    <thead>
                         <tr>
-                            <th style="text-align: left;">Concepto / Actividad (Editable)</th>
-                            <th style="width: 170px;">Precio Unit. ($)</th>
-                            <th style="width: 90px; text-align: center;">Cant.</th>
-                            <th style="width: 140px; text-align: right;">Total</th>
-                            <th style="width: 50px;"></th>
+                            <th>Nº Pres.</th>
+                            <th>Fecha</th>
+                            <th>Cliente</th>
+                            <th>Vehículo/Orden</th>
+                            <th>Enviado por</th>
+                            <th>Total</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="lista-items-presupuesto"></tbody>
+                    <tbody id="listaHistorial"></tbody>
                 </table>
-
-                <div class="add-item-row">
-                    <input type="text" id="item-concepto" placeholder="Ej: Reparación Inyector Bosch...">
-                    <input type="number" id="item-precio" placeholder="Precio ($)">
-                    <input type="number" id="item-cantidad" value="1" min="1">
-                    <button class="btn-add-item" onclick="agregarItemAlPresupuesto()" style="background:var(--primary);color:white;border:none;border-radius:6px;cursor:pointer;padding:0 15px;"><i data-lucide="plus"></i> Añadir</button>
-                </div>
-
-                <div class="pres-totals">
-                    <div style="justify-content: flex-end; gap: 10px; margin-bottom: 15px; border-bottom: 1px dashed var(--border); padding-bottom: 10px;">
-                        <label style="font-size: 0.9rem; font-weight: 500; color: var(--text-main); margin: 0;">¿Incluir IVA 21%?</label>
-                        <button class="toggle-btn active" id="btn-show-iva" onclick="toggleIVA()">
-                            <i data-lucide="check-square" id="icon-iva" size="18"></i>
-                        </button>
-                    </div>
-                    <div><span>Subtotal:</span> <span id="calc-subtotal">$ 0.00</span></div>
-                    <div id="fila-calc-iva"><span>IVA (21%):</span> <span id="calc-iva">$ 0.00</span></div>
-                    <div class="total-final"><span>TOTAL FINAL:</span> <span id="calc-total">$ 0.00</span></div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-icon" style="margin-right: auto; color: var(--text-muted); cursor:pointer;" onclick="itemsPresupuesto = []; renderizarItemsPresupuesto();">Limpiar Todo</button>
-                <button class="btn-main-action" onclick="generarYGuardarPDF()"><i data-lucide="printer"></i> Guardar y Generar PDF</button>
             </div>
         </div>
     </div>
+</div>
 
-    <div id="toast" class="toast" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #0f172a; color: white; padding: 1rem 1.5rem; border-radius: 8px; display: none; align-items: center; gap: 12px; z-index: 2000;"><i data-lucide="check-circle-2"></i> <span id="toast-msg"></span></div>
+<div id="modal-presupuesto" class="modal-overlay">
+<div class="modal-content">
+<div class="modal-header">
+<h2><i data-lucide="calculator"></i> Generador de Presupuesto</h2>
+<button class="close-btn" onclick="cerrarModalPresupuesto()" style="background:none;border:none;cursor:pointer;"><i data-lucide="x" size="24"></i></button>
+</div>
+<div class="modal-body">
+<div class="pres-header-grid">
+<div class="input-group"><label>Cliente</label><input type="text" id="modal-cliente" placeholder="Nombre/Empresa"></div>
+<div class="input-group"><label>Orden/Vehículo</label><input type="text" id="modal-vehiculo" placeholder="Patente o Modelo"></div>
+<div class="input-group"><label>Fecha</label><input type="text" id="modal-fecha"></div>
+<div class="input-group"><label>Nº Presupuesto</label><input type="text" id="modal-numero"></div>
+<div class="input-group"><label>Enviado por:</label><input type="text" id="modal-enviado" placeholder="Ej: Katia o Pilar"></div>
+</div>
 
-    <footer>
-        <p>&copy; 2026 Diesel Norte - Servicio de Inyección Diesel</p>
-        <p>Av. 72 #773, La Plata | Tel: 2216745202</p>
-    </footer>
+<table class="items-table">
+<thead>
+<tr>
+<th style="text-align: left;">Concepto / Actividad (Editable)</th>
+<th style="width: 170px;">Precio Unit. ($)</th>
+<th style="width: 90px; text-align: center;">Cant.</th>
+<th style="width: 140px; text-align: right;">Total</th>
+<th style="width: 50px;"></th>
+</tr>
+</thead>
+<tbody id="lista-items-presupuesto"></tbody>
+</table>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+<div class="add-item-row">
+<input type="text" id="item-concepto" placeholder="Ej: Reparación Inyector Bosch...">
+<input type="number" id="item-precio" placeholder="Precio ($)">
+<input type="number" id="item-cantidad" value="1" min="1">
+<button class="btn-add-item" onclick="agregarItemAlPresupuesto()"><i data-lucide="plus"></i> Añadir</button>
+</div>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCx_qCzokPIKPDec36D3If50PW_BdkxRiU",
-            authDomain: "dieselnortelp-6d680.firebaseapp.com",
-            projectId: "dieselnortelp-6d680",
-            storageBucket: "dieselnortelp-6d680.firebasestorage.app",
-            messagingSenderId: "449114568430",
-            appId: "1:449114568430:web:b4642934d81e3c4b3d25ff",
-            measurementId: "G-6KQ92MQHQ1"
-        };
+<div class="pres-totals">
+<div style="justify-content: flex-end; gap: 10px; margin-bottom: 15px; border-bottom: 1px dashed var(--border); padding-bottom: 10px;">
+<label style="font-size: 0.9rem; font-weight: 500; color: var(--text-main); margin: 0;">¿Incluir IVA 21%?</label>
+<button class="toggle-btn active" id="btn-show-iva" onclick="toggleIVA()">
+<i data-lucide="check-square" id="icon-iva" size="18"></i>
+</button>
+</div>
+<div><span>Subtotal:</span> <span id="calc-subtotal">$ 0.00</span></div>
+<div id="fila-calc-iva"><span>IVA (21%):</span> <span id="calc-iva">$ 0.00</span></div>
+<div class="total-final"><span>TOTAL FINAL:</span> <span id="calc-total">$ 0.00</span></div>
+</div>
+</div>
+<div class="modal-footer">
+<button class="btn-icon" style="margin-right: auto; color: var(--text-muted); cursor:pointer;" onclick="itemsPresupuesto = []; renderizarItemsPresupuesto();">Limpiar Todo</button>
+<button class="btn-main-action" onclick="generarPDF_Dinamico()"><i data-lucide="printer"></i> Guardar y Generar PDF</button>
+</div>
+</div>
+</div>
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const repuestosRef = collection(db, "repuestos");
-        const presupuestosRef = collection(db, "presupuestos"); 
-        
-        let inventario = [];
-        let historialPresupuestos = [];
+<div id="toast" class="toast"><i data-lucide="check-circle-2"></i> <span id="toast-msg"></span></div>
 
-        window.mostrarNotificacion = (msg) => {
-            const t = document.getElementById('toast');
-            document.getElementById('toast-msg').innerText = msg;
-            t.style.display = 'flex';
-            setTimeout(() => t.style.display = 'none', 3000);
-        }
+<footer>
+<p>&copy; 2026 Diesel Norte - Servicio de Inyección Diesel</p>
+<p>Av. 72 #773, La Plata | Tel: 2216745202</p>
+</footer>
 
-        /* --- CONTROL DE MODALES --- */
-        window.abrirModalPresupuesto = () => {
-            document.getElementById('modal-fecha').value = new Date().toLocaleDateString('es-AR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-            document.getElementById('modal-numero').value = Math.floor(Math.random() * 9000 + 1000);
-            document.getElementById('modal-enviado').value = ""; // Limpiar el campo
-            document.getElementById('modal-presupuesto').classList.add('active');
-            renderizarItemsPresupuesto();
-        }
-        window.cerrarModalPresupuesto = () => document.getElementById('modal-presupuesto').classList.remove('active');
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
-        window.abrirModalHistorial = () => document.getElementById('modal-historial').classList.add('active');
-        window.cerrarModalHistorial = () => document.getElementById('modal-historial').classList.remove('active');
+const firebaseConfig = {
+apiKey: "AIzaSyCx_qCzokPIKPDec36D3If50PW_BdkxRiU",
+authDomain: "dieselnortelp-6d680.firebaseapp.com",
+projectId: "dieselnortelp-6d680",
+storageBucket: "dieselnortelp-6d680.firebasestorage.app",
+messagingSenderId: "449114568430",
+appId: "1:449114568430:web:b4642934d81e3c4b3d25ff",
+measurementId: "G-6KQ92MQHQ1"
+};
 
-        /* --- LÓGICA DE PRESUPUESTO EDITABLE CON VISIBILIDAD --- */
-        let itemsPresupuesto = [];
-        let showIVA = true;
-        const fPlata = (n) => parseFloat(n).toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const repuestosRef = collection(db, "repuestos");
+const presupuestosRef = collection(db, "presupuestos"); // Se agrega referencia a historial
 
-        window.toggleIVA = () => {
-            showIVA = !showIVA;
-            const btn = document.getElementById('btn-show-iva');
-            const icon = document.getElementById('icon-iva');
-            if(showIVA) {
-                btn.classList.add('active');
-                icon.setAttribute('data-lucide', 'check-square');
-                document.getElementById('fila-calc-iva').style.display = 'flex';
-            } else {
-                btn.classList.remove('active');
-                icon.setAttribute('data-lucide', 'square');
-                document.getElementById('fila-calc-iva').style.display = 'none';
-            }
-            lucide.createIcons();
-            actualizarTotalesUI();
-        }
+let inventario = [];
+let historialPresupuestos = [];
 
-        window.agregarItemAlPresupuesto = () => {
-            const c = document.getElementById('item-concepto').value;
-            const p = parseFloat(document.getElementById('item-precio').value) || 0;
-            const q = parseInt(document.getElementById('item-cantidad').value) || 1;
-            if(!c) return;
-            itemsPresupuesto.push({ concepto: c, precio: p, cantidad: q, mostrarPrecio: true });
-            document.getElementById('item-concepto').value = '';
-            document.getElementById('item-precio').value = '';
-            document.getElementById('item-cantidad').value = '1';
-            renderizarItemsPresupuesto();
-        }
+window.mostrarNotificacion = (msg) => {
+const t = document.getElementById('toast');
+document.getElementById('toast-msg').innerText = msg;
+t.classList.add('show');
+setTimeout(() => t.classList.remove('show'), 3000);
+}
 
-        window.togglePrecioItem = (index) => {
-            itemsPresupuesto[index].mostrarPrecio = !itemsPresupuesto[index].mostrarPrecio;
-            renderizarItemsPresupuesto();
-        }
+/* --- CONTROL DE MODALES HISTORIAL --- */
+window.abrirModalHistorial = () => document.getElementById('modal-historial').classList.add('active');
+window.cerrarModalHistorial = () => document.getElementById('modal-historial').classList.remove('active');
 
-        window.editarFilaPresupuesto = (index, campo, valor) => {
-            if(campo === 'precio' || campo === 'cantidad') {
-                itemsPresupuesto[index][campo] = parseFloat(valor) || 0;
-            } else {
-                itemsPresupuesto[index][campo] = valor;
-            }
-            actualizarTotalesUI();
-        }
+/* --- LÓGICA DE PRESUPUESTO EDITABLE CON VISIBILIDAD --- */
+let itemsPresupuesto = [];
+let showIVA = true;
+const fPlata = (n) => parseFloat(n).toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
-        function actualizarTotalesUI() {
-            let subtotal = 0;
-            itemsPresupuesto.forEach((item, index) => {
-                const totalFila = item.precio * item.cantidad;
-                subtotal += totalFila;
-                const celdaTotal = document.getElementById(`total-fila-${index}`);
-                if(celdaTotal) celdaTotal.innerText = `$ ${fPlata(totalFila)}`;
-            });
-            const iva = subtotal * 0.21;
-            document.getElementById('calc-subtotal').innerText = `$ ${fPlata(subtotal)}`;
-            document.getElementById('calc-iva').innerText = `$ ${fPlata(iva)}`;
-            document.getElementById('calc-total').innerText = `$ ${fPlata(showIVA ? subtotal + iva : subtotal)}`;
-        }
+window.abrirModalPresupuesto = () => {
+document.getElementById('modal-fecha').value = new Date().toLocaleDateString('es-AR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+document.getElementById('modal-numero').value = Math.floor(Math.random() * 9000 + 1000);
+document.getElementById('modal-enviado').value = ""; // Limpiamos el campo
+document.getElementById('modal-presupuesto').classList.add('active');
+renderizarItemsPresupuesto();
+}
 
-        function renderizarItemsPresupuesto() {
-            const tbody = document.getElementById('lista-items-presupuesto');
-            tbody.innerHTML = '';
-            itemsPresupuesto.forEach((item, i) => {
-                const isHidden = !item.mostrarPrecio;
-                
-                tbody.innerHTML += `
-                    <tr>
-                        <td><input type="text" class="editable-input" value="${item.concepto}" oninput="editarFilaPresupuesto(${i}, 'concepto', this.value)"></td>
-                        <td>
-                            <div style="display: flex; gap: 5px; align-items: center;">
-                                <input type="number" class="editable-input" value="${item.precio}" oninput="editarFilaPresupuesto(${i}, 'precio', this.value)" style="text-align: center; ${isHidden ? 'opacity: 0.4; background: #f1f5f9;' : ''}">
-                                <button onclick="togglePrecioItem(${i})" class="btn-icon" title="Mostrar/Ocultar en PDF" style="padding: 4px; border:none; background:none; cursor:pointer; ${isHidden ? 'color: var(--danger);' : 'color: var(--primary);'}">
-                                    <i data-lucide="${item.mostrarPrecio ? 'eye' : 'eye-off'}" size="18"></i>
-                                </button>
-                            </div>
-                        </td>
-                        <td><input type="number" class="editable-input" value="${item.cantidad}" oninput="editarFilaPresupuesto(${i}, 'cantidad', this.value)" style="text-align: center;"></td>
-                        <td style="text-align: right; font-weight: 600; ${isHidden ? 'opacity: 0.4;' : ''}" id="total-fila-${i}">$ ${fPlata(item.precio * item.cantidad)}</td>
-                        <td><button onclick="itemsPresupuesto.splice(${i},1); renderizarItemsPresupuesto();" class="btn-icon" style="border:none;background:none;color:red;cursor:pointer;"><i data-lucide="trash-2" size="16"></i></button></td>
-                    </tr>`;
-            });
-            actualizarTotalesUI();
-            lucide.createIcons();
-        }
+window.cerrarModalPresupuesto = () => document.getElementById('modal-presupuesto').classList.remove('active');
 
-        /* --- GUARDAR EN NUBE Y GENERAR PDF --- */
-        window.generarYGuardarPDF = async () => {
-            if(itemsPresupuesto.length === 0) return alert("Agrega algún ítem.");
-            const cliente = document.getElementById('modal-cliente').value || 'S/N';
-            const vehiculo = document.getElementById('modal-vehiculo').value || 'S/N';
-            const fecha = document.getElementById('modal-fecha').value;
-            const numero = document.getElementById('modal-numero').value;
-            const enviado = document.getElementById('modal-enviado').value || 'Katia / Pilar';
+// Toggle del IVA global
+window.toggleIVA = () => {
+showIVA = !showIVA;
+const btn = document.getElementById('btn-show-iva');
+const icon = document.getElementById('icon-iva');
+if(showIVA) {
+btn.classList.add('active');
+icon.setAttribute('data-lucide', 'check-square');
+document.getElementById('fila-calc-iva').style.display = 'flex';
+} else {
+btn.classList.remove('active');
+icon.setAttribute('data-lucide', 'square');
+document.getElementById('fila-calc-iva').style.display = 'none';
+}
+lucide.createIcons();
+actualizarTotalesUI();
+}
 
-            let subtotal = 0;
-            itemsPresupuesto.forEach(item => subtotal += (item.precio * item.cantidad));
-            const ivaVal = subtotal * 0.21;
-            const totalFinal = showIVA ? subtotal + ivaVal : subtotal;
+window.agregarItemAlPresupuesto = () => {
+const c = document.getElementById('item-concepto').value;
+const p = parseFloat(document.getElementById('item-precio').value) || 0;
+const q = parseInt(document.getElementById('item-cantidad').value) || 1;
+if(!c) return;
+itemsPresupuesto.push({ concepto: c, precio: p, cantidad: q, mostrarPrecio: true });
+document.getElementById('item-concepto').value = '';
+document.getElementById('item-precio').value = '';
+document.getElementById('item-cantidad').value = '1';
+renderizarItemsPresupuesto();
+}
 
-            try {
-                await addDoc(presupuestosRef, {
-                    cliente: cliente, vehiculo: vehiculo, fecha: fecha, numero: numero, enviado: enviado,
-                    items: itemsPresupuesto, subtotal: subtotal, iva: ivaVal, total: totalFinal,
-                    showIVA: showIVA, timestamp: Date.now()
-                });
-                mostrarNotificacion("Guardado en la Nube.");
-            } catch(e) {
-                console.error("Error al guardar presupuesto:", e);
-                alert("Error al guardar, pero se generará el PDF.");
-            }
+// Función para ocultar/mostrar el precio de la fila
+window.togglePrecioItem = (index) => {
+itemsPresupuesto[index].mostrarPrecio = !itemsPresupuesto[index].mostrarPrecio;
+renderizarItemsPresupuesto();
+}
 
-            ejecutarDescargaPDF(cliente, vehiculo, fecha, numero, enviado, itemsPresupuesto, subtotal, ivaVal, totalFinal, showIVA);
-            cerrarModalPresupuesto();
-        }
+window.editarFilaPresupuesto = (index, campo, valor) => {
+if(campo === 'precio' || campo === 'cantidad') {
+itemsPresupuesto[index][campo] = parseFloat(valor) || 0;
+} else {
+itemsPresupuesto[index][campo] = valor;
+}
+actualizarTotalesUI();
+}
 
-        /* --- PLANTILLA CLÁSICA DE DIESEL NORTE CON "ENVIADO POR" --- */
-        function ejecutarDescargaPDF(cliente, vehiculo, fecha, numero, enviado, listaItems, subtotal, ivaVal, totalFinal, mostrarIvaPdf) {
-            let filasHTML = '';
-            listaItems.forEach(item => {
-                const tf = item.precio * item.cantidad;
-                let txtPrecio = item.mostrarPrecio ? `$ ${fPlata(item.precio)}` : '-';
-                let txtTotal = item.mostrarPrecio ? `$ ${fPlata(tf)}` : '-';
+function actualizarTotalesUI() {
+let subtotal = 0;
+itemsPresupuesto.forEach((item, index) => {
+const totalFila = item.precio * item.cantidad;
+subtotal += totalFila;
+const celdaTotal = document.getElementById(`total-fila-${index}`);
+if(celdaTotal) celdaTotal.innerText = `$ ${fPlata(totalFila)}`;
+});
+const iva = subtotal * 0.21;
+document.getElementById('calc-subtotal').innerText = `$ ${fPlata(subtotal)}`;
+document.getElementById('calc-iva').innerText = `$ ${fPlata(iva)}`;
+document.getElementById('calc-total').innerText = `$ ${fPlata(showIVA ? subtotal + iva : subtotal)}`;
+}
 
-                filasHTML += `<tr style="border-bottom:1px solid #000"><td style="padding:10px;border-right:1px solid #000">${item.concepto}</td><td style="width:120px;text-align:center;border-right:1px solid #000">${txtPrecio}</td><td style="width:70px;text-align:center;border-right:1px solid #000">${item.cantidad}</td><td style="width:120px;text-align:right;padding-right:10px;">${txtTotal}</td></tr>`;
-            });
+function renderizarItemsPresupuesto() {
+const tbody = document.getElementById('lista-items-presupuesto');
+tbody.innerHTML = '';
+itemsPresupuesto.forEach((item, i) => {
+const isHidden = !item.mostrarPrecio;
+tbody.innerHTML += `
+<tr>
+<td><input type="text" class="editable-input" value="${item.concepto}" oninput="editarFilaPresupuesto(${i}, 'concepto', this.value)"></td>
+<td>
+<div style="display: flex; gap: 5px; align-items: center;">
+<input type="number" class="editable-input" value="${item.precio}" oninput="editarFilaPresupuesto(${i}, 'precio', this.value)" style="text-align: center; ${isHidden ? 'opacity: 0.4; background: #f1f5f9;' : ''}">
+<button onclick="togglePrecioItem(${i})" class="btn-icon" title="Mostrar/Ocultar en PDF" style="padding: 4px; ${isHidden ? 'color: var(--danger);' : 'color: var(--primary);'}; border:none; background:none; cursor:pointer;">
+<i data-lucide="${item.mostrarPrecio ? 'eye' : 'eye-off'}" size="18"></i>
+</button>
+</div>
+</td>
+<td><input type="number" class="editable-input" value="${item.cantidad}" oninput="editarFilaPresupuesto(${i}, 'cantidad', this.value)" style="text-align: center;"></td>
+<td style="text-align: right; font-weight: 600; ${isHidden ? 'opacity: 0.4;' : ''}" id="total-fila-${i}">$ ${fPlata(item.precio * item.cantidad)}</td>
+<td><button onclick="itemsPresupuesto.splice(${i},1); renderizarItemsPresupuesto();" class="btn-icon" style="color:red; border:none; background:none; cursor:pointer;"><i data-lucide="trash-2" size="16"></i></button></td>
+</tr>`;
+});
+actualizarTotalesUI();
+lucide.createIcons();
+}
 
-            const template = `
-                <div style="width: 730px; padding: 20px 30px; box-sizing: border-box; font-family:Arial, sans-serif; color:#000; background:white; font-size:13px; margin: 0;">
-                    <h2 style="text-align:center; font-size:24px; margin-bottom:20px;">PRESUPUESTO</h2>
-                    <div style="display:flex; border:1px solid #000; margin-bottom:15px;">
-                        <div style="flex:1; padding:10px; border-right:1px solid #000;">
-                            <p><strong>DIESEL NORTE</strong></p>
-                            <p>Av. 72 773, La Plata.</p>
-                            <p>Tel: 2216745202 | dieselnorte@hotmail.es</p>
-                        </div>
-                        <div style="width:220px; padding:10px; text-align:center; display:flex; align-items:center; justify-content:center;">
-                            <img src="logo.jpg" style="max-width:180px; max-height:80px;">
-                        </div>
-                    </div>
-                    <div style="display:flex; border:1px solid #000; margin-bottom:15px;">
-                        <div style="flex:1; padding:10px; border-right:1px solid #000;">
-                            <span style="text-transform:capitalize;">${fecha}</span><br>
-                            <span style="display:inline-block; margin-top:5px;"><strong>PRESUPUESTO ENVIADO POR:</strong> ${enviado.toUpperCase()}</span>
-                        </div>
-                        <div style="width:220px; padding:10px; display:flex; align-items:center;"><strong>Nº:</strong> <span style="margin-left:5px;">${numero}</span></div>
-                    </div>
-                    <div style="border:1px solid #000; padding:10px; margin-bottom:20px; line-height:1.6;">
-                        <p><strong>CLIENTE:</strong> ${cliente}</p>
-                        <p><strong>ORDEN/VEHÍCULO:</strong> ${vehiculo}</p>
-                        <p><strong>GARANTÍA DIESEL</strong></p>
-                    </div>
-                    <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px;">
-                        <thead>
-                            <tr style="background:#1e293b; color:white; border-bottom:1px solid #000">
-                                <th style="padding:10px;text-align:left;border-right:1px solid #000">CONCEPTO</th>
-                                <th style="width:120px;border-right:1px solid #000">UNITARIO</th>
-                                <th style="width:70px;border-right:1px solid #000">CANT.</th>
-                                <th style="width:120px;text-align:right;padding-right:10px;">SUBTOTAL</th>
-                            </tr>
-                        </thead>
-                        <tbody>${filasHTML}</tbody>
-                    </table>
-                    <div style="display:flex; border:1px solid #000; min-height:100px;">
-                        <div style="flex:1; padding:10px; border-right:1px solid #000;"><strong>EFECTIVO S/ FACTURA</strong></div>
-                        <div style="width:220px; padding:10px; line-height:1.8;">
-                            <div style="display:flex;justify-content:space-between"><span>SUBTOTAL:</span><span>$ ${fPlata(subtotal)}</span></div>
-                            ${mostrarIvaPdf ? `<div style="display:flex;justify-content:space-between"><span>IVA 21%:</span><span>$ ${fPlata(ivaVal)}</span></div>` : ''}
-                            <div style="display:flex;justify-content:space-between;margin-top:10px;font-weight:bold;font-size:15px"><span>TOTAL:</span><span>$ ${fPlata(totalFinal)}</span></div>
-                        </div>
-                    </div>
-                </div>`;
+/* --- FUNCIÓN CENTRAL PARA GENERAR Y DESCARGAR PDF --- */
+function construirYDescargarPDF(cliente, vehiculo, fecha, numero, enviado, listaItems, subtotal, ivaVal, totalFinal, mostrarIvaPdf) {
+    let filasHTML = '';
+    listaItems.forEach(item => {
+        const tf = item.precio * item.cantidad;
+        let txtPrecio = item.mostrarPrecio ? `$ ${fPlata(item.precio)}` : '<span style="color: #666;">-</span>';
+        let txtTotal = item.mostrarPrecio ? `$ ${fPlata(tf)}` : '<span style="color: #666;">-</span>';
 
-            const wrapper = document.createElement('div');
-            wrapper.innerHTML = template;
+        filasHTML += `
+        <tr style="border-bottom:1px solid #000">
+        <td style="padding:10px;border-right:1px solid #000">${item.concepto}</td>
+        <td style="text-align:center;border-right:1px solid #000">${txtPrecio}</td>
+        <td style="text-align:center;border-right:1px solid #000">${item.cantidad}</td>
+        <td style="text-align:right">${txtTotal}</td>
+        </tr>`;
+    });
 
-            html2pdf().set({ 
-                margin: 0.35, 
-                filename: `Presupuesto_${cliente.replace(/\s+/g, '_')}.pdf`, 
-                image: { type: 'jpeg', quality: 0.98 }, 
-                html2canvas: { scale: 2, useCORS: true, windowWidth: 800, x: 0, y: 0 }, 
-                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } 
-            }).from(wrapper).save().then(() => {
-                mostrarNotificacion("PDF Generado correctamente.");
-            });
-        }
+    const template = `
+    <div style="padding: 20px 40px; font-family: Arial, sans-serif; color: #000; background: white; font-size: 13px;">
+    <h2 style="text-align: center; font-size: 24px; margin-bottom: 20px; letter-spacing: 2px;">PRESUPUESTO</h2>
 
-        /* --- CARGAR HISTORIAL DESDE LA NUBE --- */
-        onSnapshot(presupuestosRef, (s) => {
-            historialPresupuestos = [];
-            s.forEach(d => historialPresupuestos.push({...d.data(), id: d.id}));
-            historialPresupuestos.sort((a,b) => b.timestamp - a.timestamp);
-            renderizarTablaHistorial();
+    <div style="display: flex; border: 1px solid #000; margin-bottom: 15px;">
+    <div style="flex: 1; padding: 10px; border-right: 1px solid #000; line-height: 1.8;">
+    <p style="margin: 0;"><strong>Nombre:</strong> DIESEL NORTE</p>
+    <p style="margin: 0;"><strong>Dirección:</strong> Av. 72 773, B1904 La Plata.</p>
+    <p style="margin: 0;"><strong>Teléfonos:</strong> 22161624400 / 2216745202</p>
+    <p style="margin: 0;"><strong>Correo:</strong> dieselnorte@hotmail.es</p>
+    </div>
+    <div style="width: 250px; padding: 10px; text-align: center; display: flex; justify-content: center; align-items: center; background-color: #ffffff;">
+    <img src="logo.jpg" style="max-width: 220px; max-height: 100px; object-fit: contain;">
+    </div>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; margin-bottom: 15px; border: 1px solid #000;">
+    <div style="flex: 1; padding: 10px; border-right: 1px solid #000; text-transform: capitalize;">
+    ${fecha}
+    <br><span style="display:inline-block; margin-top:5px; text-transform: uppercase;"><strong>ENVIADO POR:</strong> ${enviado}</span>
+    </div>
+    <div style="width: 250px; padding: 10px; display: flex; align-items: center;">
+    Nº Presupuesto: <div style="border: 1px solid #000; width: 80px; height: 20px; margin-left: 10px; padding-left: 5px;">${numero}</div>
+    </div>
+    </div>
+
+    <div style="border: 1px solid #000; padding: 10px; margin-bottom: 20px; line-height: 1.8;">
+    <p style="margin: 0;"><strong>CLIENTE:</strong> ${cliente}</p>
+    <p style="margin: 0;"><strong>ORDEN/VEHÍCULO:</strong> ${vehiculo}</p>
+    <p style="margin: 0;"><strong>Presupuesto de:</strong> TRABAJOS Y REPUESTOS SOLICITADOS</p>
+    <p style="margin: 0;"><strong>GARANTIA DIESEL</strong></p>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: 20px;">
+    <thead>
+    <tr style="border-bottom: 1px solid #000; background: #f8f8f8;">
+    <th style="padding: 10px; text-align: left; border-right: 1px solid #000; width: 45%;">CONCEPTO / DETALLE:</th>
+    <th style="padding: 10px; text-align: center; border-right: 1px solid #000;">PRECIO UNITARIO</th>
+    <th style="padding: 10px; text-align: center; border-right: 1px solid #000;">CANTIDAD</th>
+    <th style="padding: 10px; text-align: right;">VALOR SIN IVA</th>
+    </tr>
+    </thead>
+    <tbody>
+    ${filasHTML}
+    </tbody>
+    </table>
+
+    <div style="display: flex; border: 1px solid #000; min-height: 120px;">
+    <div style="flex: 1; padding: 10px; border-right: 1px solid #000; position: relative;">
+    <strong>EFECTIVO S/ FACTURA</strong>
+    </div>
+    <div style="width: 250px; padding: 10px; line-height: 2;">
+    <div style="display: flex; justify-content: space-between;">
+    <strong>SUBTOTAL:</strong> <span>$ ${fPlata(subtotal)}</span>
+    </div>
+    ${mostrarIvaPdf ? `
+    <div style="display: flex; justify-content: space-between;">
+    <strong>IVA 21%:</strong> <span>$ ${fPlata(ivaVal)}</span>
+    </div>` : ''}
+    <div style="display: flex; justify-content: space-between; margin-top: 15px; font-size: 16px; border-top: 1px solid #000; padding-top: 5px;">
+    <strong>TOTAL:</strong> <strong>$ ${fPlata(totalFinal)}</strong>
+    </div>
+    </div>
+    </div>
+    </div>
+    `;
+
+    // OPCIONES ORIGINALES INTACTAS QUE FUNCIONAN BIEN
+    const opt = {
+        margin: 0.5,
+        filename: `Presupuesto_${cliente.replace(/\s+/g, '_')}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+
+    const element = document.createElement('div');
+    element.innerHTML = template;
+
+    html2pdf().set(opt).from(element).save().then(() => {
+        mostrarNotificacion("PDF Generado correctamente.");
+    });
+}
+
+/* --- GENERAR PDF Y GUARDAR HISTORIAL --- */
+window.generarPDF_Dinamico = async () => {
+    if(itemsPresupuesto.length === 0) return alert("Agrega algún ítem.");
+    const cliente = document.getElementById('modal-cliente').value || 'S/N';
+    const vehiculo = document.getElementById('modal-vehiculo').value || 'S/N';
+    const fecha = document.getElementById('modal-fecha').value;
+    const numero = document.getElementById('modal-numero').value;
+    const enviado = document.getElementById('modal-enviado').value || 'Katia / Pilar';
+
+    let subtotal = 0;
+    itemsPresupuesto.forEach(item => subtotal += (item.precio * item.cantidad));
+    
+    const ivaVal = subtotal * 0.21;
+    const totalFinal = showIVA ? subtotal + ivaVal : subtotal;
+
+    try {
+        await addDoc(presupuestosRef, {
+            cliente: cliente, vehiculo: vehiculo, fecha: fecha, numero: numero, enviado: enviado,
+            items: itemsPresupuesto, subtotal: subtotal, iva: ivaVal, total: totalFinal,
+            showIVA: showIVA, timestamp: Date.now()
         });
+        mostrarNotificacion("Guardado en la Nube.");
+    } catch(e) {
+        console.error("Error al guardar presupuesto:", e);
+        alert("Error al guardar, pero se generará el PDF.");
+    }
 
-        function renderizarTablaHistorial() {
-            const tb = document.getElementById('listaHistorial');
-            tb.innerHTML = '';
-            historialPresupuestos.forEach(pres => {
-                const env = pres.enviado || '-';
-                tb.innerHTML += `
-                    <tr>
-                        <td><strong>${pres.numero}</strong></td>
-                        <td>${pres.fecha}</td>
-                        <td>${pres.cliente}</td>
-                        <td>${pres.vehiculo}</td>
-                        <td>${env}</td>
-                        <td style="font-weight: 600;">$ ${fPlata(pres.total)}</td>
-                        <td class="actions">
-                            <button class="btn-icon" onclick="reimprimir('${pres.id}')" style="color:var(--primary);border:none;background:none;cursor:pointer;" title="Reimprimir PDF"><i data-lucide="printer"></i></button>
-                            <button class="btn-icon" onclick="borrarPresupuesto('${pres.id}')" style="color:var(--danger);border:none;background:none;cursor:pointer;" title="Eliminar"><i data-lucide="trash-2"></i></button>
-                        </td>
-                    </tr>
-                `;
-            });
-            lucide.createIcons();
+    construirYDescargarPDF(cliente, vehiculo, fecha, numero, enviado, itemsPresupuesto, subtotal, ivaVal, totalFinal, showIVA);
+    cerrarModalPresupuesto();
+}
+
+/* --- CARGAR HISTORIAL DESDE LA NUBE --- */
+onSnapshot(presupuestosRef, (s) => {
+    historialPresupuestos = [];
+    s.forEach(d => historialPresupuestos.push({...d.data(), id: d.id}));
+    historialPresupuestos.sort((a,b) => b.timestamp - a.timestamp);
+    renderizarTablaHistorial();
+});
+
+function renderizarTablaHistorial() {
+    const tb = document.getElementById('listaHistorial');
+    if(!tb) return;
+    tb.innerHTML = '';
+    historialPresupuestos.forEach(pres => {
+        const env = pres.enviado || '-'; 
+        tb.innerHTML += `
+            <tr>
+                <td><strong>${pres.numero}</strong></td>
+                <td>${pres.fecha}</td>
+                <td>${pres.cliente}</td>
+                <td>${pres.vehiculo}</td>
+                <td>${env}</td>
+                <td style="font-weight: 600;">$ ${fPlata(pres.total)}</td>
+                <td class="actions">
+                    <button class="btn-icon" onclick="reimprimir('${pres.id}')" style="color:var(--primary);border:none;background:none;cursor:pointer;" title="Reimprimir PDF"><i data-lucide="printer"></i></button>
+                    <button class="btn-icon" onclick="borrarPresupuesto('${pres.id}')" style="color:var(--danger);border:none;background:none;cursor:pointer;" title="Eliminar"><i data-lucide="trash-2"></i></button>
+                </td>
+            </tr>
+        `;
+    });
+    lucide.createIcons();
+}
+
+window.reimprimir = (id) => {
+    const pres = historialPresupuestos.find(p => p.id === id);
+    if(!pres) return;
+    const env = pres.enviado || 'Katia / Pilar';
+    construirYDescargarPDF(pres.cliente, pres.vehiculo, pres.fecha, pres.numero, env, pres.items, pres.subtotal, pres.iva, pres.total, pres.showIVA);
+}
+
+window.borrarPresupuesto = async (id) => {
+    if(confirm('¿Borrar este presupuesto del historial? Esta acción no se puede deshacer.')) {
+        try {
+            await deleteDoc(doc(db, 'presupuestos', id));
+            mostrarNotificacion("Presupuesto eliminado.");
+        } catch(e) {
+            console.error(e);
+            mostrarNotificacion("Hubo un error al eliminar.");
         }
+    }
+}
 
-        window.reimprimir = (id) => {
-            const pres = historialPresupuestos.find(p => p.id === id);
-            if(!pres) return;
-            const env = pres.enviado || 'Katia / Pilar';
-            ejecutarDescargaPDF(pres.cliente, pres.vehiculo, pres.fecha, pres.numero, env, pres.items, pres.subtotal, pres.iva, pres.total, pres.showIVA);
-        }
+/* --- LÓGICA DE STOCK (FIREBASE) --- */
+onSnapshot(repuestosRef, (s) => {
+inventario = []; s.forEach(d => inventario.push({...d.data(), id: d.id}));
+inventario.sort((a,b) => b.fecha - a.fecha);
+filtrarTabla();
+});
 
-        window.borrarPresupuesto = async (id) => {
-            if(confirm('¿Borrar este presupuesto del historial? Esta acción no se puede deshacer.')) {
-                try {
-                    await deleteDoc(doc(db, 'presupuestos', id));
-                    mostrarNotificacion("Presupuesto eliminado.");
-                } catch(e) {
-                    console.error(e);
-                    mostrarNotificacion("Hubo un error al eliminar.");
-                }
-            }
-        }
+window.agregarRepuesto = async () => {
+const n = document.getElementById('nombre').value;
+const c = document.getElementById('codigo').value;
+if(!n || !c) return mostrarNotificacion("Nombre y Código obligatorios.");
+document.getElementById('btn-submit').style.display = 'none';
+document.getElementById('loader').style.display = 'flex';
+const file = document.getElementById('imagen').files[0];
+const reader = new FileReader();
+reader.onload = async (e) => {
+await addDoc(repuestosRef, {
+nombre: n, marca: document.getElementById('marca').value,
+codigo: c, categoria: document.getElementById('categoria').value,
+ubicacion: document.getElementById('ubicacion').value,
+minimo: parseInt(document.getElementById('minimo').value),
+cantidad: parseInt(document.getElementById('cantidad').value),
+imagen: e.target.result, fecha: Date.now()
+});
+document.querySelectorAll('section input').forEach(i => i.value = '');
+document.getElementById('btn-submit').style.display = 'flex';
+document.getElementById('loader').style.display = 'none';
+mostrarNotificacion("Guardado.");
+};
+file ? reader.readAsDataURL(file) : reader.onload({target:{result:'https://via.placeholder.com/50'}});
+}
 
-        /* --- LÓGICA DE STOCK (FIREBASE) --- */
-        onSnapshot(repuestosRef, (s) => {
-            inventario = []; s.forEach(d => inventario.push({...d.data(), id: d.id}));
-            inventario.sort((a,b) => b.fecha - a.fecha);
-            filtrarTabla();
-        });
+window.cambiarStock = async (id, delta, actual) => await updateDoc(doc(db, "repuestos", id), { cantidad: Math.max(0, actual + delta) });
 
-        window.agregarRepuesto = async () => {
-            const n = document.getElementById('nombre').value;
-            const c = document.getElementById('codigo').value;
-            if(!n || !c) return mostrarNotificacion("Nombre y Código obligatorios.");
-            document.getElementById('btn-submit').style.display = 'none';
-            document.getElementById('loader').style.display = 'flex';
-            
-            const file = document.getElementById('imagen').files[0];
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                await addDoc(repuestosRef, { 
-                    nombre: n, marca: document.getElementById('marca').value, 
-                    codigo: c, categoria: document.getElementById('categoria').value,
-                    ubicacion: document.getElementById('ubicacion').value,
-                    minimo: parseInt(document.getElementById('minimo').value),
-                    cantidad: parseInt(document.getElementById('cantidad').value),
-                    imagen: e.target.result, fecha: Date.now() 
-                });
-                document.querySelectorAll('section input').forEach(i => i.value = '');
-                document.getElementById('btn-submit').style.display = 'flex';
-                document.getElementById('loader').style.display = 'none';
-                mostrarNotificacion("Guardado.");
-            };
-            file ? reader.readAsDataURL(file) : reader.onload({target:{result:'https://via.placeholder.com/50'}});
-        }
+window.filtrarTabla = () => {
+const q = document.getElementById('buscar').value.toLowerCase();
+const tb = document.getElementById('listaRepuestos');
+tb.innerHTML = '';
+let total = 0, bajos = 0;
+const cats = new Set();
 
-        window.cambiarStock = async (id, delta, actual) => await updateDoc(doc(db, "repuestos", id), { cantidad: Math.max(0, actual + delta) });
+inventario.forEach(item => {
+const esBajo = item.cantidad <= item.minimo;
+total += item.cantidad; if(esBajo) bajos++; cats.add(item.categoria);
 
-        window.filtrarTabla = () => {
-            const q = document.getElementById('buscar').value.toLowerCase();
-            const tb = document.getElementById('listaRepuestos');
-            tb.innerHTML = '';
-            let total = 0, bajos = 0;
-            const cats = new Set();
-
-            inventario.forEach(item => {
-                const esBajo = item.cantidad <= item.minimo;
-                total += item.cantidad; if(esBajo) bajos++; cats.add(item.categoria);
-
-                if(item.nombre.toLowerCase().includes(q) || item.codigo.toLowerCase().includes(q)) {
-                    tb.innerHTML += `
-                        <tr>
-                            <td><img src="${item.imagen}" class="thumb-img"></td>
-                            <td><canvas id="qr-${item.id}" class="qr-canvas"></canvas></td>
-                            <td><strong>${item.codigo}</strong></td>
-                            <td>${item.nombre}</td>
-                            <td>${item.marca}</td>
-                            <td>${item.ubicacion}</td>
-                            <td>${item.minimo}</td>
-                            <td><span class="stock-badge ${esBajo?'stock-low':'stock-ok'}">${item.cantidad}</span></td>
-                            <td class="actions">
-                                <button class="btn-icon" onclick="cambiarStock('${item.id}', 1, ${item.cantidad})" style="color:green;border:none;background:none;cursor:pointer;"><i data-lucide="plus-circle"></i></button>
-                                <button class="btn-icon" onclick="cambiarStock('${item.id}', -1, ${item.cantidad})" style="color:orange;border:none;background:none;cursor:pointer;"><i data-lucide="minus-circle"></i></button>
-                                <button class="btn-icon" onclick="confirm('¿Borrar?') && deleteDoc(doc(db,'repuestos','${item.id}'))" style="color:red;border:none;background:none;cursor:pointer;"><i data-lucide="trash-2"></i></button>
-                            </td>
-                        </tr>`;
-                    setTimeout(() => new QRious({ element: document.getElementById(`qr-${item.id}`), value: item.codigo, size: 60 }), 100);
-                }
-            });
-            document.getElementById('stat-total').innerText = total;
-            document.getElementById('stat-bajos').innerText = bajos;
-            document.getElementById('stat-tipos').innerText = cats.size;
-            lucide.createIcons();
-        }
-    </script>
+if(item.nombre.toLowerCase().includes(q) || item.codigo.toLowerCase().includes(q)) {
+tb.innerHTML += `
+<tr>
+<td><img src="${item.imagen}" class="thumb-img"></td>
+<td><canvas id="qr-${item.id}" class="qr-canvas"></canvas></td>
+<td><strong>${item.codigo}</strong></td>
+<td>${item.nombre}</td>
+<td>${item.marca}</td>
+<td>${item.ubicacion}</td>
+<td>${item.minimo}</td>
+<td><span class="stock-badge ${esBajo?'stock-low':'stock-ok'}">${item.cantidad}</span></td>
+<td class="actions">
+<button class="btn-icon" onclick="cambiarStock('${item.id}', 1, ${item.cantidad})" style="color:green"><i data-lucide="plus-circle"></i></button>
+<button class="btn-icon" onclick="cambiarStock('${item.id}', -1, ${item.cantidad})" style="color:orange"><i data-lucide="minus-circle"></i></button>
+<button class="btn-icon" onclick="confirm('¿Borrar?') && deleteDoc(doc(db,'repuestos','${item.id}'))" style="color:red"><i data-lucide="trash-2"></i></button>
+</td>
+</tr>`;
+setTimeout(() => new QRious({ element: document.getElementById(`qr-${item.id}`), value: item.codigo, size: 60 }), 100);
+}
+});
+document.getElementById('stat-total').innerText = total;
+document.getElementById('stat-bajos').innerText = bajos;
+document.getElementById('stat-tipos').innerText = cats.size;
+lucide.createIcons();
+}
+</script>
 </body>
 </html>
