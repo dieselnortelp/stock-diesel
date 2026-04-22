@@ -68,8 +68,8 @@ td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); font-size: 0
 .btn-icon { border: none; background: none; cursor: pointer; padding: 6px; border-radius: 6px; transition: 0.2s; }
 .btn-icon:hover { background: #e2e8f0; }
 
-/* MODAL DE PRESUPUESTOS Y HISTORIAL */
-.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.7); display: none; justify-content: center; align-items: flex-start; padding: 2rem 1rem; z-index: 2000; overflow-y: auto; backdrop-filter: blur(4px); }
+/* MODAL DE PRESUPUESTOS MEJORADO */
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.7); display: none; justify-content: center; align-items: flex-start; padding: 2rem 1rem; z-index: 1000; overflow-y: auto; backdrop-filter: blur(4px); }
 .modal-overlay.active { display: flex; }
 .modal-content { background: white; border-radius: 12px; width: 100%; max-width: 1000px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
 .modal-header { padding: 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border-radius: 12px 12px 0 0; }
@@ -92,11 +92,11 @@ td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); font-size: 0
 
 .modal-footer { padding: 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 1rem; background: #fcfcfd; border-radius: 0 0 12px 12px; }
 
-.toast { position: fixed; bottom: 20px; right: 20px; background: #0f172a; color: white; padding: 1rem 1.5rem; border-radius: 8px; display: flex; align-items: center; gap: 12px; transform: translateY(150%); opacity: 0; transition: all 0.3s; z-index: 3000; }
+.toast { position: fixed; bottom: 20px; right: 20px; background: #0f172a; color: white; padding: 1rem 1.5rem; border-radius: 8px; display: flex; align-items: center; gap: 12px; transform: translateY(150%); opacity: 0; transition: all 0.3s; z-index: 2000; }
 .toast.show { transform: translateY(0); opacity: 1; }
 
-/* Botón Flotante para Historial (CORREGIDO A LA DERECHA) */
-.fab-btn { position: fixed; bottom: 30px; right: 30px; background-color: var(--primary); color: white; border: none; width: 60px; height: 60px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; transition: transform 0.2s, background-color 0.2s; }
+/* Botón Flotante para Historial */
+.fab-btn { position: fixed; bottom: 30px; left: 30px; background-color: var(--primary); color: white; border: none; width: 60px; height: 60px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 100; transition: transform 0.2s, background-color 0.2s; }
 .fab-btn:hover { transform: scale(1.05); background-color: var(--primary-hover); }
 
 footer { text-align: center; margin-top: 3rem; color: var(--text-muted); font-size: 0.85rem; padding: 2rem; border-top: 1px solid var(--border); }
