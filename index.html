@@ -54,7 +54,7 @@
         .search-icon { position: absolute; left: 2.2rem; top: 0.8rem; color: var(--text-muted); }
 
         .table-container { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 800px; }
+        <table> { width: 100%; border-collapse: collapse; text-align: left; min-width: 800px; }
         th { background-color: #1e293b; padding: 1rem; font-size: 0.8rem; text-transform: uppercase; color: white; font-weight: 600; }
         td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; vertical-align: middle; }
         tr:hover td { background-color: #f1f5f9; }
@@ -446,7 +446,7 @@
 
             // Agregué el ENVIADO POR debajo de la fecha
             const template = `
-                <div style="width: 800px; padding:30px 40px; box-sizing: border-box; font-family:Arial, sans-serif; color:#000; background:white; font-size:13px;">
+                <div style="width: 100%; max-width: 750px; margin: 0 auto; padding: 20px 30px; box-sizing: border-box; font-family:Arial, sans-serif; color:#000; background:white; font-size:13px;">
                     <h2 style="text-align:center; font-size:24px; margin-bottom:20px;">PRESUPUESTO</h2>
                     <div style="display:flex; border:1px solid #000; margin-bottom:15px;">
                         <div style="flex:1; padding:10px; border-right:1px solid #000;">
@@ -487,12 +487,12 @@
             const wrapper = document.createElement('div');
             wrapper.innerHTML = template;
 
-            // windowWidth: 850 obliga a html2canvas a tomar la foto como si fuera una computadora, evitando recortes en celulares
             html2pdf().set({ 
-                margin: 0.5, 
+                margin: [0.3, 0.2, 0.3, 0.2], // Márgenes en pulgadas: [arriba, derecha, abajo, izquierda]
                 filename: `Presupuesto_${cliente.replace(/\s+/g, '_')}.pdf`, 
-                html2canvas: {scale: 2, useCORS: true, windowWidth: 850}, 
-                jsPDF: {unit: 'in', format: 'a4'} 
+                image: { type: 'jpeg', quality: 0.98 }, // Mejora la nitidez del logo y textos
+                html2canvas: { scale: 2, useCORS: true, windowWidth: 790 }, // Ancho virtual optimizado para A4
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } 
             }).from(wrapper).save().then(() => {
                 mostrarNotificacion("PDF Generado correctamente.");
             });
