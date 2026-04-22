@@ -54,7 +54,7 @@
         .search-icon { position: absolute; left: 2.2rem; top: 0.8rem; color: var(--text-muted); }
 
         .table-container { overflow-x: auto; }
-        <table> { width: 100%; border-collapse: collapse; text-align: left; min-width: 800px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 800px; }
         th { background-color: #1e293b; padding: 1rem; font-size: 0.8rem; text-transform: uppercase; color: white; font-weight: 600; }
         td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; vertical-align: middle; }
         tr:hover td { background-color: #f1f5f9; }
@@ -409,7 +409,7 @@
             const vehiculo = document.getElementById('modal-vehiculo').value || 'S/N';
             const fecha = document.getElementById('modal-fecha').value;
             const numero = document.getElementById('modal-numero').value;
-            const enviado = document.getElementById('modal-enviado').value || 'Katia / Pilar'; // Nuevo campo
+            const enviado = document.getElementById('modal-enviado').value || 'Katia / Pilar';
 
             let subtotal = 0;
             itemsPresupuesto.forEach(item => subtotal += (item.precio * item.cantidad));
@@ -437,16 +437,14 @@
             let filasHTML = '';
             listaItems.forEach(item => {
                 const tf = item.precio * item.cantidad;
-                // La lógica del ojito que te gustó: si está desactivado muestra un guión (-)
                 let txtPrecio = item.mostrarPrecio ? `$ ${fPlata(item.precio)}` : '-';
                 let txtTotal = item.mostrarPrecio ? `$ ${fPlata(tf)}` : '-';
 
-                filasHTML += `<tr style="border-bottom:1px solid #000"><td style="padding:10px;border-right:1px solid #000">${item.concepto}</td><td style="width:120px;text-align:center;border-right:1px solid #000">${txtPrecio}</td><td style="width:70px;text-align:center;border-right:1px solid #000">${item.cantidad}</td><td style="width:120px;text-align:right">${txtTotal}</td></tr>`;
+                filasHTML += `<tr style="border-bottom:1px solid #000"><td style="padding:10px;border-right:1px solid #000">${item.concepto}</td><td style="width:120px;text-align:center;border-right:1px solid #000">${txtPrecio}</td><td style="width:70px;text-align:center;border-right:1px solid #000">${item.cantidad}</td><td style="width:120px;text-align:right;padding-right:10px;">${txtTotal}</td></tr>`;
             });
 
-            // Agregué el ENVIADO POR debajo de la fecha
             const template = `
-                <div style="width: 100%; max-width: 750px; margin: 0 auto; padding: 20px 30px; box-sizing: border-box; font-family:Arial, sans-serif; color:#000; background:white; font-size:13px;">
+                <div style="width: 730px; padding: 20px 30px; box-sizing: border-box; font-family:Arial, sans-serif; color:#000; background:white; font-size:13px; margin: 0;">
                     <h2 style="text-align:center; font-size:24px; margin-bottom:20px;">PRESUPUESTO</h2>
                     <div style="display:flex; border:1px solid #000; margin-bottom:15px;">
                         <div style="flex:1; padding:10px; border-right:1px solid #000;">
@@ -471,7 +469,14 @@
                         <p><strong>GARANTÍA DIESEL</strong></p>
                     </div>
                     <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px;">
-                        <thead><tr style="background:#eee; border-bottom:1px solid #000"><th style="padding:10px;text-align:left;border-right:1px solid #000">CONCEPTO</th><th style="width:120px;border-right:1px solid #000">UNITARIO</th><th style="width:70px;border-right:1px solid #000">CANT.</th><th style="width:120px;text-align:right">SUBTOTAL</th></tr></thead>
+                        <thead>
+                            <tr style="background:#1e293b; color:white; border-bottom:1px solid #000">
+                                <th style="padding:10px;text-align:left;border-right:1px solid #000">CONCEPTO</th>
+                                <th style="width:120px;border-right:1px solid #000">UNITARIO</th>
+                                <th style="width:70px;border-right:1px solid #000">CANT.</th>
+                                <th style="width:120px;text-align:right;padding-right:10px;">SUBTOTAL</th>
+                            </tr>
+                        </thead>
                         <tbody>${filasHTML}</tbody>
                     </table>
                     <div style="display:flex; border:1px solid #000; min-height:100px;">
@@ -488,10 +493,10 @@
             wrapper.innerHTML = template;
 
             html2pdf().set({ 
-                margin: [0.3, 0.2, 0.3, 0.2], // Márgenes en pulgadas: [arriba, derecha, abajo, izquierda]
+                margin: 0.35, 
                 filename: `Presupuesto_${cliente.replace(/\s+/g, '_')}.pdf`, 
-                image: { type: 'jpeg', quality: 0.98 }, // Mejora la nitidez del logo y textos
-                html2canvas: { scale: 2, useCORS: true, windowWidth: 790 }, // Ancho virtual optimizado para A4
+                image: { type: 'jpeg', quality: 0.98 }, 
+                html2canvas: { scale: 2, useCORS: true, windowWidth: 800, x: 0, y: 0 }, 
                 jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } 
             }).from(wrapper).save().then(() => {
                 mostrarNotificacion("PDF Generado correctamente.");
@@ -510,7 +515,7 @@
             const tb = document.getElementById('listaHistorial');
             tb.innerHTML = '';
             historialPresupuestos.forEach(pres => {
-                const env = pres.enviado || '-'; // Por si hay presupuestos viejos que no lo tengan
+                const env = pres.enviado || '-';
                 tb.innerHTML += `
                     <tr>
                         <td><strong>${pres.numero}</strong></td>
